@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+//MainActivity
 public class MainActivity extends ActionBarActivity {
 
 	private FTDriver com;
