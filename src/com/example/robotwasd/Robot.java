@@ -16,8 +16,9 @@ public class Robot {
 		this.textLog = textLog;
 	}
 	
-	void initialize(){
+	public void initialize(){
 		connect();
+		ObstacleAvoidance obst = new ObstacleAvoidance(this);
 	}
 	
 	public void connect() {
@@ -107,8 +108,10 @@ public class Robot {
 		robotSetLeds((byte) 0, (byte) 0);
 	}
 	
-	public void readSensor() {
-		textLog.setText(comReadWrite(new byte[] { 'q', '\r', '\n' })+"\n");
+	public String readSensor() {
+		String data = comReadWrite(new byte[] { 'q', '\r', '\n' });
+		//textLog.setText(data +"\n");
+		return data;
 	}
 	
 	public void driveSquare(byte distance_cm){
@@ -123,56 +126,10 @@ public class Robot {
 		
 	
 	
-	
-	
+	/** helper functions */
+	/********************************************/
 		
-	/*****************************/
-	
-	private void comWrite(byte[] data) {
-		if (com.isConnected()) {
-			com.write(data);
-		}
-		else {
-			textLog.append("not connected\n");
-		}
-	}
-	/**
-	* reads from the serial buffer. due to buffering, the read command is
-	* issued 3 times at minimum and continuously as long as there are bytes to
-	* read from the buffer. Note that this function does not block, it might
-	* return an empty string if no bytes have been read at all.
-	*
-	* @return buffer content as string
-	*/
-	private String comRead() {
-		String s = "";
-		int i = 0;
-		int n = 0;
-		while (i < 3 || n > 0) {
-			byte[] buffer = new byte[256];
-			n = com.read(buffer);
-			s += new String(buffer, 0, n);
-			i++;
-		}
-		return s;
-	}
-	
-	/**
-	* write data to serial interface, wait 100 ms and read answer.
-	*
-	* @param data
-	* to write
-	* @return answer from serial interface
-	*/
-	private String comReadWrite(byte[] data) {
-		com.write(data);
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// ignore
-		}
-		return comRead();
-	}
+
 	
 	/**
 	 * Setting blue and red LED
@@ -253,6 +210,55 @@ public class Robot {
 		} catch (InterruptedException e) {
 			
 		}
+	}
+	
+	/**Low Level Functions */
+	/*****************************/
+	
+	synchronized private void comWrite(byte[] data) {
+		if (com.isConnected()) {
+			com.write(data);
+		}
+		else {
+			textLog.append("not connected\n");
+		}
+	}
+	/**
+	* reads from the serial buffer. due to buffering, the read command is
+	* issued 3 times at minimum and continuously as long as there are bytes to
+	* read from the buffer. Note that this function does not block, it might
+	* return an empty string if no bytes have been read at all.
+	*
+	* @return buffer content as string
+	*/
+	synchronized private String comRead() {
+		String s = "";
+		int i = 0;
+		int n = 0;
+		while (i < 3 || n > 0) {
+			byte[] buffer = new byte[256];
+			n = com.read(buffer);
+			s += new String(buffer, 0, n);
+			i++;
+		}
+		return s;
+	}
+	
+	/**
+	* write data to serial interface, wait 100 ms and read answer.
+	*
+	* @param data
+	* to write
+	* @return answer from serial interface
+	*/
+	synchronized private String comReadWrite(byte[] data) {
+		com.write(data);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// ignore
+		}
+		return comRead();
 	}
 
 }
