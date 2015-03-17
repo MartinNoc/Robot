@@ -43,6 +43,13 @@
             android:layout_height="wrap_content"
             android:text="LED off"
             android:onClick="LedOff" />
+        
+        <Button
+            android:id="@+id/Square"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Square"
+            android:onClick="driveSquare" />
     </LinearLayout>
 
     <LinearLayout

@@ -1651,8 +1651,9 @@ containing a value of this type.
     }
     public static final class id {
         public static final int LEDoffButton=0x7f0b0043;
-        public static final int LEDonButton=0x7f0b0048;
-        public static final int aButton=0x7f0b0046;
+        public static final int LEDonButton=0x7f0b0049;
+        public static final int Square=0x7f0b0044;
+        public static final int aButton=0x7f0b0047;
         public static final int action_bar=0x7f0b0031;
         public static final int action_bar_activity_content=0x7f0b0003;
         public static final int action_bar_container=0x7f0b0030;
@@ -1666,7 +1667,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0b002e;
         public static final int action_mode_bar_stub=0x7f0b002d;
         public static final int action_mode_close_button=0x7f0b0020;
-        public static final int action_settings=0x7f0b004f;
+        public static final int action_settings=0x7f0b0050;
         public static final int activity_chooser_view_content=0x7f0b0021;
         public static final int always=0x7f0b0014;
         public static final int beginning=0x7f0b001b;
@@ -1677,7 +1678,7 @@ containing a value of this type.
         public static final int default_activity_button=0x7f0b0024;
         public static final int dialog=0x7f0b0019;
         public static final int disableHome=0x7f0b000d;
-        public static final int downButton=0x7f0b0047;
+        public static final int downButton=0x7f0b0048;
         public static final int dropdown=0x7f0b001a;
         public static final int edit_query=0x7f0b0033;
         public static final int end=0x7f0b001c;
@@ -1689,12 +1690,12 @@ containing a value of this type.
         public static final int ifRoom=0x7f0b0016;
         public static final int image=0x7f0b0023;
         public static final int linearLayout1=0x7f0b003f;
-        public static final int linearLayout2=0x7f0b0049;
-        public static final int linearLayout3=0x7f0b0044;
+        public static final int linearLayout2=0x7f0b004a;
+        public static final int linearLayout3=0x7f0b0045;
         public static final int listMode=0x7f0b000a;
         public static final int list_item=0x7f0b0025;
         public static final int middle=0x7f0b001d;
-        public static final int minusButton=0x7f0b0045;
+        public static final int minusButton=0x7f0b0046;
         public static final int never=0x7f0b0017;
         public static final int none=0x7f0b000f;
         public static final int normal=0x7f0b000b;
@@ -1702,8 +1703,8 @@ containing a value of this type.
         public static final int progress_circular=0x7f0b0007;
         public static final int progress_horizontal=0x7f0b0008;
         public static final int radio=0x7f0b002b;
-        public static final int readSensorButton=0x7f0b004d;
-        public static final int sButton=0x7f0b004b;
+        public static final int readSensorButton=0x7f0b004e;
+        public static final int sButton=0x7f0b004c;
         public static final int search_badge=0x7f0b0035;
         public static final int search_bar=0x7f0b0034;
         public static final int search_button=0x7f0b0036;
@@ -1721,15 +1722,15 @@ containing a value of this type.
         public static final int split_action_bar=0x7f0b0004;
         public static final int submit_area=0x7f0b003c;
         public static final int tabMode=0x7f0b000c;
-        public static final int textView1=0x7f0b004e;
+        public static final int textView1=0x7f0b004f;
         public static final int title=0x7f0b0027;
         public static final int up=0x7f0b0001;
         public static final int upButton=0x7f0b0042;
         public static final int useLogo=0x7f0b0013;
-        public static final int wButton=0x7f0b004a;
+        public static final int wButton=0x7f0b004b;
         public static final int withText=0x7f0b0018;
         public static final int wrap_content=0x7f0b0009;
-        public static final int xButton=0x7f0b004c;
+        public static final int xButton=0x7f0b004d;
     }
     public static final class integer {
         public static final int abc_config_activityDefaultDur=0x7f0a0001;
