@@ -48,8 +48,9 @@
             android:id="@+id/Square"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Square"
-            android:onClick="SquareButton_onClick" />
+            android:onClick="SquareButton_onClick"
+            android:text="Square" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -85,6 +86,13 @@
             android:layout_height="wrap_content"
             android:text="LED on"
             android:onClick="LEDonButton_onClick" />
+        
+        <Button
+            android:id="@+id/connectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="connect"
+            android:onClick="connectButton_onClick" />
     </LinearLayout>
 
     <LinearLayout
@@ -120,8 +128,16 @@
             android:id="@+id/readSensorButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Read\nSensor"
-            android:onClick="readSensorButton_onClick" />
+            android:onClick="readSensorButton_onClick"
+            android:text="Sensor" />
+        
+        <Button
+            android:id="@+id/disconnectButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="disconnectButton_onClick"
+            android:text="discon." />
+
     </LinearLayout>
 
     <TextView
@@ -130,6 +146,6 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/linearLayout3"
         android:layout_below="@+id/linearLayout2"
-        android:text="TextView\n" />
+        android:text="not connected!" />
 
 </RelativeLayout>

@@ -11,6 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * App do controll Robot
+ * @author Witsch Daniel, Nocker Martin, Schiborr Mark
+ *
+ */
 public class MainActivity extends ActionBarActivity {
 	Robot robot;
 	
@@ -21,12 +26,11 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		
 		TextView textLog = (TextView) findViewById(R.id.textView1);
-		FTDriver com = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
+		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
 		
-		robot = new Robot(com, textLog);
+		robot = new Robot(driver, textLog);	
 		
 		robot.initialize();
-		
 	}
 	
 	
@@ -85,6 +89,14 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void SquareButton_onClick(View v) {
 		robot.driveSquare((byte) 50);
+	}
+	
+	public void connectButton_onClick(View v) {
+		robot.connect();
+	}
+	
+	public void disconnectButton_onClick(View v) {
+		robot.disconnect();
 	}
 	
 
