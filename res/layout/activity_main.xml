@@ -21,35 +21,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+"
-            android:onClick="riseBar" />
+            android:onClick="plusButton_onClick" />
 
         <Button
             android:id="@+id/dButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="D"
-            android:onClick="turnRight" />
+            android:onClick="dButton_onClick" />
 
         <Button
             android:id="@+id/upButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Up"
-            android:onClick="upPositionBar" />
+            android:onClick="upButton_onClick" />
 
         <Button
             android:id="@+id/LEDoffButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LED off"
-            android:onClick="LedOff" />
+            android:onClick="LEDoffButton_onClick" />
         
         <Button
             android:id="@+id/Square"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Square"
-            android:onClick="driveSquare" />
+            android:onClick="SquareButton_onClick" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,28 +63,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
-            android:onClick="lowerBar" />
+            android:onClick="minusButton_onClick" />
 
         <Button
             android:id="@+id/aButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="A"
-            android:onClick="turnLeft" />
+            android:onClick="aButton_onClick" />
 
         <Button
             android:id="@+id/downButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Down"
-            android:onClick="lowPositionBar" />
+            android:onClick="downButton_onClick" />
 
         <Button
             android:id="@+id/LEDonButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LED on"
-            android:onClick="LedOn" />
+            android:onClick="LEDonButton_onClick" />
     </LinearLayout>
 
     <LinearLayout
@@ -100,28 +100,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="w"
-            android:onClick="moveForward" />
+            android:onClick="wButton_onClick" />
 
         <Button
             android:id="@+id/sButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="S"
-            android:onClick="stopRobot" />
+            android:onClick="sButton_onClick" />
 
         <Button
             android:id="@+id/xButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="X"
-            android:onClick="moveBackward" />
+            android:onClick="xButton_onClick" />
 
         <Button
             android:id="@+id/readSensorButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Read\nSensor"
-            android:onClick="readSensor" />
+            android:onClick="readSensorButton_onClick" />
     </LinearLayout>
 
     <TextView

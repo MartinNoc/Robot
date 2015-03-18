@@ -1,5 +1,7 @@
 package com.example.robotwasd;
 
+import java.util.List;
+
 import jp.ksksue.driver.serial.FTDriver;
 import android.widget.TextView;
 
@@ -10,6 +12,8 @@ public class Robot {
 	private static double coefficient_length_time = 0.073;	//seconds per cm
 	private static double coefficient_degree = 1.145;
 	private static double coefficient_degree_time = 0.016111;	//seconds per degree
+	
+	private Odometry odometry;
 	
 	public Robot(FTDriver com, TextView textLog){
 		this.com = com;
@@ -143,7 +147,7 @@ public class Robot {
 	}
 	
 	/**
-	 * Driving forward/backward
+	 * Driving straight forward/backward
 	 * @param distance_cm
 	 */
 	private void robotDrive(byte distance_cm) {
@@ -153,10 +157,11 @@ public class Robot {
 			new byte[] { 'k', (byte)correctedDistance, '\r', '\n' }
 		);
 		waitForRobotLength(distance_cm);
+		odometry.adjustOdometry(distance_cm, 0);
 	}
 	
 	/**
-	 * Turning the robot
+	 * Turning the robot on the spot, counter-clockwise (left)
 	 * @param degree
 	 */
 	private void robotTurn(byte degree) {
@@ -165,6 +170,7 @@ public class Robot {
 			new byte[] { 'l', (byte)correctedDegree, '\r', '\n' }
 		);
 		waitForRobotDegree(degree);
+		odometry.adjustOdometry(0, degree);
 	}
 	
 	/**
@@ -196,7 +202,7 @@ public class Robot {
 		try {
 			Thread.sleep((long)((double)distance_cm * coefficient_length_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
-			
+			// ignore
 		}
 	}
 	
@@ -208,9 +214,10 @@ public class Robot {
 		try {
 			Thread.sleep((long)((double)degree * coefficient_degree_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
-			
+			// ignore
 		}
 	}
+	
 	
 	/**Low Level Functions */
 	/*****************************/

@@ -20,11 +20,8 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		FTDriver com;
-		TextView textLog;
-		
-		textLog = (TextView) findViewById(R.id.textView1);
-		com = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
+		TextView textLog = (TextView) findViewById(R.id.textView1);
+		FTDriver com = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
 		
 		robot = new Robot(com, textLog);
 		
@@ -36,57 +33,57 @@ public class MainActivity extends ActionBarActivity {
 	
 	/** Button Functions */
 	
-	public void moveForward(View v) {
+	public void wButton_onClick(View v) {
 		robot.moveForward();
 	}
 	
-	public void moveBackward(View v) {
+	public void xButton_onClick(View v) {
 		robot.moveBackward();
 	}
 	
-	public void stopRobot(View v) {
+	public void sButton_onClick(View v) {
 		robot.stopRobot();
 	}
 	
-	public void turnLeft(View v) {
+	public void aButton_onClick(View v) {
 		robot.turnLeft();
 	}
 	
-	public void turnRight(View w) {
+	public void dButton_onClick(View w) {
 		robot.turnRight();
 	}
 	
-	public void lowerBar(View v) {
+	public void minusButton_onClick(View v) {
 		robot.lowerBar();
 	}
 	
-	public void riseBar(View v) {
+	public void plusButton_onClick(View v) {
 		robot.riseBar();
 	}
 	
 	// fixed position for bar (low)
-	public void lowPositionBar(View v) {
+	public void downButton_onClick(View v) {
 		robot.lowPositionBar();
 	}
 	
 	// fixed position for bar (high)
-	public void upPositionBar(View v) {
+	public void upButton_onClick(View v) {
 		robot.upPositionBar();
 	}
 	
-	public void LedOn(View v) {
+	public void LEDonButton_onClick(View v) {
 		robot.LedOn();
 	}
 	
-	public void LedOff(View v) {
+	public void LEDoffButton_onClick(View v) {
 		robot.LedOff();
 	}
 	
-	public void readSensor(View v) {
+	public void readSensorButton_onClick(View v) {
 		robot.readSensor();
 	}
 	
-	public void driveSquare(View v) {
+	public void SquareButton_onClick(View v) {
 		robot.driveSquare((byte) 50);
 	}
 	
