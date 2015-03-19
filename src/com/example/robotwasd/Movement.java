@@ -1,5 +1,10 @@
 package com.example.robotwasd;
 
+/**
+ * Wrapper Class for all movements of the robot
+ * @author Witsch Daniel
+ *
+ */
 public class Movement {
 	private static final double coefficient_length = 1.355; //constant to correct length of driving
 	private static final double coefficient_length_time = 0.073;	//seconds per cm
@@ -8,10 +13,12 @@ public class Movement {
 	
 	private Communication com;
 	private Odometry odometry;
+	private ObstacleAvoidance obst;
 	
-	public Movement(Communication com, Odometry odometry){
+	public Movement(Communication com, Odometry odometry, ObstacleAvoidance obst){
 		this.com = com;
 		this.odometry = odometry;
+		this.obst = obst;
 	}
 	
 	/** helper functions */
@@ -33,13 +40,17 @@ public class Movement {
 	 * @param distance_cm
 	 */
 	public void robotDrive(byte distance_cm) {
-		
 		int correctedDistance = (int)((double)distance_cm * coefficient_length);
-		com.readWriteRobot(
+		String ok = com.readWriteRobot(
 			new byte[] { 'k', (byte)correctedDistance, '\r', '\n' }
 		);
-		waitForRobotLength(distance_cm);
-		odometry.adjustOdometry(distance_cm, 0);
+		
+		obst.setTime(false);
+		//when robot is not connected
+		if(!ok.equals("")){
+			waitForRobotLength(distance_cm);
+			odometry.adjustOdometry(distance_cm, 0);
+		}
 	}
 	
 	/**
@@ -48,11 +59,17 @@ public class Movement {
 	 */
 	public void robotTurn(byte degree) {
 		int correctedDegree = (int)((double) degree * coefficient_degree);
-		com.readWriteRobot(
+		String ok = com.readWriteRobot(
 			new byte[] { 'l', (byte)correctedDegree, '\r', '\n' }
 		);
-		waitForRobotDegree(degree);
-		odometry.adjustOdometry(0, degree);
+		
+		obst.setTime(true);
+		
+		// when robot is not connected
+		if(!ok.equals("")){
+			waitForRobotDegree(degree);
+			odometry.adjustOdometry(0, degree);
+		}
 	}
 	
 	/**

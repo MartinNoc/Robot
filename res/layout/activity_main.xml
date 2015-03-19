@@ -50,6 +50,13 @@
             android:layout_height="wrap_content"
             android:onClick="SquareButton_onClick"
             android:text="Square" />
+        
+        <Button
+            android:id="@+id/Calibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="CalibrateButton_onClick"
+            android:text="Calibrate" />
 
     </LinearLayout>
 

@@ -18,6 +18,7 @@ import android.widget.TextView;
  */
 public class MainActivity extends ActionBarActivity {
 	Robot robot;
+	TextView textLog;
 	
 	
 	@Override
@@ -31,6 +32,11 @@ public class MainActivity extends ActionBarActivity {
 		robot = new Robot(driver, textLog);	
 		
 		robot.initialize();
+	}
+	
+	@Override
+	protected void onDestroy(){
+		robot.disconnect();
 	}
 	
 	
@@ -97,6 +103,10 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void disconnectButton_onClick(View v) {
 		robot.disconnect();
+	}
+	
+	public void CalibrateButton_onClick(View v) {
+		robot.calibrateSensor();
 	}
 	
 

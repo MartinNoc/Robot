@@ -18,11 +18,15 @@ public class Communication {
 		this.textLog = textLog;
 	}
 	
-	public void connect() {
-		if (driver.begin(BAUDRATE))
+	public boolean connect() {
+		if (driver.begin(BAUDRATE)){
 			textLog.setText("connected");
-        else
+			return true;
+		}
+        else{
         	textLog.setText("could not connect");
+        	return false;
+        }
 	}
 	
 	public void disconnect() {
@@ -45,12 +49,14 @@ public class Communication {
 	/**Low Level Functions */
 	/*****************************/
 	
-	synchronized public void writeRobot(byte[] data) {
+	synchronized public boolean writeRobot(byte[] data) {
 		if (driver.isConnected()) {
 			driver.write(data);
+			return true;
 		}
 		else {
-			textLog.append("not connected");
+			textLog.setText("not connected");
+			return false;
 		}
 	}
 	/**
@@ -87,11 +93,16 @@ public class Communication {
 	* @return answer from serial interface
 	*/
 	public String readWriteRobot(byte[] data) {
-		driver.write(data);
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// ignore
+		if (isConnected()) {
+			driver.write(data);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
+		else {
+			textLog.setText("not connected");
 		}
 		return readRobot();
 	}
