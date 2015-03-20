@@ -43,7 +43,7 @@ public class Robot {
 	public void disconnect(){
 		if(com.isConnected()){
 			move.stopRobot();
-			obst.run = false;
+			obst.stopThread();
 			try {
 				obst.join();
 			} catch (InterruptedException e) {	}

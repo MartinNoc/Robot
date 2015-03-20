@@ -6,10 +6,10 @@ package com.example.robotwasd;
  *
  */
 public class Movement {
-	private static final double coefficient_length = 1.355; //constant to correct length of driving
-	private static final double coefficient_length_time = 0.073;	//seconds per cm
-	private static final double coefficient_degree = 1.145; //constant to correct rotation
-	private static final double coefficient_degree_time = 0.016111;	//seconds per degree
+	private final double coefficient_length = 1.355; //constant to correct length of driving
+	private final double coefficient_length_time = 0.073;	//seconds per cm
+	private final double coefficient_degree = 1.145; //constant to correct rotation
+	private final double coefficient_degree_time = 0.016111;	//seconds per degree
 	
 	private Communication com;
 	private Odometry odometry;
@@ -45,11 +45,12 @@ public class Movement {
 			new byte[] { 'k', (byte)correctedDistance, '\r', '\n' }
 		);
 		
-		obst.setTime(false);
-		//when robot is not connected
+		//when robot is connected
 		if(!ok.equals("")){
+			obst.startMovement(false); //false for driving straight ahead
 			waitForRobotLength(distance_cm);
 			odometry.adjustOdometry(distance_cm, 0);
+			obst.stopMovement();
 		}
 	}
 	
@@ -63,12 +64,12 @@ public class Movement {
 			new byte[] { 'l', (byte)correctedDegree, '\r', '\n' }
 		);
 		
-		obst.setTime(true);
-		
-		// when robot is not connected
+		// when robot is connected
 		if(!ok.equals("")){
+			obst.startMovement(true); //true for rotation
 			waitForRobotDegree(degree);
 			odometry.adjustOdometry(0, degree);
+			obst.stopMovement();
 		}
 	}
 	

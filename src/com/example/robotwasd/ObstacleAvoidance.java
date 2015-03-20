@@ -12,35 +12,38 @@ import android.os.IBinder;
 public class ObstacleAvoidance extends Thread {
 	private Robot robot;
 	
-	private static final double coefficient_length_time = 13.698630137;	//cm per second
-	private static final double coefficient_degree_time = 62.069393582;	//degrees per second
-	private static double stopDistance = 20;
+	private final double coefficient_length_time = 13.698630137;	//cm per second
+	private final double coefficient_degree_time = 62.069393582;	//degrees per second
+	private double stopDistance = 20;	//initial value for stop distance
 	
-	private static long time = 0;
-	private static boolean driveRotate = false; //false = drive forward, true = rotate
-	public static boolean run = true;
+	private long time = 0;
+	private boolean driveRotate = false; //false = drive forward, true = rotate
+	private boolean run = false;		//start stop detecting obstacles
+	private boolean alive = true;	//start stop thread
 	
 	public ObstacleAvoidance(Robot robot){
 		this.robot = robot;
 	}
 	
 	public void run(){
-		while(run){
-			String sensor = robot.readSensor();
-			if(minDistance(sensor) < stopDistance){
-				robot.stopRobot();
-				long driveTime = System.currentTimeMillis() - time;
-				double driveTimeSec = (double)driveTime/1000;
-				if(driveRotate){
-					//rotate
-					double rotateDegrees = driveTimeSec * coefficient_degree_time;
-					robot.correctPosition(0, rotateDegrees);
-				}else {
-					//drive forward
-					double driveDistance = driveTimeSec * coefficient_length_time;
-					robot.correctPosition(driveDistance, 0);
+		while(alive){
+			while(run){
+				String sensor = robot.readSensor();
+				if(minDistance(sensor) < stopDistance){
+					robot.stopRobot();
+					long driveTime = System.currentTimeMillis() - time;
+					double driveTimeSec = (double)driveTime/1000;
+					if(driveRotate){
+						//rotate
+						double rotateDegrees = driveTimeSec * coefficient_degree_time;
+						robot.correctPosition(0, rotateDegrees);
+					}else {
+						//drive forward
+						double driveDistance = driveTimeSec * coefficient_length_time;
+						robot.correctPosition(driveDistance, 0);
+					}
+					run = false;
 				}
-				run = false;
 			}
 		}
 	}
@@ -63,19 +66,36 @@ public class ObstacleAvoidance extends Thread {
 	}
 
 	/**
+	 * start the detection of a collision
 	 * set actual time and action what to do (false = drive forward, true = rotate)
 	 * @param driveRotate
 	 */
-	public void setTime(boolean driveRotate){
+	synchronized public void startMovement(boolean driveRotate){
 		this.driveRotate = driveRotate;
 		time = System.currentTimeMillis();
+		this.run = true;
 	}
 	
 	/**
+	 * stop the detection of a collision
+	 */
+	synchronized public void stopMovement(){
+		this.run = false;
+	}
+		
+	/**
 	 * calibrate the stop distance with the actual shortest distance to an object
 	 */
-	public void setStopDistance(){
-		stopDistance = minDistance(robot.readSensor());
+	synchronized public void setStopDistance(){
+		this.stopDistance = minDistance(robot.readSensor());
+	}
+	
+	/**
+	 * stop thread
+	 */
+	synchronized public void stopThread(){
+		this.run = false;
+		this.alive = false;
 	}
 
 }

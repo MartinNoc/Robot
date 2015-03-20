@@ -11,7 +11,7 @@ public class Odometry {
 	public Odometry() {
 		p = new Position();
 		robotPosList = new ArrayList<Position>();
-	}
+	}public static boolean run = true;
 	
 	/**
 	 * Calculates the new robot position of 
