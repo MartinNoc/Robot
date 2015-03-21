@@ -123,7 +123,7 @@ public class Robot {
 		return move.readSensor();
 	}
 	
-	public void driveSquare(byte distance_cm){
+	public void driveSquare(int distance_cm){
 		textLog.setText("drive Square");
 		for(int i = 0; i < 4; i++) {
 				move.robotDrive(distance_cm);

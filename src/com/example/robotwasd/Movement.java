@@ -37,10 +37,24 @@ public class Movement {
 	
 	/**
 	 * Driving straight forward/backward
+	 * Computes correctedDistance and splits driving into parts in order to avoid overflows
 	 * @param distance_cm
 	 */
-	public void robotDrive(byte distance_cm) {
+	public void robotDrive(int distance_cm){
 		int correctedDistance = (int)((double)distance_cm * coefficient_length);
+		int numberRepetitions = correctedDistance/128;
+		int remain = correctedDistance%128;
+		for (int i = 0; i < numberRepetitions; i++) {
+			robotDrive_helper((byte)128);
+		}
+		robotDrive_helper((byte)remain);
+	}
+	
+	/**
+	 * Helper for driving straight forward/backward
+	 * @param correctedDistance
+	 */
+	private void robotDrive_helper(byte correctedDistance) {
 		String ok = com.readWriteRobot(
 			new byte[] { 'k', (byte)correctedDistance, '\r', '\n' }
 		);
@@ -48,8 +62,8 @@ public class Movement {
 		//when robot is connected
 		if(!ok.equals("")){
 			obst.startMovement(false); //false for driving straight ahead
-			waitForRobotLength(distance_cm);
-			odometry.adjustOdometry(distance_cm, 0);
+			waitForRobotLength(correctedDistance);
+			odometry.adjustOdometry(correctedDistance, 0);
 			obst.stopMovement();
 		}
 	}
@@ -112,7 +126,7 @@ public class Movement {
 	 */
 	private void waitForRobotDegree(byte degree){
 		try {
-			Thread.sleep((long)((double)degree * coefficient_degree_time * 1.1 * 1000));
+			Thread.sleep((long)((double)degree * coefficient_degree_time * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
