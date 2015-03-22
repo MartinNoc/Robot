@@ -19,14 +19,17 @@ public class Odometry {
 		robotPosList = new ArrayList<Position>();
 	}
 	
+	public Position getPosition(){
+		return p;
+	}
+	
 	/**
 	 * Calculates the new robot position of 
 	 * 	linear movement: x'=x+dx=x+a*cos(theta) y'=y+dy=y+a*sin(theta) theta'=theta+0
-	 *  rotational movement (on the spot): x'=x+0 y'=y+0 theta'=theta+alpha
-	 * via 
+	 *  rotational movement (on the spot): x'=x+0 y'=y+0 theta'=theta+alpha 
 	 *  
 	 * @param a distance driven [in cm]
-	 * @param alpha angle turned (vx = -vy) [in degree] converted to radians within the method
+	 * @param alpha angle turned (vx = -vy) [degree] converted to radians within the method
 	 */
 	public void adjustOdometry(double a, double alpha) {
 		/** calculate new position cooridnates x,y */

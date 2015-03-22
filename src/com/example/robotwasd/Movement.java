@@ -41,8 +41,8 @@ public class Movement {
 	 * Computes correctedDistance and splits driving into parts in order to avoid overflows
 	 * @param distance_cm
 	 */
-	public void robotDrive(int distance_cm){
-		int correctedDistance = (int)((double)distance_cm * coefficient_length);
+	public void robotDrive(double distance_cm){
+		int correctedDistance = (int)(distance_cm * coefficient_length);
 		int numberRepetitions = correctedDistance/SIZE_BYTE;
 		int remain = correctedDistance%SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
@@ -69,8 +69,8 @@ public class Movement {
 		}
 	}
 	
-	public void robotTurn(int degree){
-		int correctedDegree = (int)((double) degree * coefficient_degree);
+	public void robotTurn(double degree){
+		int correctedDegree = (int)(degree * coefficient_degree);
 		int numberRepetitions = correctedDegree/SIZE_BYTE;
 		int remain = correctedDegree%SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
@@ -137,10 +137,61 @@ public class Movement {
 	 */
 	private void waitForRobotDegree(byte degree){
 		try {
-			Thread.sleep((long)((double)degree * coefficient_degree_time * 1000));
+			Thread.sleep((long)((double)degree * coefficient_degree_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
+	}
+	
+	
+	/**
+	 * Turns robot to a specific angle alpha
+	 * @param alpha Desired orientation-angle the robot will be turned to: [0,360) [degree]
+	 */
+	public void setRobotOrientation(double alpha){
+		// convert angle alpha to number within interval [0,360)
+		alpha = alpha % 360;
+		if (alpha < 0)
+			alpha = 360 - alpha;
+		
+		double theta = odometry.getPosition().theta * 180 / Math.PI;
+		
+		robotTurn(alpha-theta);
+	}
+	
+	/**
+	 * moves the robot back to origin position.
+	 * x = y = theta = 0.
+	 */
+	public void driveToOrigin(){
+		Position p = odometry.getPosition();
+		
+		// robot is in quadrant I or II
+		if (p.y > 0){
+			// turn robot towards origin, parallel to y-axis, drive until y=0
+			setRobotOrientation(270);
+		}
+		// robot is in quadrant III or IV
+		else if (p.y < 0){
+			// turn robot towards origin, parallel to y-axis, drive until y=0
+			setRobotOrientation(90);
+		}
+		
+		robotDrive(p.y);
+		
+		// now the robot is in y-position zero at some x-position facing either
+		// straight down (theta = 3/2*PI) or straight up (theta = PI/2)
+		
+		if (p.x > 0){
+			// turn robot directly towards origin
+			setRobotOrientation(180);
+		}
+		else if (p.x < 0){
+			// turn robot directly towards origin
+			setRobotOrientation(0);
+		}
+		robotDrive(p.x);
+		setRobotOrientation(0);
 	}
 	
 	/**
