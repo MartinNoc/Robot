@@ -127,7 +127,7 @@ public class Robot {
 		textLog.setText("drive Square");
 		for(int i = 0; i < 4; i++) {
 				move.robotDrive(distance_cm);
-				move.robotTurn((byte)90);
+				move.robotTurn(90);
 		}
 	}
 	

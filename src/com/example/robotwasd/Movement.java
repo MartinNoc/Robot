@@ -10,6 +10,7 @@ public class Movement {
 	private final double coefficient_length_time = 0.073;	//seconds per cm
 	private final double coefficient_degree = 1.145; //constant to correct rotation
 	private final double coefficient_degree_time = 0.016111;	//seconds per degree
+	private final int SIZE_BYTE = 128;
 	
 	private Communication com;
 	private Odometry odometry;
@@ -42,10 +43,10 @@ public class Movement {
 	 */
 	public void robotDrive(int distance_cm){
 		int correctedDistance = (int)((double)distance_cm * coefficient_length);
-		int numberRepetitions = correctedDistance/128;
-		int remain = correctedDistance%128;
+		int numberRepetitions = correctedDistance/SIZE_BYTE;
+		int remain = correctedDistance%SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
-			robotDrive_helper((byte)128);
+			robotDrive_helper((byte)SIZE_BYTE);
 		}
 		robotDrive_helper((byte)remain);
 	}
@@ -68,12 +69,22 @@ public class Movement {
 		}
 	}
 	
+	public void robotTurn(int degree){
+		int correctedDegree = (int)((double) degree * coefficient_degree);
+		int numberRepetitions = correctedDegree/SIZE_BYTE;
+		int remain = correctedDegree%SIZE_BYTE;
+		for (int i = 0; i < numberRepetitions; i++) {
+			robotTurn_helper((byte)SIZE_BYTE);
+		}
+		robotTurn_helper((byte)remain);
+		
+	}
+	
 	/**
 	 * Turning the robot on the spot, counter-clockwise (left)
 	 * @param degree
 	 */
-	public void robotTurn(byte degree) {
-		int correctedDegree = (int)((double) degree * coefficient_degree);
+	public void robotTurn_helper(byte correctedDegree) {		
 		String ok = com.readWriteRobot(
 			new byte[] { 'l', (byte)correctedDegree, '\r', '\n' }
 		);
@@ -81,8 +92,8 @@ public class Movement {
 		// when robot is connected
 		if(!ok.equals("")){
 			obst.startMovement(true); //true for rotation
-			waitForRobotDegree(degree);
-			odometry.adjustOdometry(0, degree);
+			waitForRobotDegree(correctedDegree);
+			odometry.adjustOdometry(0, correctedDegree);
 			obst.stopMovement();
 		}
 	}
