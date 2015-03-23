@@ -160,37 +160,45 @@ public class Movement {
 	}
 	
 	/**
+	 * Test method which moves the robot and calls driveToOrigin at the end.
+	 */
+	public void testMovement(){
+		robotDrive(50);
+		robotTurn(45);
+		robotDrive(30);
+		robotTurn(-45);
+		robotDrive(50);
+		
+		driveToOrigin();
+	}
+	
+	/**
 	 * moves the robot back to origin position.
 	 * x = y = theta = 0.
 	 */
 	public void driveToOrigin(){
 		Position p = odometry.getPosition();
 		
-		// robot is in quadrant I or II
-		if (p.y > 0){
-			// turn robot towards origin, parallel to y-axis, drive until y=0
-			setRobotOrientation(270);
-		}
-		// robot is in quadrant III or IV
-		else if (p.y < 0){
-			// turn robot towards origin, parallel to y-axis, drive until y=0
-			setRobotOrientation(90);
-		}
-		
+		/**
+		 * turn robot parallel to y-axis facing down the negative y-axis.
+		 * no case analysis whether p.y is positive or not because if...
+		 * y > 0: robot is facing down towards x-axis and moving forward because y is positive
+		 * y < 0: robot is facing down, x-axis is behind(!) but y is negative so the robot moves backwards
+		 */
+		setRobotOrientation(270);
 		robotDrive(p.y);
 		
-		// now the robot is in y-position zero at some x-position facing either
-		// straight down (theta = 3/2*PI) or straight up (theta = PI/2)
+		// now the robot is in y-position zero at some x-position facing straight down (theta = 3/2*PI)
 		
-		if (p.x > 0){
-			// turn robot directly towards origin
-			setRobotOrientation(180);
-		}
-		else if (p.x < 0){
-			// turn robot directly towards origin
-			setRobotOrientation(0);
-		}
+		/**
+		 * turn robot parallel to x-axis facing down the negative x-axis.
+		 * no case analysis due to same reasons as mentioned above
+		 */
+		setRobotOrientation(180);
 		robotDrive(p.x);
+		
+		// now the robot is in (x/y) position (0/0) at angle theta = PI
+		
 		setRobotOrientation(0);
 	}
 	

@@ -109,6 +109,9 @@ public class MainActivity extends ActionBarActivity {
 		robot.calibrateSensor();
 	}
 	
+	public void odometryButton_onClick(View v){
+		robot.getOdometryData();
+	}
 
 	
 	

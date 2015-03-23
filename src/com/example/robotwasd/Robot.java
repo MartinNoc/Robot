@@ -140,6 +140,10 @@ public class Robot {
 		}
 	}
 	
+	public void getOdometryData(){
+		textLog.setText(odometry.getPosition().toString());
+	}
+	
 	/**
 	 * corrects the actual position of the robot
 	 * @param distance_cm
