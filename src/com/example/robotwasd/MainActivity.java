@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void readSensorButton_onClick(View v) {
-		robot.readSensor();
+		textLog.setText(robot.readSensor());
 	}
 	
 	public void SquareButton_onClick(View v) {

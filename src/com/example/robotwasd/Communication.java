@@ -65,11 +65,11 @@ public class Communication {
 	* read from the buffer. Note that this function does not block, it might
 	* return an empty string if no bytes have been read at all.
 	*
-	* @return buffer content as string
+	* @return buffer content as string, if their is no connection then return an empty string
 	*/
 	public String readRobot() {
 		String s = "";
-		if (driver.isConnected()) {
+		if (isConnected()) {
 			int i = 0;
 			int n = 0;
 			while (i < 3 || n > 0) {
