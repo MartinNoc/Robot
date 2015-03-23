@@ -1,9 +1,5 @@
 package com.example.robotwasd;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-
 /**
  * Class for observation of objects around the robot and avoiding the contact between an obstacle and the robot
  * @author daniel
@@ -11,19 +7,19 @@ import android.os.IBinder;
  */
 public class ObstacleAvoidance extends Thread {
 	private Robot robot;
+	private Odometry odometry;
 	
 	private final double coefficient_length_time = 13.698630137;	//cm per second
-	private final double coefficient_degree_time = 62.069393582;	//degrees per second
 	private double stopDistance = 20;	//initial value for stop distance
 	
 	private long time = 0;
-	private boolean driveRotate = false; //false = drive forward, true = rotate
 	private boolean run = false;		//start stop detecting obstacles
 	private boolean alive = true;	//start stop thread
 	private boolean robotHit = false;
 	
-	public ObstacleAvoidance(Robot robot){
+	public ObstacleAvoidance(Robot robot, Odometry odometry){
 		this.robot = robot;
+		this.odometry = odometry;
 	}
 	
 	public void run(){
@@ -34,23 +30,17 @@ public class ObstacleAvoidance extends Thread {
 					robot.stopRobot();
 					long driveTime = System.currentTimeMillis() - time;
 					double driveTimeSec = (double)driveTime/1000;
-					if(driveRotate){
-						//rotate
-						double rotateDegrees = driveTimeSec * coefficient_degree_time;
-						robot.correctPosition(0, rotateDegrees);
-					}else {
-						//drive forward
-						double driveDistance = driveTimeSec * coefficient_length_time;
-						robot.correctPosition(driveDistance, 0);
-					}
+					
+					//drive forward
+					double driveDistance = driveTimeSec * coefficient_length_time;
+					odometry.adjustOdometry(driveDistance, 0);
+					
 					robotHit = true;
 					run = false;
+					
 					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+						Thread.sleep(500);	
+					} catch (InterruptedException e) {	}
 				}
 			}
 		}
@@ -58,36 +48,38 @@ public class ObstacleAvoidance extends Thread {
 	
 	/**
 	 * search the smallest number of the sensor data
-	 * @param sensor
+	 * @param sensor data of the sensor from the robot
 	 * @return
 	 */
 	private int minDistance(String sensor) {
-		Integer[] sensorData = new Integer[8];
-		for(int i = 0; i < 8; i++)
-			sensorData[i] = Integer.parseInt(sensor.substring(i*5+10, i*5+12), 16);
+		Integer[] sensorData = new Integer[3];
+		sensorData[0] = Integer.parseInt(sensor.substring(20, 22), 16);
+		sensorData[1] = Integer.parseInt(sensor.substring(25, 27), 16);
+		sensorData[2] = Integer.parseInt(sensor.substring(40, 42), 16);
 		int minimum = sensorData[0];
-		for(int i = 1; i < 8; i++)
+		for(int i = 1; i < 3; i++)
 			if(sensorData[i] < minimum)
 				minimum = sensorData[i];
 		
 		return minimum;
 	}
+	
+	/********************************/
+	/**public methods**/
 
 	/**
 	 * start the detection of a collision
-	 * set actual time and action what to do (false = drive forward, true = rotate)
-	 * @param driveRotate
+	 * set actual time and action what to do
 	 */
-	public void startMovement(boolean driveRotate){
-		this.driveRotate = driveRotate;
-		time = System.currentTimeMillis();
-		this.run = true;
-		this.robotHit = false;
+	public void startMovement(){
+			time = System.currentTimeMillis();
+			this.run = true;
+			this.robotHit = false;
 	}
 	
 	/**
 	 * stop the detection of a collision
-	 * returns true if robot stops
+	 * @return true if robot stops because of obstacle
 	 */
 	public boolean stopMovement(){
 		this.run = false;
@@ -98,7 +90,8 @@ public class ObstacleAvoidance extends Thread {
 	 * calibrate the stop distance with the actual shortest distance to an object
 	 */
 	public void setStopDistance(){
-		this.stopDistance = minDistance(robot.readSensor());
+		String data = robot.readSensor();
+		this.stopDistance = minDistance(data);
 	}
 	
 	/**
@@ -107,6 +100,13 @@ public class ObstacleAvoidance extends Thread {
 	public void stopThread(){
 		this.run = false;
 		this.alive = false;
+	}
+	/**
+	 * checks if a obstacle is in front of the robot
+	 * @return true when there is a obstacle, false if not
+	 */
+	public boolean checkObstacleAhead(){
+		return (stopDistance > minDistance(robot.readSensor()));
 	}
 
 }

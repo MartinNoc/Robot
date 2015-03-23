@@ -1,7 +1,5 @@
 package com.example.robotwasd;
 
-import java.util.List;
-
 import jp.ksksue.driver.serial.FTDriver;
 import android.widget.TextView;
 
@@ -26,7 +24,7 @@ public class Robot {
 	public void initialize(){
 		com = new Communication(driver, textLog);
 		odometry = new Odometry();
-		obst = new ObstacleAvoidance(this);
+		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
 		com.connect();
 	}
@@ -35,8 +33,8 @@ public class Robot {
 		com.connect();
 		if(com.isConnected()){
 			if(!obst.isAlive())
-				obst = new ObstacleAvoidance(this);
-			//obst.start();
+				obst = new ObstacleAvoidance(this, odometry);
+			obst.start();
 		}
 	}
 	
@@ -119,8 +117,7 @@ public class Robot {
 	}
 	
 	public String readSensor() {
-		textLog.append(move.readSensor());
-		return "";
+		return move.readSensor();
 	}
 	
 	public void driveSquare(double distance_cm){
@@ -132,24 +129,11 @@ public class Robot {
 	}
 	
 	public void calibrateSensor() {
-		if(com.isConnected()){
-			obst.setStopDistance();
-			textLog.setText("calibration done");
-		} else {
-			textLog.setText("not connected");
-		}
+		textLog.setText("calibration done");
+		obst.setStopDistance();
 	}
 	
 	public void getOdometryData(){
 		textLog.setText(odometry.getPosition().toString());
-	}
-	
-	/**
-	 * corrects the actual position of the robot
-	 * @param distance_cm
-	 * @param alpha
-	 */
-	public void correctPosition(double distance_cm, double alpha){
-		odometry.adjustOdometry(distance_cm, alpha);
 	}
 }

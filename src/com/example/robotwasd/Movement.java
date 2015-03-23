@@ -22,6 +22,74 @@ public class Movement {
 		this.obst = obst;
 	}
 	
+	/**
+	 * read out the sensors
+	 */
+	public String readSensor() {
+		return com.readWriteRobot(new byte[] { 'q', '\r', '\n' });
+	}
+	
+	/** Movements */
+	public void moveForward() {
+		com.writeRobot(new byte[] {'w','\r','\n'});
+	}
+	
+	public void moveBackward() {
+		com.writeRobot(new byte[] {'x','\r','\n'});
+	}
+	
+	public void stopRobot() {
+		com.writeRobot(new byte[] {'s','\r','\n'});
+	}
+	
+	public void turnLeft() {
+		com.writeRobot(new byte[] {'a','\r','\n'});
+	}
+	
+	public void turnLeft(double degree) {
+		robotTurn(degree);
+	}
+	
+	public void turnRight() {
+		com.writeRobot(new byte[] {'d','\r','\n'});
+	}
+	
+	public void turnRight(double degree) {
+		robotTurn((-1)*degree);
+	}
+	
+	public void lowerBar() {
+		com.writeRobot(new byte[] {'-','\r','\n'});
+	}
+	
+	public void riseBar() {
+		com.writeRobot(new byte[] {'+','\r','\n'});
+	}
+	
+	// fixed position for bar (low)
+	public void lowPositionBar() {
+		robotSetBar((byte) 0);
+	}
+	
+	// fixed position for bar (high)
+	public void upPositionBar() {
+		robotSetBar((byte) 255);
+	}
+	
+	/**
+	 * all LED ON
+	 */
+	public void LedOn() {
+		robotSetLeds((byte) 255, (byte) 128);
+	}
+	
+	/** 
+	 * all LED OFF
+	 */
+	public void LedOff() {
+		robotSetLeds((byte) 0, (byte) 0);
+	}
+	
 	/** helper functions */
 	/********************************************/
 		
@@ -56,16 +124,16 @@ public class Movement {
 	 * @param correctedDistance
 	 */
 	private void robotDrive_helper(int distance_cm) {
-		String ok = com.readWriteRobot(
-			new byte[] { 'k', (byte)distance_cm, '\r', '\n' }
-		);
-		
-		//when robot is connected
-		if(!ok.equals("")){
-			//obst.startMovement(false); //false for driving straight ahead
+		if(!obst.checkObstacleAhead()) {
+			com.readWriteRobot(
+				new byte[] { 'k', (byte)distance_cm, '\r', '\n' }
+			);
+				
+			obst.startMovement();	
 			waitForRobotLength((double)distance_cm/coefficient_length);
-			//if(!obst.stopMovement())
-			odometry.adjustOdometry(distance_cm/coefficient_length, 0);
+			//correct odometry values if robot doesn't hit a obstacle
+			if(!obst.stopMovement())	
+				odometry.adjustOdometry((double)distance_cm/coefficient_length, 0);
 		}
 	}
 	
@@ -76,8 +144,7 @@ public class Movement {
 		for (int i = 0; i < numberRepetitions; i++) {
 			robotTurn_helper(SIZE_BYTE);
 		}
-		robotTurn_helper(remain);
-		
+		robotTurn_helper(remain);		
 	}
 	
 	/**
@@ -85,17 +152,12 @@ public class Movement {
 	 * @param degree
 	 */
 	private void robotTurn_helper(int degree) {		
-		String ok = com.readWriteRobot(
+		com.readWriteRobot(
 			new byte[] { 'l', (byte)degree, '\r', '\n' }
 		);
 		
-		// when robot is connected
-		if(!ok.equals("")){
-			//obst.startMovement(true); //true for rotation
-			waitForRobotDegree((double)degree/coefficient_degree);
-			//if(!obst.stopMovement())
-			odometry.adjustOdometry(0, degree/coefficient_degree);
-		}
+		waitForRobotDegree((double)degree/coefficient_degree);
+		odometry.adjustOdometry(0, (double)degree/coefficient_degree);
 	}
 	
 	/**
@@ -200,73 +262,5 @@ public class Movement {
 		// now the robot is in (x/y) position (0/0) at angle theta = PI
 		
 		setRobotOrientation(0);
-	}
-	
-	/**
-	 * read out the sensors
-	 */
-	public String readSensor() {
-		return com.readWriteRobot(new byte[] { 'q', '\r', '\n' });
-	}
-	
-	/** Movements */
-	public void moveForward() {
-		com.writeRobot(new byte[] {'w','\r','\n'});
-	}
-	
-	public void moveBackward() {
-		com.writeRobot(new byte[] {'x','\r','\n'});
-	}
-	
-	public void stopRobot() {
-		com.writeRobot(new byte[] {'s','\r','\n'});
-	}
-	
-	public void turnLeft() {
-		com.writeRobot(new byte[] {'a','\r','\n'});
-	}
-	
-	public void turnLeft(double degree) {
-		robotTurn(degree);
-	}
-	
-	public void turnRight() {
-		com.writeRobot(new byte[] {'d','\r','\n'});
-	}
-	
-	public void turnRight(double degree) {
-		robotTurn((-1)*degree);
-	}
-	
-	public void lowerBar() {
-		com.writeRobot(new byte[] {'-','\r','\n'});
-	}
-	
-	public void riseBar() {
-		com.writeRobot(new byte[] {'+','\r','\n'});
-	}
-	
-	// fixed position for bar (low)
-	public void lowPositionBar() {
-		robotSetBar((byte) 0);
-	}
-	
-	// fixed position for bar (high)
-	public void upPositionBar() {
-		robotSetBar((byte) 255);
-	}
-	
-	/**
-	 * all LED ON
-	 */
-	public void LedOn() {
-		robotSetLeds((byte) 255, (byte) 128);
-	}
-	
-	/** 
-	 * all LED OFF
-	 */
-	public void LedOff() {
-		robotSetLeds((byte) 0, (byte) 0);
 	}
 }
