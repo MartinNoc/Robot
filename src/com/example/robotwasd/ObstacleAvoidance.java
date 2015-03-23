@@ -48,7 +48,7 @@ public class ObstacleAvoidance extends Thread {
 	
 	/**
 	 * search the smallest number of the sensor data
-	 * @param sensor
+	 * @param sensor data of the sensor from the robot
 	 * @return
 	 */
 	private int minDistance(String sensor) {
