@@ -26,7 +26,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		TextView textLog = (TextView) findViewById(R.id.textView1);
+		textLog = (TextView) findViewById(R.id.textView1);
 		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
 		
 		robot = new Robot(driver, textLog);	
@@ -90,7 +90,6 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void readSensorButton_onClick(View v) {
-		//textLog.setText("agdfa");
 		robot.readSensor();
 	}
 	
