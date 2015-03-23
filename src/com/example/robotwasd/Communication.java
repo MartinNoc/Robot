@@ -49,7 +49,7 @@ public class Communication {
 	/**Low Level Functions */
 	/*****************************/
 	
-	synchronized public boolean writeRobot(byte[] data) {
+	public boolean writeRobot(byte[] data) {
 		if (driver.isConnected()) {
 			driver.write(data);
 			return true;
@@ -67,7 +67,7 @@ public class Communication {
 	*
 	* @return buffer content as string
 	*/
-	synchronized public String readRobot() {
+	public String readRobot() {
 		String s = "";
 		if (driver.isConnected()) {
 			int i = 0;

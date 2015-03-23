@@ -10,7 +10,7 @@ public class Movement {
 	private final double coefficient_length_time = 0.073;	//seconds per cm
 	private final double coefficient_degree = 1.145; //constant to correct rotation
 	private final double coefficient_degree_time = 0.016111;	//seconds per degree
-	private final int SIZE_BYTE = 128;
+	private final int SIZE_BYTE = 127;
 	
 	private Communication com;
 	private Odometry odometry;
@@ -46,26 +46,26 @@ public class Movement {
 		int numberRepetitions = correctedDistance/SIZE_BYTE;
 		int remain = correctedDistance%SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
-			robotDrive_helper((byte)SIZE_BYTE);
+			robotDrive_helper(SIZE_BYTE);
 		}
-		robotDrive_helper((byte)remain);
+		robotDrive_helper(remain);
 	}
 	
 	/**
 	 * Helper for driving straight forward/backward
 	 * @param correctedDistance
 	 */
-	private void robotDrive_helper(byte correctedDistance) {
+	private void robotDrive_helper(int distance_cm) {
 		String ok = com.readWriteRobot(
-			new byte[] { 'k', (byte)correctedDistance, '\r', '\n' }
+			new byte[] { 'k', (byte)distance_cm, '\r', '\n' }
 		);
 		
 		//when robot is connected
 		if(!ok.equals("")){
-			obst.startMovement(false); //false for driving straight ahead
-			waitForRobotLength(correctedDistance);
-			odometry.adjustOdometry(correctedDistance, 0);
-			obst.stopMovement();
+			//obst.startMovement(false); //false for driving straight ahead
+			waitForRobotLength((double)distance_cm/coefficient_length);
+			//if(!obst.stopMovement())
+			odometry.adjustOdometry(distance_cm/coefficient_length, 0);
 		}
 	}
 	
@@ -74,9 +74,9 @@ public class Movement {
 		int numberRepetitions = correctedDegree/SIZE_BYTE;
 		int remain = correctedDegree%SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
-			robotTurn_helper((byte)SIZE_BYTE);
+			robotTurn_helper(SIZE_BYTE);
 		}
-		robotTurn_helper((byte)remain);
+		robotTurn_helper(remain);
 		
 	}
 	
@@ -84,17 +84,17 @@ public class Movement {
 	 * Turning the robot on the spot, counter-clockwise (left)
 	 * @param degree
 	 */
-	public void robotTurn_helper(byte correctedDegree) {		
+	private void robotTurn_helper(int degree) {		
 		String ok = com.readWriteRobot(
-			new byte[] { 'l', (byte)correctedDegree, '\r', '\n' }
+			new byte[] { 'l', (byte)degree, '\r', '\n' }
 		);
 		
 		// when robot is connected
 		if(!ok.equals("")){
-			obst.startMovement(true); //true for rotation
-			waitForRobotDegree(correctedDegree);
-			odometry.adjustOdometry(0, correctedDegree);
-			obst.stopMovement();
+			//obst.startMovement(true); //true for rotation
+			waitForRobotDegree((double)degree/coefficient_degree);
+			//if(!obst.stopMovement())
+			odometry.adjustOdometry(0, degree/coefficient_degree);
 		}
 	}
 	
@@ -123,9 +123,9 @@ public class Movement {
 	 * calculates the time till the movement is over
 	 * @param distance_cm distance to drive
 	 */
-	private void waitForRobotLength(byte distance_cm){
+	private void waitForRobotLength(double distance_cm){
 		try {
-			Thread.sleep((long)((double)distance_cm * coefficient_length_time * 1.1 * 1000));
+			Thread.sleep((long)(distance_cm * coefficient_length_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
@@ -135,9 +135,9 @@ public class Movement {
 	 * calculates the time till the roation is over
 	 * @param degree how much degree to rotate
 	 */
-	private void waitForRobotDegree(byte degree){
+	private void waitForRobotDegree(double degree){
 		try {
-			Thread.sleep((long)((double)degree * coefficient_degree_time * 1.1 * 1000));
+			Thread.sleep((long)(degree * coefficient_degree_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
@@ -198,8 +198,7 @@ public class Movement {
 	 * read out the sensors
 	 */
 	public String readSensor() {
-		String data = com.readWriteRobot(new byte[] { 'q', '\r', '\n' });
-		return data;
+		return com.readWriteRobot(new byte[] { 'q', '\r', '\n' });
 	}
 	
 	/** Movements */
@@ -219,7 +218,7 @@ public class Movement {
 		com.writeRobot(new byte[] {'a','\r','\n'});
 	}
 	
-	public void turnLeft(byte degree) {
+	public void turnLeft(double degree) {
 		robotTurn(degree);
 	}
 	
@@ -227,8 +226,8 @@ public class Movement {
 		com.writeRobot(new byte[] {'d','\r','\n'});
 	}
 	
-	public void turnRight(byte degree) {
-		robotTurn((byte)((-1)*degree));
+	public void turnRight(double degree) {
+		robotTurn((-1)*degree);
 	}
 	
 	public void lowerBar() {

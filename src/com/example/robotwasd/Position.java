@@ -1,5 +1,7 @@
 package com.example.robotwasd;
 
+import java.text.DecimalFormat;
+
 public class Position {
 
 	public double x;
@@ -16,5 +18,10 @@ public class Position {
 		this.x = x;
 		this.y = y;
 		this.theta = theta;
+	}
+	
+	public String toString(){
+		DecimalFormat df = new DecimalFormat("#.00");
+		return "(x,y,theta) = (" + df.format(x) + "," + df.format(y) + "," + df.format(theta) + ")";
 	}
 }

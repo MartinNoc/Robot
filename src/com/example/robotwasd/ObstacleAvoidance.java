@@ -20,6 +20,7 @@ public class ObstacleAvoidance extends Thread {
 	private boolean driveRotate = false; //false = drive forward, true = rotate
 	private boolean run = false;		//start stop detecting obstacles
 	private boolean alive = true;	//start stop thread
+	private boolean robotHit = false;
 	
 	public ObstacleAvoidance(Robot robot){
 		this.robot = robot;
@@ -42,7 +43,14 @@ public class ObstacleAvoidance extends Thread {
 						double driveDistance = driveTimeSec * coefficient_length_time;
 						robot.correctPosition(driveDistance, 0);
 					}
+					robotHit = true;
 					run = false;
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -70,30 +78,33 @@ public class ObstacleAvoidance extends Thread {
 	 * set actual time and action what to do (false = drive forward, true = rotate)
 	 * @param driveRotate
 	 */
-	synchronized public void startMovement(boolean driveRotate){
+	public void startMovement(boolean driveRotate){
 		this.driveRotate = driveRotate;
 		time = System.currentTimeMillis();
 		this.run = true;
+		this.robotHit = false;
 	}
 	
 	/**
 	 * stop the detection of a collision
+	 * returns true if robot stops
 	 */
-	synchronized public void stopMovement(){
+	public boolean stopMovement(){
 		this.run = false;
+		return robotHit;
 	}
 		
 	/**
 	 * calibrate the stop distance with the actual shortest distance to an object
 	 */
-	synchronized public void setStopDistance(){
+	public void setStopDistance(){
 		this.stopDistance = minDistance(robot.readSensor());
 	}
 	
 	/**
 	 * stop thread
 	 */
-	synchronized public void stopThread(){
+	public void stopThread(){
 		this.run = false;
 		this.alive = false;
 	}

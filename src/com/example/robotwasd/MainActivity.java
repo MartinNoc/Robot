@@ -90,11 +90,12 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void readSensorButton_onClick(View v) {
+		//textLog.setText("agdfa");
 		robot.readSensor();
 	}
 	
 	public void SquareButton_onClick(View v) {
-		robot.driveSquare((byte) 50);
+		robot.driveSquare(50.0);
 	}
 	
 	public void connectButton_onClick(View v) {

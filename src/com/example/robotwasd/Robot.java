@@ -28,7 +28,7 @@ public class Robot {
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this);
 		move = new Movement(com, odometry, obst);
-		com.connect();		
+		com.connect();
 	}
 	
 	public void connect(){
@@ -36,7 +36,7 @@ public class Robot {
 		if(com.isConnected()){
 			if(!obst.isAlive())
 				obst = new ObstacleAvoidance(this);
-			obst.start();
+			//obst.start();
 		}
 	}
 	
@@ -119,8 +119,8 @@ public class Robot {
 	}
 	
 	public String readSensor() {
-		textLog.setText("read Sensor");
-		return move.readSensor();
+		textLog.append(move.readSensor());
+		return "";
 	}
 	
 	public void driveSquare(double distance_cm){
