@@ -1,6 +1,6 @@
 package com.example.robotwasd;
 
-import java.text.DecimalFormat;
+import java.util.Locale;
 
 public class Position {
 
@@ -21,7 +21,6 @@ public class Position {
 	}
 	
 	public String toString(){
-		DecimalFormat df = new DecimalFormat("#.00");
-		return "(x,y,theta) = (" + df.format(x) + "," + df.format(y) + "," + df.format(theta) + ")";
+		return String.format(Locale.US,"(x,y,theta) = (%1$.2f,%2$.2f,%3$.2f)",x,y,theta);
 	}
 }

@@ -10,7 +10,7 @@ public class Movement {
 	private final double coefficient_length_time = 0.073;	//seconds per cm
 	private final double coefficient_degree = 1.145; //constant to correct rotation
 	private final double coefficient_degree_time = 0.016111;	//seconds per degree
-	private final int SIZE_BYTE = 127;
+	private final double SIZE_BYTE = 127;
 	
 	private Communication com;
 	private Odometry odometry;
@@ -110,9 +110,10 @@ public class Movement {
 	 * @param distance_cm
 	 */
 	public void robotDrive(double distance_cm){
-		int correctedDistance = (int)(distance_cm * coefficient_length);
-		int numberRepetitions = correctedDistance/SIZE_BYTE;
-		int remain = correctedDistance%SIZE_BYTE;
+		double correctedDistance = distance_cm * coefficient_length;
+		int numberRepetitions = (int)(correctedDistance / SIZE_BYTE);
+		double remain = correctedDistance % SIZE_BYTE;
+		
 		for (int i = 0; i < numberRepetitions; i++) {
 			robotDrive_helper(SIZE_BYTE);
 		}
@@ -121,26 +122,30 @@ public class Movement {
 	
 	/**
 	 * Helper for driving straight forward/backward
-	 * @param correctedDistance
+	 * @param distance_cm Real distance robot will drive
 	 */
-	private void robotDrive_helper(int distance_cm) {
+	private void robotDrive_helper(double distance_cm) {
 		if(!obst.checkObstacleAhead()) {
 			com.readWriteRobot(
-				new byte[] { 'k', (byte)distance_cm, '\r', '\n' }
+				new byte[] { 'k', (byte)Math.round(distance_cm), '\r', '\n' }
+				// round in order to get a minimal error by casting to byte
+				// only effective when passing remain
 			);
 				
-			obst.startMovement();	
-			waitForRobotLength((double)distance_cm/coefficient_length);
-			//correct odometry values if robot doesn't hit a obstacle
-			if(!obst.stopMovement())	
-				odometry.adjustOdometry((double)distance_cm/coefficient_length, 0);
+			obst.startObstacleAvoidance();	
+			waitForRobotLength(distance_cm/coefficient_length);
+			//correct odometry values if robot doesn't hit an obstacle
+			if(!obst.stopObstacleAvoidance())	
+				odometry.adjustOdometry(distance_cm/coefficient_length, 0);
 		}
 	}
 	
+	
+	
 	public void robotTurn(double degree){
-		int correctedDegree = (int)(degree * coefficient_degree);
-		int numberRepetitions = correctedDegree/SIZE_BYTE;
-		int remain = correctedDegree%SIZE_BYTE;
+		double correctedDegree = degree * coefficient_degree;
+		int numberRepetitions = (int)(correctedDegree / SIZE_BYTE);
+		double remain = correctedDegree % SIZE_BYTE;
 		for (int i = 0; i < numberRepetitions; i++) {
 			robotTurn_helper(SIZE_BYTE);
 		}
@@ -151,13 +156,15 @@ public class Movement {
 	 * Turning the robot on the spot, counter-clockwise (left)
 	 * @param degree
 	 */
-	private void robotTurn_helper(int degree) {		
+	private void robotTurn_helper(double degree) {
 		com.readWriteRobot(
-			new byte[] { 'l', (byte)degree, '\r', '\n' }
+			new byte[] { 'l', (byte)Math.round(degree), '\r', '\n' }
+			// round in order to get a minimal error by casting to byte
+			// only effective when passing remain
 		);
 		
-		waitForRobotDegree((double)degree/coefficient_degree);
-		odometry.adjustOdometry(0, (double)degree/coefficient_degree);
+		waitForRobotDegree(degree/coefficient_degree);
+		odometry.adjustOdometry(0, degree/coefficient_degree);
 	}
 	
 	/**
@@ -187,7 +194,7 @@ public class Movement {
 	 */
 	private void waitForRobotLength(double distance_cm){
 		try {
-			Thread.sleep((long)(distance_cm * coefficient_length_time * 1.1 * 1000));
+			Thread.sleep((long)(Math.abs(distance_cm) * coefficient_length_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
@@ -199,7 +206,7 @@ public class Movement {
 	 */
 	private void waitForRobotDegree(double degree){
 		try {
-			Thread.sleep((long)(degree * coefficient_degree_time * 1.1 * 1000));
+			Thread.sleep((long)(Math.abs(degree) * coefficient_degree_time * 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
 		}
@@ -225,11 +232,11 @@ public class Movement {
 	 * Test method which moves the robot and calls driveToOrigin at the end.
 	 */
 	public void testMovement(){
-		robotDrive(50);
-		robotTurn(45);
+		robotDrive(20);
+		robotTurn(70);
 		robotDrive(30);
-		robotTurn(-45);
-		robotDrive(50);
+		robotTurn(-15);
+		robotDrive(20);
 		
 		driveToOrigin();
 	}

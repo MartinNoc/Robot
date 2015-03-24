@@ -9,7 +9,7 @@ import android.widget.TextView;
  *
  */
 public class Robot {
-	private TextView textLog;
+	public TextView textLog;
 	private Communication com;
 	private Movement move;
 	private Odometry odometry;
@@ -26,12 +26,13 @@ public class Robot {
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
-		com.connect();
+		connect();
 	}
 	
 	public void connect(){
 		com.connect();
 		if(com.isConnected()){
+			textLog.setText("connect says: connected");
 			if(!obst.isAlive())
 				obst = new ObstacleAvoidance(this, odometry);
 			obst.start();
@@ -51,7 +52,8 @@ public class Robot {
 	
 	public void moveForward() {
 		textLog.setText("forward");
-		move.moveForward();
+		//move.moveForward();
+		move.robotDrive(100);
 	}
 	
 	public void moveBackward() {
@@ -69,7 +71,7 @@ public class Robot {
 		move.turnLeft();
 	}
 	
-	public void turnLeft(byte degree) {
+	public void turnLeft(double degree) {
 		textLog.setText("turn left degrees");
 		move.turnLeft(degree);
 	}
@@ -79,7 +81,7 @@ public class Robot {
 		move.turnRight();
 	}
 	
-	public void turnRight(byte degree) {
+	public void turnRight(double degree) {
 		textLog.setText("turn right degrees");
 		move.turnRight(degree);
 	}
@@ -103,7 +105,7 @@ public class Robot {
 	// fixed position for bar (high)
 	public void upPositionBar() {
 		textLog.setText("up Position");
-		move.robotSetBar((byte) 255);
+		move.upPositionBar();
 	}
 	
 	public void LedOn() {
@@ -135,5 +137,9 @@ public class Robot {
 	
 	public void getOdometryData(){
 		textLog.setText(odometry.getPosition().toString());
+	}
+	
+	public void OdometryTestMovement(){
+		move.testMovement();
 	}
 }

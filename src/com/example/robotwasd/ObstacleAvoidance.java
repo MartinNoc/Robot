@@ -25,6 +25,7 @@ public class ObstacleAvoidance extends Thread {
 	public void run(){
 		while(alive){
 			while(run){
+				robot.textLog.setText("In run");
 				String sensor = robot.readSensor();
 				if(minDistance(sensor) < stopDistance){
 					robot.stopRobot();
@@ -37,12 +38,14 @@ public class ObstacleAvoidance extends Thread {
 					
 					robotHit = true;
 					run = false;
-					
-					try {
-						Thread.sleep(500);	
-					} catch (InterruptedException e) {	}
 				}
+				try {
+					Thread.sleep(300);	
+				} catch (InterruptedException e) {	}
 			}
+			try {
+				Thread.sleep(50);	
+			} catch (InterruptedException e) {	}
 		}
 	}
 	
@@ -52,16 +55,19 @@ public class ObstacleAvoidance extends Thread {
 	 * @return
 	 */
 	private int minDistance(String sensor) {
+		String str_sensorData = sensor.substring(sensor.indexOf("sensor: 0x"));
+		
 		Integer[] sensorData = new Integer[3];
-		sensorData[0] = Integer.parseInt(sensor.substring(20, 22), 16);
-		sensorData[1] = Integer.parseInt(sensor.substring(25, 27), 16);
-		sensorData[2] = Integer.parseInt(sensor.substring(40, 42), 16);
+		sensorData[0] = Integer.parseInt(str_sensorData.substring(20, 22), 16);
+		sensorData[1] = Integer.parseInt(str_sensorData.substring(25, 27), 16);
+		sensorData[2] = Integer.parseInt(str_sensorData.substring(40, 42), 16);
 		int minimum = sensorData[0];
 		for(int i = 1; i < 3; i++)
 			if(sensorData[i] < minimum)
 				minimum = sensorData[i];
 		
 		return minimum;
+		
 	}
 	
 	/********************************/
@@ -71,7 +77,7 @@ public class ObstacleAvoidance extends Thread {
 	 * start the detection of a collision
 	 * set actual time and action what to do
 	 */
-	public void startMovement(){
+	public void startObstacleAvoidance(){
 			time = System.currentTimeMillis();
 			this.run = true;
 			this.robotHit = false;
@@ -81,7 +87,7 @@ public class ObstacleAvoidance extends Thread {
 	 * stop the detection of a collision
 	 * @return true if robot stops because of obstacle
 	 */
-	public boolean stopMovement(){
+	public boolean stopObstacleAvoidance(){
 		this.run = false;
 		return robotHit;
 	}
