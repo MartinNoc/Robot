@@ -144,6 +144,13 @@
             android:layout_height="match_parent"
             android:onClick="disconnectButton_onClick"
             android:text="discon." />
+        
+         <Button
+            android:id="@+id/odometryButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="odometryButton_onClick"
+            android:text="odometry" />
 
     </LinearLayout>
 
