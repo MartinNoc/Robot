@@ -1,20 +1,23 @@
 package com.example.robotwasd;
 
+import android.os.AsyncTask;
+
 /**
  * Class for observation of objects around the robot and avoiding the contact between an obstacle and the robot
  * @author daniel
  *
  */
-public class ObstacleAvoidance extends Thread {
+public class ObstacleAvoidance extends AsyncTask<Void, String, Void> {
 	private Robot robot;
 	private Odometry odometry;
 	
 	private final double coefficient_length_time = 13.698630137;	//cm per second
 	private double stopDistance = 20;	//initial value for stop distance
+	private String sensor = "";			//"global" sensor return-string, from publishProgress, used in doInBackground
 	
 	private long time = 0;
+	private boolean alive = true;		//start stop thread
 	private boolean run = false;		//start stop detecting obstacles
-	private boolean alive = true;	//start stop thread
 	private boolean robotHit = false;
 	
 	public ObstacleAvoidance(Robot robot, Odometry odometry){
@@ -22,19 +25,26 @@ public class ObstacleAvoidance extends Thread {
 		this.odometry = odometry;
 	}
 	
-	public void run(){
+	@Override
+	protected Void doInBackground(Void... params) {
 		while(alive){
 			while(run){
-				robot.textLog.setText("In run");
-				String sensor = robot.readSensor();
+				publishProgress("Thread running...");
+				//String sensor = robot.readSensor();
+				publishProgress("readSensor");
+				/** kann es passieren, dass die if Abfrage VOR dem Setzen von sensor
+				 *  in publishProgress ausgeführt wird?
+				 */
 				if(minDistance(sensor) < stopDistance){
-					robot.stopRobot();
+					//robot.stopRobot();
+					publishProgress("stopRobot");
 					long driveTime = System.currentTimeMillis() - time;
 					double driveTimeSec = (double)driveTime/1000;
 					
 					//drive forward
 					double driveDistance = driveTimeSec * coefficient_length_time;
-					odometry.adjustOdometry(driveDistance, 0);
+					//odometry.adjustOdometry(driveDistance, 0);
+					publishProgress("adjustOdometry",String.valueOf(driveDistance));
 					
 					robotHit = true;
 					run = false;
@@ -46,6 +56,21 @@ public class ObstacleAvoidance extends Thread {
 			try {
 				Thread.sleep(50);	
 			} catch (InterruptedException e) {	}
+		}
+		return null;
+	}
+	
+	@Override
+	protected void onProgressUpdate(String... progress) {
+		for (int i=0; i < progress.length; i++){
+			if (progress[i].equals("readSensor"))
+				this.sensor = robot.readSensor();
+			else if (progress[i].equals("stopRobot"))
+				robot.stopRobot();
+			else if (progress[i].equals("adjustOdometry"))
+				odometry.adjustOdometry(Double.parseDouble(progress[++i]), 0);
+			else
+				robot.textLog.setText(progress[i]);
 		}
 	}
 	
@@ -67,7 +92,6 @@ public class ObstacleAvoidance extends Thread {
 				minimum = sensorData[i];
 		
 		return minimum;
-		
 	}
 	
 	/********************************/
@@ -96,8 +120,7 @@ public class ObstacleAvoidance extends Thread {
 	 * calibrate the stop distance with the actual shortest distance to an object
 	 */
 	public void setStopDistance(){
-		String data = robot.readSensor();
-		this.stopDistance = minDistance(data);
+		this.stopDistance = minDistance(robot.readSensor());
 	}
 	
 	/**
@@ -108,8 +131,8 @@ public class ObstacleAvoidance extends Thread {
 		this.alive = false;
 	}
 	/**
-	 * checks if a obstacle is in front of the robot
-	 * @return true when there is a obstacle, false if not
+	 * checks if an obstacle is in front of the robot
+	 * @return true when there is an obstacle, false if not
 	 */
 	public boolean checkObstacleAhead(){
 		return (stopDistance > minDistance(robot.readSensor()));

@@ -30,12 +30,8 @@ public class Robot {
 	}
 	
 	public void connect(){
-		com.connect();
-		if(com.isConnected()){
-			textLog.setText("connect says: connected");
-			if(!obst.isAlive())
-				obst = new ObstacleAvoidance(this, odometry);
-			obst.start();
+		if(com.connect()){
+			obst.execute();		// starts the doInBackground-method in ObstacleAvoidance
 		}
 	}
 	
@@ -43,9 +39,7 @@ public class Robot {
 		if(com.isConnected()){
 			move.stopRobot();
 			obst.stopThread();
-			try {
-				obst.join();
-			} catch (InterruptedException e) {	}
+			obst.cancel(true);
 			com.disconnect();
 		}
 	}	

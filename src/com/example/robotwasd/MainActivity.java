@@ -17,8 +17,8 @@ import android.widget.TextView;
  *
  */
 public class MainActivity extends ActionBarActivity {
-	Robot robot;
-	TextView textLog;
+	private Robot robot;
+	private TextView textLog;
 	
 	
 	@Override

@@ -21,6 +21,6 @@ public class Position {
 	}
 	
 	public String toString(){
-		return String.format(Locale.US,"(x,y,theta) = (%1$.2f,%2$.2f,%3$.2f)",x,y,theta);
+		return String.format(Locale.US,"(x,y,theta) = (%1$.2f,%2$.2f,%3$.2f)",x,y,180*theta/Math.PI);
 	}
 }
