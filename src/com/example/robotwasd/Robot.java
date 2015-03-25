@@ -50,7 +50,7 @@ public class Robot {
 	public void moveForward() {
 		textLog.setText("forward");
 		//move.moveForward();
-		move.robotDrive(90);
+		move.robotDrive(130);
 	}
 	
 	public void moveBackward() {

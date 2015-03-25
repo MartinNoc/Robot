@@ -6,9 +6,9 @@ package com.example.robotwasd;
  *
  */
 public class Movement {
-	private final double coefficient_length = 1.355; //constant to correct length of driving
+	private final double coefficient_length = 1.352; //constant to correct length of driving
 	private final double coefficient_length_time = 0.073;	//seconds per cm
-	private final double coefficient_degree = 1.145; //constant to correct rotation
+	private final double coefficient_degree = 1.137; //constant to correct rotation
 	private final double coefficient_degree_time = 0.016111;	//seconds per degree
 	private final double SIZE_BYTE = 127;
 	

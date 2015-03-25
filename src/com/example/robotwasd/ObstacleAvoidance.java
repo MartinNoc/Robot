@@ -28,7 +28,6 @@ public class ObstacleAvoidance extends AsyncTask<Void, String, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		while(alive){
-			publishProgress("Thread alive");
 			while(run){
 				publishProgress("Thread running...");
 				//String sensor = robot.readSensor();

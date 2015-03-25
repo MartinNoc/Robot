@@ -57,11 +57,11 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void aButton_onClick(View v) {
-		robot.turnLeft(45);
+		robot.turnLeft(90);
 	}
 	
 	public void dButton_onClick(View w) {
-		robot.turnRight(45);
+		robot.turnRight(90);
 	}
 	
 	public void minusButton_onClick(View v) {
@@ -95,8 +95,8 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void SquareButton_onClick(View v) {
-		//robot.driveSquare(30.0);
-		robot.OdometryTestMovement();
+		robot.driveSquare(90.0);
+		//robot.OdometryTestMovement();
 	}
 	
 	public void connectButton_onClick(View v) {
