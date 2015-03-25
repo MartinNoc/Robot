@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onDestroy(){
 		robot.disconnect();
+		super.onDestroy();
 	}
 	
 	

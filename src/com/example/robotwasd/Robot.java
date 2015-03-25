@@ -1,6 +1,7 @@
 package com.example.robotwasd;
 
 import jp.ksksue.driver.serial.FTDriver;
+import android.os.AsyncTask;
 import android.widget.TextView;
 
 /**
@@ -31,7 +32,9 @@ public class Robot {
 	
 	public void connect(){
 		if(com.connect()){
-			obst.execute();		// starts the doInBackground-method in ObstacleAvoidance
+			if(obst.isCancelled())
+				obst = new ObstacleAvoidance(this, odometry);
+			obst.execute();  //starts the doInBackground-method in ObstacleAvoidance
 		}
 	}
 	
@@ -39,7 +42,7 @@ public class Robot {
 		if(com.isConnected()){
 			move.stopRobot();
 			obst.stopThread();
-			obst.cancel(true);
+			//obst.cancel(true); könnte fehler auslösen
 			com.disconnect();
 		}
 	}	
@@ -47,7 +50,7 @@ public class Robot {
 	public void moveForward() {
 		textLog.setText("forward");
 		//move.moveForward();
-		move.robotDrive(100);
+		move.robotDrive(90);
 	}
 	
 	public void moveBackward() {

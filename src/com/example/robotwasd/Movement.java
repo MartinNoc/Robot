@@ -131,8 +131,8 @@ public class Movement {
 				// round in order to get a minimal error by casting to byte
 				// only effective when passing remain
 			);
-				
-			obst.startObstacleAvoidance();	
+					
+			obst.startObstacleAvoidance();
 			waitForRobotLength(distance_cm/coefficient_length);
 			//correct odometry values if robot doesn't hit an obstacle
 			if(!obst.stopObstacleAvoidance())	
@@ -211,7 +211,7 @@ public class Movement {
 			// ignore
 		}
 	}
-	
+
 	
 	/**
 	 * Turns robot to a specific angle alpha

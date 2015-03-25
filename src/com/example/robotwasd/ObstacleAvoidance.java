@@ -28,13 +28,13 @@ public class ObstacleAvoidance extends AsyncTask<Void, String, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		while(alive){
+			publishProgress("Thread alive");
 			while(run){
 				publishProgress("Thread running...");
 				//String sensor = robot.readSensor();
+				sensor = "";
 				publishProgress("readSensor");
-				/** kann es passieren, dass die if Abfrage VOR dem Setzen von sensor
-				 *  in publishProgress ausgeführt wird?
-				 */
+				while(sensor.equals("")) {};
 				if(minDistance(sensor) < stopDistance){
 					//robot.stopRobot();
 					publishProgress("stopRobot");
@@ -48,9 +48,10 @@ public class ObstacleAvoidance extends AsyncTask<Void, String, Void> {
 					
 					robotHit = true;
 					run = false;
+					publishProgress("obstacle ahead");
 				}
 				try {
-					Thread.sleep(300);	
+					Thread.sleep(100);	
 				} catch (InterruptedException e) {	}
 			}
 			try {
@@ -136,6 +137,10 @@ public class ObstacleAvoidance extends AsyncTask<Void, String, Void> {
 	 */
 	public boolean checkObstacleAhead(){
 		return (stopDistance > minDistance(robot.readSensor()));
+	}
+	
+	public boolean getRun(){
+		return run;
 	}
 
 }
