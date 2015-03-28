@@ -27,27 +27,26 @@ public class Robot {
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
-		// braucht man das?
-		// connect();
+		connect();
 	}
 
-	// braucht man das?
 
-	/*
-	 * public void connect() { if (com.connect()) { if (obst.isCancelled()) {
-	 * obst = new ObstacleAvoidance(this, odometry); } obst.execute(); // starts
-	 * the doInBackground-method in // ObstacleAvoidance } }
-	 */
+	 public void connect() { 
+		 com.connect();
+	 }
+	 
 
-	/*
-	 * public void disconnect() { if (com.isConnected()) { move.stopRobot();
-	 * com.disconnect(); } }
-	 */
+	 public void disconnect() { 
+		 if (com.isConnected()) { 
+			 move.stopRobot();
+			 com.disconnect(); 
+		} 
+	}
 
 	public void moveForward() {
 		textLog.setText("forward");
 		// move.moveForward();
-		move.robotDrive(130);
+		move.robotDrive(120);
 	}
 
 	public void moveBackward() {

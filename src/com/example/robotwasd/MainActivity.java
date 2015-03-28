@@ -95,8 +95,8 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void SquareButton_onClick(View v) {
-		robot.driveSquare(90.0);
-		//robot.OdometryTestMovement();
+		//robot.driveSquare(90.0);
+		robot.OdometryTestMovement();
 	}
 	
 	public void connectButton_onClick(View v) {

@@ -15,7 +15,7 @@ public class ObstacleAvoidance {
 	private final double coefficient_length_time = 13.698630137;
 	// initial value for stop distance
 	private double stopDistance = 20;
-	private final long SLEEPING_TIME = 100;
+	private final long SLEEPING_TIME = 50;
 
 	public ObstacleAvoidance(Robot robot, Odometry odometry) {
 		this.robot = robot;
@@ -56,10 +56,13 @@ public class ObstacleAvoidance {
 	 */
 	public boolean avoidObstacles(double waitingTime, long startTime) {
 		boolean robotHit = false;
-		for (int i = 0; i < Math.ceil(waitingTime / SLEEPING_TIME); i++) {
+		long driveTime = 0;
+		//for (int i = 0; i < Math.ceil(waitingTime / SLEEPING_TIME); i++) {
+		while(driveTime < waitingTime) {
+			driveTime = System.currentTimeMillis() - startTime;
 			if (minDistance(robot.readSensor()) < stopDistance) {
-				long driveTime = System.currentTimeMillis() - startTime;
 				robot.stopRobot();
+				driveTime = System.currentTimeMillis() - startTime;
 				robotHit = true;
 				double driveTimeSec = (double) driveTime / 1000;
 

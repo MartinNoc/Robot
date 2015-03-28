@@ -117,11 +117,15 @@ public class Movement {
 		double correctedDistance = distance_cm * coefficient_length;
 		int numberRepetitions = (int) (correctedDistance / SIZE_BYTE);
 		double remain = correctedDistance % SIZE_BYTE;
+		boolean robotHit = false;
 
 		for (int i = 0; i < numberRepetitions; i++) {
-			robotDrive_helper(SIZE_BYTE);
+			robotHit = robotDrive_helper(SIZE_BYTE);
+			if(robotHit)	//when robot drives against a obstacle
+				break;
 		}
-		robotDrive_helper(remain);
+		if(!robotHit)
+			robotDrive_helper(remain);
 	}
 
 	/**
@@ -130,17 +134,16 @@ public class Movement {
 	 * @param distance_cm
 	 *            Real distance robot will drive
 	 */
-	private void robotDrive_helper(double distance_cm) {
+	private boolean robotDrive_helper(double distance_cm) {
 		double waitingTime;
-		boolean robotHit;
+		boolean robotHit = false;
 		if (!obst.checkObstacleAhead()) {
+			waitingTime = calculateWaitTimeLength(distance_cm / coefficient_length);
 			com.readWriteRobot(new byte[] { 'k',
 					(byte) Math.round(distance_cm), '\r', '\n' }
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
 			);
-
-			waitingTime = waitForRobotLength(distance_cm / coefficient_length);
 			robotHit = obst.avoidObstacles(waitingTime,
 					System.currentTimeMillis());
 			// correct odometry values if robot doesn't hit an obstacle
@@ -148,6 +151,7 @@ public class Movement {
 				odometry.adjustOdometry(distance_cm / coefficient_length, 0);
 			}
 		}
+		return robotHit;
 	}
 
 	public void robotTurn(double degree) {
@@ -201,7 +205,7 @@ public class Movement {
 	 * @param distance_cm
 	 *            distance to drive
 	 */
-	private double waitForRobotLength(double distance_cm) {
+	private double calculateWaitTimeLength(double distance_cm) {
 		return (Math.abs(distance_cm) * coefficient_length_time * 1.1 * 1000);
 	}
 
@@ -243,11 +247,11 @@ public class Movement {
 	 * Test method which moves the robot and calls driveToOrigin at the end.
 	 */
 	public void testMovement() {
-		robotDrive(20);
-		robotTurn(70);
-		robotDrive(30);
-		robotTurn(-15);
-		robotDrive(20);
+		robotDrive(90);
+		turnLeft(90);
+		robotDrive(90);
+		//turnLeft(140);
+		//robotDrive(90);
 
 		driveToOrigin();
 	}
