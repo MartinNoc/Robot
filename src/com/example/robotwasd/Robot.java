@@ -126,7 +126,8 @@ public class Robot {
 
 	public void calibrateSensor() {
 		textLog.setText("calibration done");
-		obst.setStopDistance();
+		textLog.setText(Double.toString(obst.setStopDistance()));
+		
 	}
 
 	public void getOdometryData() {

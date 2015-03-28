@@ -158,8 +158,11 @@ public class Movement {
 		double correctedDegree = degree * coefficient_degree;
 		int numberRepetitions = (int) (correctedDegree / SIZE_BYTE);
 		double remain = correctedDegree % SIZE_BYTE;
-		for (int i = 0; i < numberRepetitions; i++) {
-			robotTurn_helper(SIZE_BYTE);
+		for (int i = 0; i < Math.abs(numberRepetitions); i++) {	//abs for minus degrees
+			if(correctedDegree < 0)	//when degree is negative
+				robotTurn_helper(-SIZE_BYTE);
+			else
+				robotTurn_helper(SIZE_BYTE);
 		}
 		robotTurn_helper(remain);
 	}
@@ -247,11 +250,11 @@ public class Movement {
 	 * Test method which moves the robot and calls driveToOrigin at the end.
 	 */
 	public void testMovement() {
-		robotDrive(90);
-		turnLeft(90);
-		robotDrive(90);
-		//turnLeft(140);
-		//robotDrive(90);
+		robotDrive(140);
+		turnLeft(60);
+		robotDrive(100);
+		turnRight(90);
+		robotDrive(30);
 
 		driveToOrigin();
 	}

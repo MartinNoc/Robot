@@ -82,8 +82,9 @@ public class ObstacleAvoidance {
 	 * calibrate the stop distance with the actual shortest distance to an
 	 * object
 	 */
-	public void setStopDistance() {
+	public double setStopDistance() {
 		this.stopDistance = minDistance(robot.readSensor());
+		return stopDistance;
 	}
 
 	/**
