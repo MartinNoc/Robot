@@ -55,7 +55,6 @@ public class ObstacleAvoidance {
 	 * @return true, if obstacle is detected, false otherwise
 	 */
 	public boolean avoidObstacles(double waitingTime, long startTime) {
-		boolean robotHit = false;
 		long driveTime = 0;
 		//for (int i = 0; i < Math.ceil(waitingTime / SLEEPING_TIME); i++) {
 		while(driveTime < waitingTime) {
@@ -63,13 +62,12 @@ public class ObstacleAvoidance {
 			if (minDistance(robot.readSensor()) < stopDistance) {
 				robot.stopRobot();
 				driveTime = System.currentTimeMillis() - startTime;
-				robotHit = true;
 				double driveTimeSec = (double) driveTime / 1000;
 
 				// drive forward
 				double driveDistance = driveTimeSec * coefficient_length_time;
 				odometry.adjustOdometry(driveDistance, 0);
-				break;
+				return true;
 			}
 			try {
 				Thread.sleep(SLEEPING_TIME);
@@ -77,7 +75,7 @@ public class ObstacleAvoidance {
 				// ignore
 			}
 		}
-		return robotHit;
+		return false;
 	}
 
 	/**

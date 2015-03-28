@@ -57,11 +57,11 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void aButton_onClick(View v) {
-		robot.turnLeft(90);
+		robot.turnLeft(45);
 	}
 	
 	public void dButton_onClick(View w) {
-		robot.turnRight(90);
+		robot.turnRight(45);
 	}
 	
 	public void minusButton_onClick(View v) {
@@ -113,6 +113,10 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void odometryButton_onClick(View v){
 		robot.getOdometryData();
+	}
+	
+	public void initOdometryButton_onClick(View v){
+		robot.initOdometryPosition();
 	}
 
 	

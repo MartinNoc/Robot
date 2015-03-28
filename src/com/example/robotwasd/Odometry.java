@@ -23,6 +23,10 @@ public class Odometry {
 		return p;
 	}
 	
+	public void setPosition(double x, double y, double theta){
+		p.setPosition(x, y, theta);
+	}
+	
 	/**
 	 * Calculates the new robot position of 
 	 * 	linear movement: x'=x+dx=x+a*cos(theta) y'=y+dy=y+a*sin(theta) theta'=theta+0

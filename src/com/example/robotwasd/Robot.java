@@ -46,12 +46,13 @@ public class Robot {
 	public void moveForward() {
 		textLog.setText("forward");
 		// move.moveForward();
-		move.robotDrive(120);
+		move.robotDrive(40);
 	}
 
 	public void moveBackward() {
 		textLog.setText("backward");
-		move.moveBackward();
+		//move.moveBackward();
+		move.robotDrive(-40);
 	}
 
 	public void stopRobot() {
@@ -134,5 +135,9 @@ public class Robot {
 
 	public void OdometryTestMovement() {
 		move.testMovement();
+	}
+	
+	public void initOdometryPosition(){
+		odometry.setPosition(0, 0, 0);
 	}
 }

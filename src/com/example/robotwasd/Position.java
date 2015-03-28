@@ -20,6 +20,12 @@ public class Position {
 		this.theta = theta;
 	}
 	
+	public void setPosition(double x, double y, double theta) {
+		this.x = x;
+		this.y = y;
+		this.theta = theta;
+	}
+	
 	public String toString(){
 		return String.format(Locale.US,"(x,y,theta) = (%1$.2f,%2$.2f,%3$.2f)",x,y,180*theta/Math.PI);
 	}
