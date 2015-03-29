@@ -7,15 +7,11 @@ package com.example.robotwasd;
  * 
  */
 public class Movement {
-	private final double coefficient_length = 1.352; // constant to correct
-														// length of driving
-	private final double coefficient_length_time = 0.073; // seconds per cm
-	private final double coefficient_degree = 1.137; // constant to correct
-														// rotation
-	private final double coefficient_degree_time = 0.016111; // seconds per
-																// degree
-	private final double SIZE_BYTE = 127;
-
+	private final double COEFFICIENT_LENGTH = 1.352;		// constant to correct length of driving
+	private final double COEFFICIENT_LENGTH_TIME = 0.073; 	// seconds per cm
+	private final double COEFFICIENT_DEGREE = 1.137;		// constant to correct rotation
+	private final double COEFFICIENT_DEGREE_TIME = 0.016111;// seconds per degree
+	
 	private Communication com;
 	private Odometry odometry;
 	private ObstacleAvoidance obst;
@@ -114,13 +110,16 @@ public class Movement {
 	 * @param distance_cm
 	 */
 	public void robotDrive(double distance_cm) {
-		double correctedDistance = distance_cm * coefficient_length;
-		int numberRepetitions = (int) (correctedDistance / SIZE_BYTE);
-		double remain = correctedDistance % SIZE_BYTE;
+		double correctedDistance = distance_cm * COEFFICIENT_LENGTH;
+		int numberRepetitions = (int) (correctedDistance / Byte.MAX_VALUE);
+		double remain = correctedDistance % Byte.MAX_VALUE;
 		boolean robotHit = false;
 
-		for (int i = 0; i < numberRepetitions; i++) {
-			robotHit = robotDrive_helper(SIZE_BYTE);
+		for (int i = 0; i < Math.abs(numberRepetitions); i++) {
+			if (correctedDistance < 0)
+				robotHit = robotDrive_helper(-Byte.MAX_VALUE);
+			else
+				robotHit = robotDrive_helper(Byte.MAX_VALUE);
 			if(robotHit)	//when robot drives against a obstacle
 				break;
 		}
@@ -138,9 +137,8 @@ public class Movement {
 		double waitingTime;
 		boolean robotHit = false;
 		if (!obst.checkObstacleAhead()) {
-			waitingTime = calculateWaitTimeLength(distance_cm / coefficient_length);
-			com.readWriteRobot(new byte[] { 'k',
-					(byte) Math.round(distance_cm), '\r', '\n' }
+			waitingTime = calculateWaitTimeLength(distance_cm / COEFFICIENT_LENGTH);
+			com.readWriteRobot(new byte[] { 'k', (byte) Math.round(distance_cm), '\r', '\n' }
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
 			);
@@ -148,21 +146,21 @@ public class Movement {
 					System.currentTimeMillis());
 			// correct odometry values if robot doesn't hit an obstacle
 			if (!robotHit) {
-				odometry.adjustOdometry(distance_cm / coefficient_length, 0);
+				odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
 			}
 		}
 		return robotHit;
 	}
 
 	public void robotTurn(double degree) {
-		double correctedDegree = degree * coefficient_degree;
-		int numberRepetitions = (int) (correctedDegree / SIZE_BYTE);
-		double remain = correctedDegree % SIZE_BYTE;
+		double correctedDegree = degree * COEFFICIENT_DEGREE;
+		int numberRepetitions = (int) (correctedDegree / Byte.MAX_VALUE);
+		double remain = correctedDegree % Byte.MAX_VALUE;
 		for (int i = 0; i < Math.abs(numberRepetitions); i++) {	//abs for minus degrees
 			if(correctedDegree < 0)	//when degree is negative
-				robotTurn_helper(-SIZE_BYTE);
+				robotTurn_helper(-Byte.MAX_VALUE);
 			else
-				robotTurn_helper(SIZE_BYTE);
+				robotTurn_helper(Byte.MAX_VALUE);
 		}
 		robotTurn_helper(remain);
 	}
@@ -179,8 +177,8 @@ public class Movement {
 		// only effective when passing remain
 		);
 
-		waitForRobotDegree(degree / coefficient_degree);
-		odometry.adjustOdometry(0, degree / coefficient_degree);
+		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
+		odometry.adjustOdometry(0, degree / COEFFICIENT_DEGREE);
 	}
 
 	/**
@@ -209,7 +207,7 @@ public class Movement {
 	 *            distance to drive
 	 */
 	private double calculateWaitTimeLength(double distance_cm) {
-		return (Math.abs(distance_cm) * coefficient_length_time * 1.1 * 1000);
+		return (Math.abs(distance_cm) * COEFFICIENT_LENGTH_TIME * 1.1 * 1000);
 	}
 
 	/**
@@ -220,7 +218,7 @@ public class Movement {
 	 */
 	private void waitForRobotDegree(double degree) {
 		try {
-			Thread.sleep((long) (Math.abs(degree) * coefficient_degree_time
+			Thread.sleep((long) (Math.abs(degree) * COEFFICIENT_DEGREE_TIME
 					* 1.1 * 1000));
 		} catch (InterruptedException e) {
 			// ignore
