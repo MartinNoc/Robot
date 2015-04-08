@@ -141,4 +141,25 @@ public class Robot {
 	public void initOdometryPosition(){
 		odometry.setPosition(0, 0, 0);
 	}
+	
+	public void navigateToPosition(Position goal){
+		/**
+		 *  calc angle and distance towards goal considering the robot's current position
+		 *  
+		 *  therefore we subtract the robot-position from the goal-position to "project" the
+		 *  robot into the origin (of the coordinate system), also the goal is projected but now
+		 *  the calculation is easy
+		 *  
+		 *  change x and y arguments in atan2-method because atan2 calculates with the y-axis as 0 degree
+		 *  but we need the x-axis as 0 degree
+		 */
+		
+		Position robotPos = odometry.getPosition();
+		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x);
+		double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
+		
+		move.setRobotOrientation(angle);
+		move.robotDrive(distance);
+		move.setRobotOrientation(goal.theta);
+	}
 }

@@ -9,58 +9,6 @@
     tools:context="com.example.robotwasd.MainActivity" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/plusButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+"
-            android:onClick="plusButton_onClick" />
-
-        <Button
-            android:id="@+id/dButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="D"
-            android:onClick="dButton_onClick" />
-
-        <Button
-            android:id="@+id/upButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Up"
-            android:onClick="upButton_onClick" />
-
-        <Button
-            android:id="@+id/LEDoffButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LED off"
-            android:onClick="LEDoffButton_onClick" />
-        
-        <Button
-            android:id="@+id/Square"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="SquareButton_onClick"
-            android:text="Square" />
-        
-        <Button
-            android:id="@+id/Calibrate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="CalibrateButton_onClick"
-            android:text="Calibrate" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,107 +16,208 @@
 
         <Button
             android:id="@+id/minusButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="-"
-            android:onClick="minusButton_onClick" />
+            android:onClick="minusButton_onClick"
+            android:text="-" />
 
         <Button
             android:id="@+id/aButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="A"
-            android:onClick="aButton_onClick" />
+            android:onClick="aButton_onClick"
+            android:text="A" />
 
         <Button
             android:id="@+id/downButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="Down"
-            android:onClick="downButton_onClick" />
+            android:onClick="downButton_onClick"
+            android:text="Down" />
 
         <Button
             android:id="@+id/LEDonButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="LED on"
-            android:onClick="LEDonButton_onClick" />
+            android:onClick="LEDonButton_onClick"
+            android:text="LED on" />
         
         <Button
             android:id="@+id/connectButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="connect"
-            android:onClick="connectButton_onClick" />
+            android:onClick="connectButton_onClick"
+            android:text="conn" />
         
         <Button
             android:id="@+id/initOdometryButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="init.Odom"
-            android:onClick="initOdometryButton_onClick" />
+            android:onClick="initOdometryButton_onClick"
+            android:text="init.Odo" />
+
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/linearLayout3"
+        android:layout_toRightOf="@+id/linearLayout2"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/plusButton"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:onClick="plusButton_onClick"
+            android:text="+" />
+
+        <Button
+            android:id="@+id/dButton"
+            android:layout_width="59dp"
+            android:layout_height="wrap_content"
+            android:onClick="dButton_onClick"
+            android:text="D" />
+
+        <Button
+            android:id="@+id/upButton"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:onClick="upButton_onClick"
+            android:text="Up" />
+
+        <Button
+            android:id="@+id/LEDoffButton"
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:onClick="LEDoffButton_onClick"
+            android:text="LED off" />
+
+        <Button
+            android:id="@+id/Square"
+            android:layout_width="61dp"
+            android:layout_height="wrap_content"
+            android:onClick="SquareButton_onClick"
+            android:text="Square" />
+
+        <Button
+            android:id="@+id/Calibrate"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:onClick="CalibrateButton_onClick"
+            android:text="Calib" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_inputTheta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/linearLayout1"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:ems="8"
+        android:inputType="numberDecimal" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/linearLayout1"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/linearLayout3"
         android:orientation="vertical" >
 
         <Button
             android:id="@+id/wButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="w"
-            android:onClick="wButton_onClick" />
+            android:onClick="wButton_onClick"
+            android:text="w" />
 
         <Button
             android:id="@+id/sButton"
-            android:layout_width="wrap_content"
+            android:layout_width="61dp"
             android:layout_height="wrap_content"
-            android:text="S"
-            android:onClick="sButton_onClick" />
+            android:onClick="sButton_onClick"
+            android:text="S" />
 
         <Button
             android:id="@+id/xButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="X"
-            android:onClick="xButton_onClick" />
+            android:onClick="xButton_onClick"
+            android:text="X" />
 
         <Button
             android:id="@+id/readSensorButton"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:onClick="readSensorButton_onClick"
             android:text="Sensor" />
-        
+
         <Button
             android:id="@+id/disconnectButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:onClick="disconnectButton_onClick"
             android:text="discon." />
-        
-         <Button
+
+        <Button
             android:id="@+id/odometryButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:onClick="odometryButton_onClick"
-            android:text="odometry" />
-
+            android:text="odom" />
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_inputX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/edit_inputY"
+        android:layout_alignLeft="@+id/edit_inputY"
+        android:layout_alignParentRight="true"
+        android:ems="8"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/edit_inputY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/edit_inputTheta"
+        android:layout_alignLeft="@+id/edit_inputTheta"
+        android:layout_alignParentRight="true"
+        android:ems="8"
+        android:inputType="numberDecimal" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/edit_inputX"
+        android:layout_alignRight="@+id/edit_inputX"
+        android:text="Navigation Goal" />
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="19dp"
+        android:onClick="navigationButton_onClick"
+        android:text="NAV" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/linearLayout3"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_marginTop="18dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/linearLayout3"
+        android:layout_marginTop="17dp"
         android:text="not connected!" />
 
 </RelativeLayout>

@@ -120,7 +120,7 @@ public class Movement {
 				robotHit = robotDrive_helper(-Byte.MAX_VALUE);
 			else
 				robotHit = robotDrive_helper(Byte.MAX_VALUE);
-			if(robotHit)	//when robot drives against a obstacle
+			if(robotHit)	//when robot drives against an obstacle
 				break;
 		}
 		if(!robotHit)
@@ -179,6 +179,7 @@ public class Movement {
 
 		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
 		odometry.adjustOdometry(0, degree / COEFFICIENT_DEGREE);
+		
 	}
 
 	/**

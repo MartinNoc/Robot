@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -20,6 +21,9 @@ public class MainActivity extends ActionBarActivity {
 	private Robot robot;
 	private TextView textLog;
 	
+	private EditText editTextX;
+	private EditText editTextY;
+	private EditText editTextTheta;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +31,20 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		
 		textLog = (TextView) findViewById(R.id.textView1);
+		editTextX = (EditText) findViewById(R.id.edit_inputX);
+		editTextY = (EditText) findViewById(R.id.edit_inputY);
+		editTextTheta = (EditText) findViewById(R.id.edit_inputTheta);
+		
 		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
 		
 		robot = new Robot(driver, textLog);	
 		
 		robot.initialize();
+		
+		// Put initial default values into navigation goal-position input boxes
+		editTextX.setText("100");
+		editTextY.setText("50");
+		editTextTheta.setText("45");
 	}
 	
 	@Override
@@ -119,6 +132,13 @@ public class MainActivity extends ActionBarActivity {
 		robot.initOdometryPosition();
 	}
 
+	public void navigationButton_onClick(View v){
+		double x = Double.parseDouble(editTextX.getText().toString());
+		double y = Double.parseDouble(editTextY.getText().toString());
+		double theta = Double.parseDouble(editTextTheta.getText().toString());
+		Position p = new Position(x,y,theta);
+		robot.navigateToPosition(p);
+	}
 	
 	
 	@Override
