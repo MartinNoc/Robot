@@ -108,8 +108,9 @@ public class Movement {
 	 * driving into parts in order to avoid overflows
 	 * 
 	 * @param distance_cm
+	 * @return when true then robot hit against an obstacle
 	 */
-	public void robotDrive(double distance_cm) {
+	public boolean robotDrive(double distance_cm) {
 		double correctedDistance = distance_cm * COEFFICIENT_LENGTH;
 		int numberRepetitions = (int) (correctedDistance / Byte.MAX_VALUE);
 		double remain = correctedDistance % Byte.MAX_VALUE;
@@ -121,10 +122,10 @@ public class Movement {
 			else
 				robotHit = robotDrive_helper(Byte.MAX_VALUE);
 			if(robotHit)	//when robot drives against an obstacle
-				break;
+				return true;
 		}
-		if(!robotHit)
-			robotDrive_helper(remain);
+		//when robot doesn't drive against an obstacle
+		return robotDrive_helper(remain);
 	}
 
 	/**
@@ -148,8 +149,9 @@ public class Movement {
 			if (!robotHit) {
 				odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
 			}
-		}
-		return robotHit;
+			return robotHit;
+		}else
+			return true;
 	}
 
 	public void robotTurn(double degree) {

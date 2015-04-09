@@ -45,14 +45,12 @@ public class Robot {
 
 	public void moveForward() {
 		textLog.setText("forward");
-		// move.moveForward();
-		move.robotDrive(40);
+		move.moveForward();
 	}
 
 	public void moveBackward() {
 		textLog.setText("backward");
-		//move.moveBackward();
-		move.robotDrive(-40);
+		move.moveBackward();
 	}
 
 	public void stopRobot() {
@@ -142,7 +140,7 @@ public class Robot {
 		odometry.setPosition(0, 0, 0);
 	}
 	
-	public void navigateToPosition(Position goal){
+	public void navigateToPosition(Position goal, int depth){
 		/**
 		 *  calc angle and distance towards goal considering the robot's current position
 		 *  
@@ -158,8 +156,19 @@ public class Robot {
 		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x)*180/Math.PI;
 		double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
 		
+		//easy obstacle avoidance
 		move.setRobotOrientation(angle);
-		move.robotDrive(distance);
-		move.setRobotOrientation(goal.theta);
+		if(obst.checkObstacleAhead()){
+			move.turnLeft(90 + depth * 5);
+			move.robotDrive(50 + depth * 5);
+			navigateToPosition(goal, depth + 1);
+		}else{
+			if(move.robotDrive(distance)){
+				move.turnLeft(90);
+				move.robotDrive(50);
+				navigateToPosition(goal, 0);
+			}else
+				move.setRobotOrientation(goal.theta);
+		}
 	}
 }

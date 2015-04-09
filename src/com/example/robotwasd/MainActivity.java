@@ -108,8 +108,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void SquareButton_onClick(View v) {
-		//robot.driveSquare(90.0);
-		robot.OdometryTestMovement();
+		robot.driveSquare(90.0);
 	}
 	
 	public void connectButton_onClick(View v) {
@@ -137,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
 		double y = Double.parseDouble(editTextY.getText().toString());
 		double theta = Double.parseDouble(editTextTheta.getText().toString());
 		Position p = new Position(x,y,theta);
-		robot.navigateToPosition(p);
+		robot.navigateToPosition(p,0);
 	}
 	
 	
