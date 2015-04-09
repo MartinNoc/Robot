@@ -47,6 +47,8 @@ public class Odometry {
 		p.theta = (p.theta + alpha*Math.PI/180) % (2*Math.PI);
 		if (p.theta < 0)
 			p.theta = 2*Math.PI + p.theta;
+		if(p.theta == 2*Math.PI)
+			p.theta = 0;
 	}
 	
 	/**

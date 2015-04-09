@@ -227,25 +227,6 @@ public class Movement {
 	}
 
 	/**
-	 * Turns robot to a specific angle alpha
-	 * 
-	 * @param alpha
-	 *            Desired orientation-angle the robot will be turned to: [0,360)
-	 *            [degree]
-	 */
-	public void setRobotOrientation(double alpha) {
-		// convert angle alpha to number within interval [0,360)
-		alpha = alpha % 360;
-		if (alpha < 0) {
-			alpha = 360 - alpha;
-		}
-
-		double theta = odometry.getPosition().theta * 180 / Math.PI;
-
-		robotTurn(alpha - theta);
-	}
-
-	/**
 	 * Test method which moves the robot and calls driveToOrigin at the end.
 	 */
 	public void testMovement() {
@@ -287,5 +268,24 @@ public class Movement {
 		// now the robot is in (x/y) position (0/0) at angle theta = PI
 
 		setRobotOrientation(0);
+	}
+	
+	/**
+	 * Turns robot to a specific angle alpha
+	 * 
+	 * @param alpha
+	 *            Desired orientation-angle the robot will be turned to: [0,360)
+	 *            [degree]
+	 */
+	public void setRobotOrientation(double alpha) {
+		// convert angle alpha to number within interval [0,360)
+		alpha = alpha % 360;
+		if (alpha < 0) {
+			alpha = 360 + alpha;
+		}
+
+		double theta = odometry.getPosition().theta * 180 / Math.PI;
+
+		robotTurn(alpha - theta);
 	}
 }

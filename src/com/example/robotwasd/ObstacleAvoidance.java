@@ -56,7 +56,6 @@ public class ObstacleAvoidance {
 	 */
 	public boolean avoidObstacles(double waitingTime, long startTime) {
 		long driveTime = 0;
-		//for (int i = 0; i < Math.ceil(waitingTime / SLEEPING_TIME); i++) {
 		while(driveTime < waitingTime) {
 			driveTime = System.currentTimeMillis() - startTime;
 			if (minDistance(robot.readSensor()) < stopDistance) {

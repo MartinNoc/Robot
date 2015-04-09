@@ -155,7 +155,7 @@ public class Robot {
 		 */
 		
 		Position robotPos = odometry.getPosition();
-		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x);
+		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x)*180/Math.PI;
 		double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
 		
 		move.setRobotOrientation(angle);
