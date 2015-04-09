@@ -158,16 +158,20 @@ public class Robot {
 		
 		//easy obstacle avoidance
 		move.setRobotOrientation(angle);
+		//obstacle ahead, drive around and then drive again to position
 		if(obst.checkObstacleAhead()){
 			move.turnLeft(90 + depth * 5);
 			move.robotDrive(50 + depth * 5);
 			navigateToPosition(goal, depth + 1);
 		}else{
+			//no obstacle ahead
 			if(move.robotDrive(distance)){
+				//during driving robot drive against an obstacle, drive around and then drive again to position
 				move.turnLeft(90);
 				move.robotDrive(50);
 				navigateToPosition(goal, 0);
 			}else
+				//driving worked perfect, no obstacles
 				move.setRobotOrientation(goal.theta);
 		}
 	}

@@ -56,14 +56,16 @@ public class ObstacleAvoidance {
 	 */
 	public boolean avoidObstacles(double waitingTime, long startTime) {
 		long driveTime = 0;
+		//wait till robot stops after driving the desired distance
 		while(driveTime < waitingTime) {
 			driveTime = System.currentTimeMillis() - startTime;
+			//hit obstacle -> stop robot
 			if (minDistance(robot.readSensor()) < stopDistance) {
 				robot.stopRobot();
 				driveTime = System.currentTimeMillis() - startTime;
 				double driveTimeSec = (double) driveTime / 1000;
 
-				// drive forward
+				// calculate drived distance and correct odometry
 				double driveDistance = driveTimeSec * coefficient_length_time;
 				odometry.adjustOdometry(driveDistance, 0);
 				return true;
