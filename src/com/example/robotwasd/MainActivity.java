@@ -124,7 +124,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void odometryButton_onClick(View v){
-		robot.getOdometryData();
+		robot.printOdometryData();
 	}
 	
 	public void initOdometryButton_onClick(View v){

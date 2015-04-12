@@ -1,5 +1,7 @@
 package com.example.robotwasd;
 
+import android.widget.TextView;
+
 /**
  * Wrapper Class for all movements of the robot
  * 
@@ -15,11 +17,13 @@ public class Movement {
 	private Communication com;
 	private Odometry odometry;
 	private ObstacleAvoidance obst;
+	private TextView textLog;
 
-	public Movement(Communication com, Odometry odometry, ObstacleAvoidance obst) {
+	public Movement(Communication com, Odometry odometry, ObstacleAvoidance obst, TextView textLog) {
 		this.com = com;
 		this.odometry = odometry;
 		this.obst = obst;
+		this.textLog = textLog;
 	}
 
 	/**
@@ -143,11 +147,11 @@ public class Movement {
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
 			);
-			robotHit = obst.avoidObstacles(waitingTime,
-					System.currentTimeMillis());
+			robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis(), distance_cm / COEFFICIENT_LENGTH);
 			// correct odometry values if robot doesn't hit an obstacle
 			if (!robotHit) {
 				odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
+				textLog.setText(odometry.getPosition().toString());
 			}
 			return robotHit;
 		}else
@@ -173,15 +177,14 @@ public class Movement {
 	 * @param degree
 	 */
 	private void robotTurn_helper(double degree) {
-		com.readWriteRobot(new byte[] { 'l', (byte) Math.round(degree), '\r',
-				'\n' }
+		com.readWriteRobot(new byte[] { 'l', (byte) Math.round(degree), '\r', '\n' }
 		// round in order to get a minimal error by casting to byte
 		// only effective when passing remain
 		);
 
 		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
 		odometry.adjustOdometry(0, degree / COEFFICIENT_DEGREE);
-		
+		textLog.setText(odometry.getPosition().toString());
 	}
 
 	/**
@@ -214,17 +217,33 @@ public class Movement {
 	}
 
 	/**
-	 * calculates the time till the roation is over
+	 * calculates the time till the roation is over and sleeps until rotation is done.
+	 * performs the rotation-live-odometry
 	 * 
-	 * @param degree
-	 *            how much degree to rotate
+	 * @param degree amount of degree to rotate
 	 */
 	private void waitForRobotDegree(double degree) {
-		try {
-			Thread.sleep((long) (Math.abs(degree) * COEFFICIENT_DEGREE_TIME
-					* 1.1 * 1000));
-		} catch (InterruptedException e) {
-			// ignore
+		
+		double initialTheta = odometry.getPosition().theta;
+		Position livePosition = odometry.getPosition();
+		
+		long execTime = 0;
+		long startTime = System.currentTimeMillis();
+		double waitingTime = Math.abs(degree) * COEFFICIENT_DEGREE_TIME * 1.1 * 1000;
+		
+		while (execTime < waitingTime) {
+			execTime = System.currentTimeMillis() - startTime;
+			
+			/** calculates live orientation theta */
+			livePosition.theta = initialTheta + execTime/waitingTime * degree;
+			
+			textLog.setText(livePosition.toString());
+			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// ignore
+			}
 		}
 	}
 

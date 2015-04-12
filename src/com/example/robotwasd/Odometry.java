@@ -14,6 +14,8 @@ public class Odometry {
 	private Position p;
 	private List<Position> robotPosList;
 	
+	private final double ACCURACY_THREASHOLD = 1e-3;
+	
 	public Odometry() {
 		p = new Position();
 		robotPosList = new ArrayList<Position>();
@@ -47,9 +49,13 @@ public class Odometry {
 		p.theta = (p.theta + alpha*Math.PI/180) % (2*Math.PI);
 		if (p.theta < 0)
 			p.theta = 2*Math.PI + p.theta;
-		if(p.theta == 2*Math.PI)	//case: theta = -0.0, then after first if theta = 2*PI, so with this if correct theta to 0
-			p.theta = 0;
+		
+		/** Set odometry properties to 0 if values are under the threashold */
+		if (Math.abs(p.theta) < ACCURACY_THREASHOLD) p.theta = 0;
+		if (Math.abs(p.x) < ACCURACY_THREASHOLD) p.x = 0;
+		if (Math.abs(p.y) < ACCURACY_THREASHOLD) p.y = 0;
 	}
+	
 	
 	/**
 	 * Methods to save robot's position into the List of positions

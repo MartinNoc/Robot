@@ -46,7 +46,7 @@ public class ObstacleAvoidance {
 		return minimum;
 	}
 
-	/********************************/
+	
 	/** public methods **/
 
 	/**
@@ -54,12 +54,14 @@ public class ObstacleAvoidance {
 	 * @param waitingTime
 	 * @return true, if obstacle is detected, false otherwise
 	 */
-	public boolean avoidObstacles(double waitingTime, long startTime) {
+	public boolean avoidObstacles(double waitingTime, long startTime, double distance) {
 		long driveTime = 0;
-		//wait till robot stops after driving the desired distance
+		Position initialPosition = odometry.getPosition();
+		Position livePosition = odometry.getPosition();
+		// wait till robot stops after driving the desired distance
 		while(driveTime < waitingTime) {
 			driveTime = System.currentTimeMillis() - startTime;
-			//hit obstacle -> stop robot
+			// hit obstacle -> stop robot
 			if (minDistance(robot.readSensor()) < stopDistance) {
 				robot.stopRobot();
 				driveTime = System.currentTimeMillis() - startTime;
@@ -68,8 +70,15 @@ public class ObstacleAvoidance {
 				// calculate drived distance and correct odometry
 				double driveDistance = driveTimeSec * coefficient_length_time;
 				odometry.adjustOdometry(driveDistance, 0);
+				robot.textLog.setText(odometry.getPosition().toString());
 				return true;
 			}
+			
+			// live odometry
+			livePosition.x = initialPosition.x + driveTime/waitingTime * distance * Math.cos(initialPosition.theta);
+			livePosition.y = initialPosition.y + driveTime/waitingTime * distance * Math.sin(initialPosition.theta);
+			robot.textLog.setText(livePosition.toString());
+			
 			try {
 				Thread.sleep(SLEEPING_TIME);
 			} catch (InterruptedException e) {

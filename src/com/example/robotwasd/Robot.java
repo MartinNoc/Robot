@@ -26,7 +26,7 @@ public class Robot {
 		com = new Communication(driver, textLog);
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this, odometry);
-		move = new Movement(com, odometry, obst);
+		move = new Movement(com, odometry, obst, textLog);
 		connect();
 	}
 
@@ -128,7 +128,7 @@ public class Robot {
 		
 	}
 
-	public void getOdometryData() {
+	public void printOdometryData() {
 		textLog.setText(odometry.getPosition().toString());
 	}
 
@@ -147,9 +147,6 @@ public class Robot {
 		 *  therefore we subtract the robot-position from the goal-position to "project" the
 		 *  robot into the origin (of the coordinate system), also the goal is projected but now
 		 *  the calculation is easy
-		 *  
-		 *  change x and y arguments in atan2-method because atan2 calculates with the y-axis as 0 degree
-		 *  but we need the x-axis as 0 degree
 		 */
 		
 		Position robotPos = odometry.getPosition();
