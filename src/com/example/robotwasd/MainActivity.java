@@ -42,8 +42,8 @@ public class MainActivity extends ActionBarActivity {
 		robot.initialize();
 		
 		// Put initial default values into navigation goal-position input boxes
-		editTextX.setText("100");
-		editTextY.setText("50");
+		editTextX.setText("85");
+		editTextY.setText("0");
 		editTextTheta.setText("45");
 	}
 	
@@ -70,11 +70,11 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void aButton_onClick(View v) {
-		robot.turnLeft(45);
+		robot.turnLeft(90);
 	}
 	
 	public void dButton_onClick(View w) {
-		robot.turnRight(45);
+		robot.turnRight(90);
 	}
 	
 	public void minusButton_onClick(View v) {
@@ -136,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
 		double y = Double.parseDouble(editTextY.getText().toString());
 		double theta = Double.parseDouble(editTextTheta.getText().toString());
 		Position p = new Position(x,y,theta);
-		robot.navigateToPosition(p,0);
+		robot.navigateToPosition(p);
 	}
 	
 	

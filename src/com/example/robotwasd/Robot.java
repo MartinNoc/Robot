@@ -140,7 +140,7 @@ public class Robot {
 		odometry.setPosition(0, 0, 0);
 	}
 	
-	public void navigateToPosition(Position goal, int depth){
+	public void navigateToPosition(Position goal){
 		/**
 		 *  calc angle and distance towards goal considering the robot's current position
 		 *  
@@ -149,27 +149,20 @@ public class Robot {
 		 *  the calculation is easy
 		 */
 		
-		Position robotPos = odometry.getPosition();
-		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x)*180/Math.PI;
-		double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
+		move.turnTowardsPosition(goal);
 		
-		//easy obstacle avoidance
-		move.setRobotOrientation(angle);
-		//obstacle ahead, drive around and then drive again to position
-		if(obst.checkObstacleAhead()){
-			move.turnLeft(90 + depth * 5);
-			move.robotDrive(50 + depth * 5);
-			navigateToPosition(goal, depth + 1);
-		}else{
-			//no obstacle ahead
-			if(move.robotDrive(distance)){
+		while(true) {
+			Position robotPos = odometry.getPosition();
+			double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
+			if (move.robotDrive(distance)) {
 				//during driving robot drive against an obstacle, drive around and then drive again to position
-				move.turnLeft(90);
-				move.robotDrive(50);
-				navigateToPosition(goal, 0);
-			}else
+				move.avoidanceAlgorithm(goal);
+			}
+			else {
 				//driving worked perfect, no obstacles
-				move.setRobotOrientation(goal.theta);
+				move.setRobotOrientation(goal.theta);	
+				return;
+			}
 		}
 	}
 }

@@ -11,8 +11,10 @@ import android.widget.TextView;
 public class Movement {
 	private final double COEFFICIENT_LENGTH = 1.352;		// constant to correct length of driving
 	private final double COEFFICIENT_LENGTH_TIME = 0.073; 	// seconds per cm
-	private final double COEFFICIENT_DEGREE = 1.137;		// constant to correct rotation
+	private final double COEFFICIENT_DEGREE = 1.165;		// constant to correct rotation
 	private final double COEFFICIENT_DEGREE_TIME = 0.016111;// seconds per degree
+	
+	static boolean turnLeft = true;
 	
 	private Communication com;
 	private Odometry odometry;
@@ -130,6 +132,7 @@ public class Movement {
 		}
 		//when robot doesn't drive against an obstacle
 		return robotDrive_helper(remain);
+		
 	}
 
 	/**
@@ -147,14 +150,15 @@ public class Movement {
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
 			);
-			robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis(), distance_cm / COEFFICIENT_LENGTH);
+			robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis());
 			// correct odometry values if robot doesn't hit an obstacle
 			if (!robotHit) {
 				odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
 				textLog.setText(odometry.getPosition().toString());
 			}
 			return robotHit;
-		}else
+		}
+		else
 			return true;
 	}
 
@@ -169,6 +173,7 @@ public class Movement {
 				robotTurn_helper(Byte.MAX_VALUE);
 		}
 		robotTurn_helper(remain);
+		textLog.setText(odometry.getPosition().toString());
 	}
 
 	/**
@@ -184,7 +189,6 @@ public class Movement {
 
 		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
 		odometry.adjustOdometry(0, degree / COEFFICIENT_DEGREE);
-		textLog.setText(odometry.getPosition().toString());
 	}
 
 	/**
@@ -218,33 +222,17 @@ public class Movement {
 
 	/**
 	 * calculates the time till the roation is over and sleeps until rotation is done.
-	 * performs the rotation-live-odometry
 	 * 
 	 * @param degree amount of degree to rotate
 	 */
 	private void waitForRobotDegree(double degree) {
 		
-		double initialTheta = odometry.getPosition().theta;
-		Position livePosition = odometry.getPosition();
-		
-		long execTime = 0;
-		long startTime = System.currentTimeMillis();
-		double waitingTime = Math.abs(degree) * COEFFICIENT_DEGREE_TIME * 1.1 * 1000;
-		
-		while (execTime < waitingTime) {
-			execTime = System.currentTimeMillis() - startTime;
-			
-			/** calculates live orientation theta */
-			livePosition.theta = initialTheta + execTime/waitingTime * degree;
-			
-			textLog.setText(livePosition.toString());
-			
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// ignore
-			}
+		try {
+			Thread.sleep((long)(Math.abs(degree) * COEFFICIENT_DEGREE_TIME * 1.1 * 1000));
+		} catch (InterruptedException e) {
+			// ignore
 		}
+		
 	}
 
 	/**
@@ -263,6 +251,7 @@ public class Movement {
 	/**
 	 * moves the robot back to origin position. x = y = theta = 0.
 	 */
+	@Deprecated 
 	public void driveToOrigin() {
 		Position p = odometry.getPosition();
 
@@ -308,5 +297,38 @@ public class Movement {
 		double theta = odometry.getPosition().theta * 180 / Math.PI;
 
 		robotTurn(alpha - theta);
+	}
+	
+	/**
+	 * Called if robot faces an obstacle.
+	 * Tries to go round the obstacle until the way to the goal is free.
+	 * 
+	 * @param goal Position of the goal
+	 */
+	public void avoidanceAlgorithm(Position goal) {
+		// turn robot until it does not face an obstacle
+		while(obst.checkObstacleAhead()) {
+			if (turnLeft) 
+				robotTurn(90);
+			else 
+				robotTurn(-90);
+		}
+		robotDrive(90);
+		turnTowardsPosition(goal);
+		
+		if (obst.checkObstacleAhead())
+			avoidanceAlgorithm(goal);
+		else
+			turnLeft = !turnLeft;
+	}
+	
+	/**
+	 * rotates the robot towards the goal position
+	 * @param goal remote point the robot is going to face
+	 */
+	public void turnTowardsPosition(Position goal) {
+		Position robotPos = odometry.getPosition();
+		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x) * 180 / Math.PI;
+		setRobotOrientation(angle);
 	}
 }
