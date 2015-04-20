@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class Movement {
 	private final double COEFFICIENT_LENGTH = 1.352;		// constant to correct length of driving
 	private final double COEFFICIENT_LENGTH_TIME = 0.073; 	// seconds per cm
-	private final double COEFFICIENT_DEGREE = 1.165;		// constant to correct rotation
+	private final double COEFFICIENT_DEGREE = 1.12;		// constant to correct rotation
 	private final double COEFFICIENT_DEGREE_TIME = 0.016111;// seconds per degree
 	
 	static boolean turnLeft = true;

@@ -117,7 +117,7 @@
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@+id/linearLayout1"
         android:ems="8"
-        android:inputType="numberDecimal" />
+        android:inputType="numberSigned|numberDecimal" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -178,7 +178,7 @@
         android:layout_alignLeft="@+id/edit_inputY"
         android:layout_alignParentRight="true"
         android:ems="8"
-        android:inputType="numberDecimal" />
+        android:inputType="numberSigned|numberDecimal" />
 
     <EditText
         android:id="@+id/edit_inputY"
@@ -188,7 +188,7 @@
         android:layout_alignLeft="@+id/edit_inputTheta"
         android:layout_alignParentRight="true"
         android:ems="8"
-        android:inputType="numberDecimal" />
+        android:inputType="numberSigned|numberDecimal" />
 
     <TextView
         android:id="@+id/textView3"
