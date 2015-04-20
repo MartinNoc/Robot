@@ -1,223 +1,145 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.robotwasd.MainActivity" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+    <Button
+        android:id="@+id/connectButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="10px"
+        android:layout_y="85px"
+        android:onClick="connectButton_onClick"
+        android:text="conn" />
 
-        <Button
-            android:id="@+id/minusButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="minusButton_onClick"
-            android:text="-" />
+    <Button
+        android:id="@+id/initOdometryButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="220px"
+        android:layout_y="85px"
+        android:onClick="initOdometryButton_onClick"
+        android:text="init.Odo" />
 
-        <Button
-            android:id="@+id/aButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="aButton_onClick"
-            android:text="A" />
 
-        <Button
-            android:id="@+id/downButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="downButton_onClick"
-            android:text="Down" />
+    <Button
+        android:id="@+id/plusButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="325px"
+        android:layout_y="10px"
+        android:onClick="plusButton_onClick"
+        android:text="+" />
 
-        <Button
-            android:id="@+id/LEDonButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="LEDonButton_onClick"
-            android:text="LED on" />
-        
-        <Button
-            android:id="@+id/connectButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="connectButton_onClick"
-            android:text="conn" />
-        
-        <Button
-            android:id="@+id/initOdometryButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="initOdometryButton_onClick"
-            android:text="init.Odo" />
+    <Button
+        android:id="@+id/upButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="220px"
+        android:layout_y="10px"
+        android:onClick="upButton_onClick"
+        android:text="Up" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/linearLayout3"
-        android:layout_toRightOf="@+id/linearLayout2"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/plusButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="plusButton_onClick"
-            android:text="+" />
-
-        <Button
-            android:id="@+id/dButton"
-            android:layout_width="59dp"
-            android:layout_height="wrap_content"
-            android:onClick="dButton_onClick"
-            android:text="D" />
-
-        <Button
-            android:id="@+id/upButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="upButton_onClick"
-            android:text="Up" />
-
-        <Button
-            android:id="@+id/LEDoffButton"
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:onClick="LEDoffButton_onClick"
-            android:text="LED off" />
-
-        <Button
-            android:id="@+id/Square"
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:onClick="SquareButton_onClick"
-            android:text="Square" />
-
-        <Button
-            android:id="@+id/Calibrate"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="CalibrateButton_onClick"
-            android:text="Calib" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/Calibrate"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="10px"
+        android:layout_y="160px"
+        android:onClick="CalibrateButton_onClick"
+        android:text="Calib" />
 
     <EditText
         android:id="@+id/edit_inputTheta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/linearLayout1"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/linearLayout1"
+        android:layout_width="130px"
+        android:layout_height="70px"
+        android:layout_x="280px"
+        android:layout_y="235px"
         android:ems="8"
         android:inputType="numberSigned|numberDecimal" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/linearLayout3"
-        android:orientation="vertical" >
+    <Button
+        android:id="@+id/disconnectButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="115px"
+        android:layout_y="85px"
+        android:onClick="disconnectButton_onClick"
+        android:text="discon." />
 
-        <Button
-            android:id="@+id/wButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="wButton_onClick"
-            android:text="w" />
-
-        <Button
-            android:id="@+id/sButton"
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:onClick="sButton_onClick"
-            android:text="S" />
-
-        <Button
-            android:id="@+id/xButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="xButton_onClick"
-            android:text="X" />
-
-        <Button
-            android:id="@+id/readSensorButton"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:onClick="readSensorButton_onClick"
-            android:text="Sensor" />
-
-        <Button
-            android:id="@+id/disconnectButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:onClick="disconnectButton_onClick"
-            android:text="discon." />
-
-        <Button
-            android:id="@+id/odometryButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:onClick="odometryButton_onClick"
-            android:text="odom" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/odometryButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="325px"
+        android:layout_y="85px"
+        android:onClick="odometryButton_onClick"
+        android:text="odom" />
 
     <EditText
         android:id="@+id/edit_inputX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/edit_inputY"
-        android:layout_alignLeft="@+id/edit_inputY"
-        android:layout_alignParentRight="true"
+        android:layout_width="130px"
+        android:layout_height="70px"
+        android:layout_x="10px"
+        android:layout_y="235px"
         android:ems="8"
         android:inputType="numberSigned|numberDecimal" />
 
     <EditText
         android:id="@+id/edit_inputY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/edit_inputTheta"
-        android:layout_alignLeft="@+id/edit_inputTheta"
-        android:layout_alignParentRight="true"
+        android:layout_width="130px"
+        android:layout_height="70px"
+        android:layout_x="145px"
+        android:layout_y="235px"
         android:ems="8"
         android:inputType="numberSigned|numberDecimal" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/edit_inputX"
-        android:layout_alignRight="@+id/edit_inputX"
-        android:text="Navigation Goal" />
-
     <Button
         android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView3"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_marginBottom="18dp"
-        android:layout_marginLeft="19dp"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="325px"
+        android:layout_y="160px"
         android:onClick="navigationButton_onClick"
         android:text="NAV" />
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout3"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/linearLayout3"
-        android:layout_marginTop="17dp"
+        android:layout_width="430px"
+        android:layout_height="50px"
+        android:layout_x="10px"
+        android:layout_y="320px"
         android:text="not connected!" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/minusButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="10px"
+        android:layout_y="10px"
+        android:onClick="minusButton_onClick"
+        android:text="-" />
+
+    <Button
+        android:id="@+id/downButton"
+        android:layout_width="100px"
+        android:layout_height="70px"
+        android:layout_x="115px"
+        android:layout_y="10px"
+        android:onClick="downButton_onClick"
+        android:text="Down" />
+    
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/color_blob_detection_activity_surface_view"
+        android:layout_width="410px"
+        android:layout_height="260px"
+        android:layout_x="10px"
+        android:layout_y="375px"
+        android:visibility="visible" />
+
+</AbsoluteLayout>
