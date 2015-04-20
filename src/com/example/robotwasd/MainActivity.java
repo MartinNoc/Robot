@@ -51,6 +51,9 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 	
+    /**
+     * iniatilize the robot and camera
+     */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,19 +66,20 @@ public class MainActivity extends ActionBarActivity {
 		editTextY = (EditText) findViewById(R.id.edit_inputY);
 		editTextTheta = (EditText) findViewById(R.id.edit_inputTheta);
 		
+		//load FTDriver
 		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
 		
-		robot = new Robot(driver, textLog);	
+		//initialize the ColorBlobDetection and Camera
+		blobDetection = new ColorBlobDetection(findViewById(R.id.color_blob_detection_activity_surface_view)); 
 		
+		//initialize robot functions
+		robot = new Robot(driver, textLog, blobDetection);	
 		robot.initialize();
 		
 		// Put initial default values into navigation goal-position input boxes
 		editTextX.setText("85");
 		editTextY.setText("0");
 		editTextTheta.setText("45");
-		
-		//initialize the ColorBlobDetection and Camera
-		blobDetection = new ColorBlobDetection(findViewById(R.id.color_blob_detection_activity_surface_view)); 
 	}
 	
     @Override

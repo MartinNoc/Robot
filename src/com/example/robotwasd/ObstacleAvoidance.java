@@ -4,7 +4,7 @@ package com.example.robotwasd;
  * Class for observation of objects around the robot and avoiding the contact
  * between an obstacle and the robot
  * 
- * @author daniel
+ * @author Daniel Witsch
  * 
  */
 public class ObstacleAvoidance {
@@ -14,7 +14,8 @@ public class ObstacleAvoidance {
 	// cm per second
 	private final double coefficient_length_time = 13.698630137;
 	// initial value for stop distance
-	private double stopDistance = 20;
+	private double stopDistance = 15;
+	//sleeping time between the loops for checking of an obstacle
 	private final long SLEEPING_TIME = 50;
 
 	public ObstacleAvoidance(Robot robot, Odometry odometry) {

@@ -7,7 +7,7 @@ import java.util.List;
  * Odometry class.
  * Keep track of the robot's position via maintaining Position instance
  * including x-coordinate, y-coordinate and orientation 'theta'
- *
+ * @author Nocker Martin
  */
 public class Odometry {
 
@@ -60,7 +60,6 @@ public class Odometry {
 	/**
 	 * Methods to save robot's position into the List of positions
 	 */
-	
 	public void saveRobotPosition(double x, double y, double theta){
 		robotPosList.add(new Position(x,y,theta));
 	}

@@ -146,10 +146,9 @@ public class Movement {
 		boolean robotHit = false;
 		if (!obst.checkObstacleAhead()) {
 			waitingTime = calculateWaitTimeLength(distance_cm / COEFFICIENT_LENGTH);
-			com.readWriteRobot(new byte[] { 'k', (byte) Math.round(distance_cm), '\r', '\n' }
+			com.readWriteRobot(new byte[] { 'k', (byte) Math.round(distance_cm), '\r', '\n' });
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
-			);
 			robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis());
 			// correct odometry values if robot doesn't hit an obstacle
 			if (!robotHit) {
@@ -233,19 +232,6 @@ public class Movement {
 			// ignore
 		}
 		
-	}
-
-	/**
-	 * Test method which moves the robot and calls driveToOrigin at the end.
-	 */
-	public void testMovement() {
-		robotDrive(140);
-		turnLeft(60);
-		robotDrive(100);
-		turnRight(90);
-		robotDrive(30);
-
-		driveToOrigin();
 	}
 
 	/**

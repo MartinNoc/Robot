@@ -3,6 +3,8 @@ package com.example.robotwasd;
 import jp.ksksue.driver.serial.FTDriver;
 import android.widget.TextView;
 
+import com.example.OpenCV.ColorBlobDetection;
+
 /**
  * Class to controll the functions of the robot
  * 
@@ -16,12 +18,17 @@ public class Robot {
 	private Odometry odometry;
 	private ObstacleAvoidance obst;
 	private FTDriver driver;
+	private ColorBlobDetection blobDetection;
 
-	public Robot(FTDriver driver, TextView textLog) {
+	public Robot(FTDriver driver, TextView textLog, ColorBlobDetection blobDetection) {
 		this.textLog = textLog;
 		this.driver = driver;
+		this.blobDetection = blobDetection;
 	}
 
+	/**
+	 * create all helper classes
+	 */
 	public void initialize() {
 		com = new Communication(driver, textLog);
 		odometry = new Odometry();
@@ -30,14 +37,19 @@ public class Robot {
 		connect();
 	}
 
-
-	 public void connect() { 
+	/**
+	 * create the usb connection to the robot
+	 */
+	public void connect() { 
 		 com.connect();
-	 }
-	 
-
-	 public void disconnect() { 
+	}
+	
+	/**
+	 * disconnect from robot
+	 */
+	public void disconnect() { 
 		 if (com.isConnected()) { 
+			 //stop robot
 			 move.stopRobot();
 			 com.disconnect(); 
 		} 
@@ -63,8 +75,11 @@ public class Robot {
 		move.turnLeft();
 	}
 
+	/**
+	 * turning with obstacle avoidance
+	 * @param degree
+	 */
 	public void turnLeft(double degree) {
-		textLog.setText("turn left degrees");
 		move.turnLeft(degree);
 	}
 
@@ -72,9 +87,12 @@ public class Robot {
 		textLog.setText("turn right");
 		move.turnRight();
 	}
-
+	
+	/**
+	 * turning with obstacle avoidance
+	 * @param degree
+	 */
 	public void turnRight(double degree) {
-		textLog.setText("turn right degrees");
 		move.turnRight(degree);
 	}
 
@@ -88,32 +106,50 @@ public class Robot {
 		move.riseBar();
 	}
 
-	// fixed position for bar (low)
+	/**
+	 * low fix position for bar
+	 */
 	public void lowPositionBar() {
 		textLog.setText("low Position");
 		move.lowPositionBar();
 	}
 
-	// fixed position for bar (high)
+	/**
+	 * high fix position for bar
+	 */
 	public void upPositionBar() {
 		textLog.setText("up Position");
 		move.upPositionBar();
 	}
 
+	/**
+	 * all LEDs on
+	 */
 	public void LedOn() {
 		textLog.setText("all LED on");
 		move.LedOn();
 	}
 
+	/**
+	 * all LEDs off
+	 */
 	public void LedOff() {
 		textLog.setText("all LED off");
 		move.LedOff();
 	}
 
+	/**
+	 * read out the sensor data (range sensors)
+	 * @return the data of the range sensors
+	 */
 	public String readSensor() {
 		return move.readSensor();
 	}
 
+	/**
+	 * drive a square
+	 * @param distance_cm
+	 */
 	public void driveSquare(double distance_cm) {
 		textLog.setText("drive Square");
 		for (int i = 0; i < 4; i++) {
@@ -122,24 +158,32 @@ public class Robot {
 		}
 	}
 
+	/**
+	 * calibrate the distance for obstacle avoidance
+	 */
 	public void calibrateSensor() {
-		textLog.setText("calibration done");
-		textLog.setText(Double.toString(obst.setStopDistance()));
-		
+		textLog.setText("calibration done: " + Double.toString(obst.setStopDistance()) + "cm");		
 	}
 
+	/**
+	 * print out the actual odometry position to the textView
+	 */
 	public void printOdometryData() {
 		textLog.setText(odometry.getPosition().toString());
 	}
-
-	public void OdometryTestMovement() {
-		move.testMovement();
-	}
 	
+	/**
+	 * set odometry to (0,0,0)
+	 */
 	public void initOdometryPosition(){
 		odometry.setPosition(0, 0, 0);
+		printOdometryData();
 	}
 	
+	/**
+	 * robot drive to the goal position from his actual position
+	 * @param goal goal position
+	 */
 	public void navigateToPosition(Position goal){
 		/**
 		 *  calc angle and distance towards goal considering the robot's current position

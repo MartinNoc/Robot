@@ -21,6 +21,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+/**
+ * coordinate the camera and color-blob detection
+ * @author Witsch Daniel
+ *
+ */
 public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener2 {
     private static final String  TAG              = "OCVSample::Activity";
 
