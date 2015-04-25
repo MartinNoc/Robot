@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main); 
 		
 		textLog = (TextView) findViewById(R.id.textView1);
 		editTextX = (EditText) findViewById(R.id.edit_inputX);
@@ -75,11 +75,6 @@ public class MainActivity extends ActionBarActivity {
 		//initialize robot functions
 		robot = new Robot(driver, textLog, blobDetection);	
 		robot.initialize();
-		
-		// Put initial default values into navigation goal-position input boxes
-		editTextX.setText("85");
-		editTextY.setText("0");
-		editTextTheta.setText("45");
 	}
 	
     @Override
