@@ -59,12 +59,15 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.activity_main); 
+		setContentView(R.layout.camera_activity); 
 		
+		/*
 		textLog = (TextView) findViewById(R.id.textView1);
 		editTextX = (EditText) findViewById(R.id.edit_inputX);
 		editTextY = (EditText) findViewById(R.id.edit_inputY);
 		editTextTheta = (EditText) findViewById(R.id.edit_inputTheta);
+		*/
+		textLog = null;
 		
 		//load FTDriver
 		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));

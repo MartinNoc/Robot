@@ -111,8 +111,8 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
-        Mat rotMat = Imgproc.getRotationMatrix2D(new Point(mRgba.cols()/2,mRgba.rows()/2), -90.0, 1);      
-        Imgproc.warpAffine(mRgba, mRgba, rotMat, mRgba.size());
+        //Mat rotMat = Imgproc.getRotationMatrix2D(new Point(mRgba.cols()/2,mRgba.rows()/2), -90.0, 1);      
+        //Imgproc.warpAffine(mRgba, mRgba, rotMat, mRgba.size());
        
         if (mIsColorSelected) {
             mDetector.process(mRgba);

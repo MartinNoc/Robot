@@ -86,7 +86,7 @@
     
     <EditText
         android:id="@+id/edit_inputX"
-        android:layout_width="200px"
+        android:layout_width="100px"
         android:layout_height="wrap_content"
         android:layout_below="@+id/upButton"
         android:ems="8"
@@ -95,7 +95,7 @@
    
     <EditText
         android:id="@+id/edit_inputY"
-        android:layout_width="200px"
+        android:layout_width="100px"
         android:layout_height="wrap_content"
         android:layout_below="@+id/downButton"
         android:layout_toRightOf="@+id/edit_inputX"
@@ -105,7 +105,7 @@
 
     <EditText
         android:id="@+id/edit_inputTheta"
-        android:layout_width="200px"
+        android:layout_width="100px"
         android:layout_height="wrap_content"
         android:layout_below="@+id/calibrateButton"
         android:layout_toRightOf="@+id/edit_inputY"

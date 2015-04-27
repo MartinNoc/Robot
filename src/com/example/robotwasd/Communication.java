@@ -20,11 +20,11 @@ public class Communication {
 	
 	public boolean connect() {
 		if (driver.begin(BAUDRATE)){
-			textLog.setText("connected");
+			//textLog.setText("connected");
 			return true;
 		}
         else{
-        	textLog.setText("could not connect");
+        	//textLog.setText("could not connect");
         	return false;
         }
 	}
