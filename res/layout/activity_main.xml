@@ -1,139 +1,150 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewSwitcher
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewswitcher"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.robotwasd.MainActivity" >
- 
-    <Button
-        android:id="@+id/connectButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"   
-        android:onClick="connectButton_onClick"
-        android:text="conn" />
+    android:layout_height="match_parent" 
+    tools:context="com.example.robotwasd.MainActivity">
     
-    <Button
-        android:id="@+id/disconnectButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/connectButton"
-        android:onClick="disconnectButton_onClick"
-        android:text="discon" />
-    
-    <Button
-        android:id="@+id/odometryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-		android:layout_toRightOf="@+id/disconnectButton"
-        android:onClick="odometryButton_onClick"
-        android:text="odom" />
-
-    <Button
-        android:id="@+id/plusButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/connectButton"
-		android:layout_alignLeft="@+id/connectButton"
-        android:onClick="plusButton_onClick"
-        android:text="+" />
-    
-    <Button
-        android:id="@+id/minusButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/disconnectButton"
-        android:layout_toRightOf="@+id/plusButton"
-        android:onClick="minusButton_onClick"
-        android:text="-" />
-    
-   <Button
-        android:id="@+id/initOdometryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/odometryButton"
-        android:layout_toRightOf="@+id/minusButton"
-        android:onClick="initOdometryButton_onClick"
-        android:text="init" />
-    
-    <Button
-        android:id="@+id/upButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/plusButton"
-        android:onClick="upButton_onClick"
-        android:text="Up" />
-    
-    <Button
-        android:id="@+id/downButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/minusButton"
-        android:layout_toRightOf="@+id/upButton"
-        android:onClick="downButton_onClick"
-        android:text="Down" />
-
-    <Button
-        android:id="@+id/calibrateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/initOdometryButton"
-        android:layout_toRightOf="@+id/downButton"
-        android:onClick="CalibrateButton_onClick"
-        android:text="Calib" />
-    
-    <EditText
-        android:id="@+id/edit_inputX"
-        android:layout_width="100px"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/upButton"
-        android:ems="8"
-        android:hint="X"
-        android:inputType="numberSigned|numberDecimal" />
-   
-    <EditText
-        android:id="@+id/edit_inputY"
-        android:layout_width="100px"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/downButton"
-        android:layout_toRightOf="@+id/edit_inputX"
-        android:ems="8"
-        android:hint="Y"
-        android:inputType="numberSigned|numberDecimal" />
-
-    <EditText
-        android:id="@+id/edit_inputTheta"
-        android:layout_width="100px"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/calibrateButton"
-        android:layout_toRightOf="@+id/edit_inputY"
-        android:ems="8"
-        android:hint="T"
-        android:inputType="numberSigned|numberDecimal" />
-    
-    <Button
-        android:id="@+id/navigateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/calibrateButton"
-        android:layout_toRightOf="@+id/edit_inputTheta"
-        android:onClick="navigationButton_onClick"
-        android:text="NAV" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_inputX"
-        android:text="not connected!" />
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:paddingBottom="@dimen/activity_vertical_margin"
+	    android:paddingLeft="@dimen/activity_horizontal_margin"
+	    android:paddingRight="@dimen/activity_horizontal_margin"
+	    android:paddingTop="@dimen/activity_vertical_margin" >
+	 
+	    <Button
+	        android:id="@+id/connectButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"   
+	        android:onClick="connectButton_onClick"
+	        android:text="conn" />
+	    
+	    <Button
+	        android:id="@+id/disconnectButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/connectButton"
+	        android:onClick="disconnectButton_onClick"
+	        android:text="discon" />
+	    
+	    <Button
+	        android:id="@+id/odometryButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/disconnectButton"
+	        android:onClick="odometryButton_onClick"
+	        android:text="odom" />
+	
+	    <Button
+	        android:id="@+id/plusButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/connectButton"
+			android:layout_alignLeft="@+id/connectButton"
+	        android:onClick="plusButton_onClick"
+	        android:text="+" />
+	    
+	    <Button
+	        android:id="@+id/minusButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/disconnectButton"
+	        android:layout_toRightOf="@+id/plusButton"
+	        android:onClick="minusButton_onClick"
+	        android:text="-" />
+	    
+	   <Button
+	        android:id="@+id/initOdometryButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/odometryButton"
+	        android:layout_toRightOf="@+id/minusButton"
+	        android:onClick="initOdometryButton_onClick"
+	        android:text="init" />
+	    
+	    <Button
+	        android:id="@+id/upButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/plusButton"
+	        android:onClick="upButton_onClick"
+	        android:text="Up" />
+	    
+	    <Button
+	        android:id="@+id/downButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/minusButton"
+	        android:layout_toRightOf="@+id/upButton"
+	        android:onClick="downButton_onClick"
+	        android:text="Down" />
+	
+	    <Button
+	        android:id="@+id/calibrateButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/initOdometryButton"
+	        android:layout_toRightOf="@+id/downButton"
+	        android:onClick="CalibrateButton_onClick"
+	        android:text="Calib" />
+	    
+	    <EditText
+	        android:id="@+id/edit_inputX"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/upButton"
+	        android:ems="8"
+	        android:hint="X"
+	        android:inputType="numberSigned|numberDecimal" />
+	   
+	    <EditText
+	        android:id="@+id/edit_inputY"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/downButton"
+	        android:layout_toRightOf="@+id/edit_inputX"
+	        android:ems="8"
+	        android:hint="Y"
+	        android:inputType="numberSigned|numberDecimal" />
+	
+	    <EditText
+	        android:id="@+id/edit_inputTheta"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/calibrateButton"
+	        android:layout_toRightOf="@+id/edit_inputY"
+	        android:ems="8"
+	        android:hint="T"
+	        android:inputType="numberSigned|numberDecimal" />
+	    
+	    <Button
+	        android:id="@+id/navigateButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/calibrateButton"
+	        android:layout_toRightOf="@+id/edit_inputTheta"
+	        android:onClick="navigationButton_onClick"
+	        android:text="NAV" />
+	
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/edit_inputX"
+	        android:text="not connected!" />
+	    
+	</RelativeLayout>
+	
+	<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
     
     <org.opencv.android.JavaCameraView
-        android:id="@+id/color_blob_detection_activity_surface_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/textView1"
-        android:visibility="visible" />
-    
-</RelativeLayout>
+        android:id="@+id/color_blob_detection_activity_surface_view" />   
+
+	</LinearLayout>
+</ViewSwitcher>

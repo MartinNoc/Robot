@@ -12,8 +12,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.example.OpenCV.ColorBlobDetection;
 
@@ -30,6 +33,8 @@ public class MainActivity extends ActionBarActivity {
 	private EditText editTextX;
 	private EditText editTextY;
 	private EditText editTextTheta;
+	private ViewSwitcher switcher;
+	Animation slide_in_left, slide_out_right;
 
 	/**
 	 * load the OpenCV camera 
@@ -59,15 +64,19 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.camera_activity); 
+		setContentView(R.layout.activity_main); 
 		
-		/*
+		switcher = (ViewSwitcher) findViewById(R.id.viewswitcher);
 		textLog = (TextView) findViewById(R.id.textView1);
 		editTextX = (EditText) findViewById(R.id.edit_inputX);
 		editTextY = (EditText) findViewById(R.id.edit_inputY);
 		editTextTheta = (EditText) findViewById(R.id.edit_inputTheta);
-		*/
-		textLog = null;
+		
+		slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+		slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+
+		switcher.setInAnimation(slide_in_left);
+		switcher.setOutAnimation(slide_out_right);
 		
 		//load FTDriver
 		FTDriver driver = new FTDriver((UsbManager) getSystemService(USB_SERVICE));
@@ -157,7 +166,9 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		//getMenuInflater().inflate(R.menu.main, menu);
+		menu.add("Buttons");
+		menu.add("Camera");
 		return true;
 	}
 
@@ -166,9 +177,14 @@ public class MainActivity extends ActionBarActivity {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		CharSequence itemSelected = item.getTitle();
+		switch(itemSelected.toString()){
+			case "Buttons":
+				switcher.showPrevious();
+				break;
+			case "Camera":
+				switcher.showNext();
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
