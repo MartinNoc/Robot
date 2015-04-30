@@ -37,6 +37,9 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
+    
+    public	Mat					 rawPicture;
+    public  Point				 lowestBlobPoint;
 
     public CameraBridgeViewBase mOpenCvCameraView;
     
@@ -96,7 +99,11 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 
         Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
                 ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
-
+        /*
+        System.out.println(TAG + ": HSV: " + mBlobColorHsv.val[0] + ", " + mBlobColorHsv.val[1] +
+        		", " + mBlobColorHsv.val[2] + ", " + mBlobColorHsv.val[3]);
+		*/
+        
         mDetector.setHsvColor(mBlobColorHsv);
 
         Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE);
@@ -111,26 +118,33 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
+        rawPicture = inputFrame.rgba();
         //Mat rotMat = Imgproc.getRotationMatrix2D(new Point(mRgba.cols()/2,mRgba.rows()/2), -90.0, 1);      
         //Imgproc.warpAffine(mRgba, mRgba, rotMat, mRgba.size());
        
         if (mIsColorSelected) {
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
-            Point lowest = new Point(0,0);
+            
+            
             if(contours.size() > 0){
+            	Point lowest = new Point(0,0);
+            	
             	for(MatOfPoint matofpoint : contours){
 		            List<Point> contList = matofpoint.toList();
 		            Iterator<Point> iter = contList.iterator();
 		            while(iter.hasNext()){
-		            	Point x = iter.next();
-		            	if(lowest.x < x.x)
-		            		lowest = x;
+		            	Point p = iter.next();
+		            	if(lowest.y < p.y)
+		            		lowest = p;
 		            }
             	}
-	           	System.out.println("ROBOT: " + lowest.x);
+	           	//System.out.println("ROBOT: " + lowest.y);
+	           	
+	           	lowestBlobPoint = lowest;
             }
-            Core.circle(mRgba, lowest, 20, new Scalar(200.0), -1);
+            
+            Core.circle(mRgba, lowestBlobPoint, 20, new Scalar(200.0), -1);
             Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 

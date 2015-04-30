@@ -19,6 +19,7 @@ public class Robot {
 	private ObstacleAvoidance obst;
 	private FTDriver driver;
 	private ColorBlobDetection blobDetection;
+	private Homography homography;
 
 	public Robot(FTDriver driver, TextView textLog, ColorBlobDetection blobDetection) {
 		this.textLog = textLog;
@@ -34,6 +35,7 @@ public class Robot {
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst, textLog);
+		homography = new Homography(blobDetection);
 		connect();
 	}
 
@@ -110,7 +112,7 @@ public class Robot {
 	 * low fix position for bar
 	 */
 	public void lowPositionBar() {
-		textLog.setText("low Position");
+		//textLog.setText("low Position");
 		move.lowPositionBar();
 	}
 
@@ -153,7 +155,7 @@ public class Robot {
 	public void driveSquare(double distance_cm) {
 		textLog.setText("drive Square");
 		for (int i = 0; i < 4; i++) {
-			move.robotDrive(distance_cm);
+			move.robotDrive(distance_cm, true);
 			move.robotTurn(90);
 		}
 	}
@@ -184,7 +186,7 @@ public class Robot {
 	 * robot drive to the goal position from his actual position
 	 * @param goal goal position
 	 */
-	public void navigateToPosition(Position goal){
+	public void navigateToPosition(Position goal, boolean withOrientation, boolean withAvoidance) {
 		/**
 		 *  calc angle and distance towards goal considering the robot's current position
 		 *  
@@ -198,15 +200,35 @@ public class Robot {
 		while(true) {
 			Position robotPos = odometry.getPosition();
 			double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
-			if (move.robotDrive(distance)) {
+			if (move.robotDrive(distance, withAvoidance)) {
 				//during driving robot drive against an obstacle, drive around and then drive again to position
 				move.avoidanceAlgorithm(goal);
 			}
 			else {
 				//driving worked perfect, no obstacles
-				move.setRobotOrientation(goal.theta);	
+				if (withOrientation) {
+					move.setRobotOrientation(goal.theta);
+				}
 				return;
 			}
 		}
+	}
+	
+	public void collectRedBall() {
+		Position ballPosition = homography.collectBall("RED");
+		
+		ballPosition.x += odometry.getPosition().x;
+		ballPosition.y += odometry.getPosition().y;
+		
+		navigateToPosition(ballPosition, false, false);
+		
+		lowPositionBar();
+		
+		navigateToPosition(new Position(0,0,0), true, false);
+		
+	}
+	
+	public void calibrateHomography() {
+		homography.calibrateHomography();
 	}
 }

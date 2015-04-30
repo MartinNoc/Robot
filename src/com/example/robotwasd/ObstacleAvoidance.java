@@ -14,7 +14,7 @@ public class ObstacleAvoidance {
 	// cm per second
 	private final double coefficient_length_time = 13.698630137;
 	// initial value for stop distance
-	private double stopDistance = 15;
+	private double stopDistance = 10;
 	//sleeping time between the loops for checking of an obstacle
 	private final long SLEEPING_TIME = 50;
 

@@ -159,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
 		double y = Double.parseDouble(editTextY.getText().toString());
 		double theta = Double.parseDouble(editTextTheta.getText().toString());
 		Position p = new Position(x,y,theta);
-		robot.navigateToPosition(p);
+		robot.navigateToPosition(p, true, true);
 	}
 	
 	
@@ -169,6 +169,8 @@ public class MainActivity extends ActionBarActivity {
 		//getMenuInflater().inflate(R.menu.main, menu);
 		menu.add("Buttons");
 		menu.add("Camera");
+		menu.add("Collect Red");
+		menu.add("Homography");
 		return true;
 	}
 
@@ -185,7 +187,13 @@ public class MainActivity extends ActionBarActivity {
 			case "Camera":
 				switcher.showNext();
 				break;
+			case "Collect Red":
+				robot.collectRedBall();
+				break;
+			case "Homography":
+				robot.calibrateHomography();
+				break;
 		}
-		return super.onOptionsItemSelected(item);
+		return false;
 	}
 }
