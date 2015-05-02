@@ -214,8 +214,12 @@ public class Robot {
 		}
 	}
 	
-	public void collectRedBall() {
-		Position ballPosition = homography.collectBall("RED");
+	public void collectRedBall(boolean withExplore) {
+		if (withExplore) {
+			explore();
+		}
+		
+		Position ballPosition = homography.collectBall();
 		
 		ballPosition.x += odometry.getPosition().x;
 		ballPosition.y += odometry.getPosition().y;
@@ -226,6 +230,18 @@ public class Robot {
 		
 		navigateToPosition(new Position(0,0,0), true, false);
 		
+	}
+	
+	public void explore() {
+		for (int i=0; i < 4 && !blobDetection.existslowestPoint(); i++) {
+			move.robotTurn(90);
+		}
+		if (blobDetection.existslowestPoint()) {
+			return;
+		}
+		move.robotTurn(90);
+		move.robotDrive(50, false);
+		explore();
 	}
 	
 	public void calibrateHomography() {

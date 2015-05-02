@@ -188,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
 				switcher.showNext();
 				break;
 			case "Collect Red":
-				robot.collectRedBall();
+				robot.collectRedBall(false);
 				break;
 			case "Homography":
 				robot.calibrateHomography();

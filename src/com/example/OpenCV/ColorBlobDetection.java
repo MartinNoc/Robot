@@ -143,6 +143,9 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 	           	
 	           	lowestBlobPoint = lowest;
             }
+            else {
+            	lowestBlobPoint = null;
+            }
             
             Core.circle(mRgba, lowestBlobPoint, 20, new Scalar(200.0), -1);
             Log.e(TAG, "Contours count: " + contours.size());
@@ -164,5 +167,9 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
         Imgproc.cvtColor(pointMatHsv, pointMatRgba, Imgproc.COLOR_HSV2RGB_FULL, 4);
 
         return new Scalar(pointMatRgba.get(0, 0));
+    }
+    
+    public boolean existslowestPoint() {
+    	return lowestBlobPoint != null;
     }
 }

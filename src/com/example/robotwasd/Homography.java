@@ -68,7 +68,7 @@ public class Homography {
 			return new Mat();
 	}
 
-	public Position collectBall(String color) {
+	public Position collectBall() {
 		Position goal = new Position();
 
 		Mat src = new Mat(1, 1, CvType.CV_32FC2);
