@@ -1,5 +1,8 @@
 package com.example.robotwasd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jp.ksksue.driver.serial.FTDriver;
 import android.widget.TextView;
 
@@ -233,15 +236,27 @@ public class Robot {
 	}
 	
 	public void explore() {
-		for (int i=0; i < 4 && !blobDetection.existslowestPoint(); i++) {
-			move.robotTurn(90);
+		List<Position> positions = new ArrayList<Position>();
+		Position p0 = new Position( 0, 0,  0);
+		Position p1 = new Position( 1, 1, 45);
+		Position p2 = new Position(-1, 1,180);
+		Position p3 = new Position(-1,-1,-90);
+		Position p4 = new Position( 1,-1,  0);
+		positions.add(p0);
+		positions.add(p1);
+		positions.add(p2);
+		positions.add(p3);
+		positions.add(p4);
+		
+		for (Position p : positions) {
+			navigateToPosition(p, true, false);
+			for (int i=0; i < 4 && !blobDetection.existslowestPoint(); i++) {
+				move.robotTurn(90);
+			}
+			if (blobDetection.existslowestPoint()) {
+				return;
+			}
 		}
-		if (blobDetection.existslowestPoint()) {
-			return;
-		}
-		move.robotTurn(90);
-		move.robotDrive(50, false);
-		explore();
 	}
 	
 	public void calibrateHomography() {
