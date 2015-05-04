@@ -155,7 +155,7 @@ public class Movement {
 				// correct odometry values if robot doesn't hit an obstacle
 				if (!robotHit) {
 					odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
-					textLog.setText(odometry.getPosition().toString());
+					// textLog.setText(odometry.getPosition().toString());
 				}
 			}
 			else {
@@ -183,7 +183,8 @@ public class Movement {
 				robotTurn_helper(Byte.MAX_VALUE);
 		}
 		robotTurn_helper(remain);
-		textLog.setText(odometry.getPosition().toString());
+		// textLog.setText(odometry.getPosition().toString());
+		
 	}
 
 	/**

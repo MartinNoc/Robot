@@ -20,11 +20,11 @@ public class Communication {
 	
 	public boolean connect() {
 		if (driver.begin(BAUDRATE)){
-			//textLog.setText("connected");
+			// textLog.setText("connected");
 			return true;
 		}
         else{
-        	//textLog.setText("could not connect");
+        	// textLog.setText("could not connect");
         	return false;
         }
 	}
@@ -32,7 +32,7 @@ public class Communication {
 	public void disconnect() {
 	       driver.end();
 	       if (!driver.isConnected()) {
-	          textLog.setText("disconnected");
+	    	   // textLog.setText("disconnected");
 	       }
 	}
 	
@@ -55,7 +55,7 @@ public class Communication {
 			return true;
 		}
 		else {
-			textLog.setText("not connected");
+			// textLog.setText("not connected");
 			return false;
 		}
 	}
@@ -80,7 +80,7 @@ public class Communication {
 			}
 		}
 		else {
-			textLog.setText("not connected");
+			// textLog.setText("not connected");
 		}
 		return s;
 	}
@@ -102,7 +102,7 @@ public class Communication {
 			}
 		}
 		else {
-			textLog.setText("not connected");
+			// textLog.setText("not connected");
 		}
 		return readRobot();
 	}

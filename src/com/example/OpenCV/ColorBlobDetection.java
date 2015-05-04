@@ -31,6 +31,7 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
+    private Mat					 setPicture;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
     private ColorBlobDetector    mDetector;
@@ -117,6 +118,7 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+    	System.out.println("Robot: new frame");
         mRgba = inputFrame.rgba();
         rawPicture = inputFrame.rgba();
         //Mat rotMat = Imgproc.getRotationMatrix2D(new Point(mRgba.cols()/2,mRgba.rows()/2), -90.0, 1);      

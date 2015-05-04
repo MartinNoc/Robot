@@ -61,22 +61,22 @@ public class Robot {
 	}
 
 	public void moveForward() {
-		textLog.setText("forward");
+		// textLog.setText("forward");
 		move.moveForward();
 	}
 
 	public void moveBackward() {
-		textLog.setText("backward");
+		// textLog.setText("backward");
 		move.moveBackward();
 	}
 
 	public void stopRobot() {
-		textLog.setText("stop");
+		// textLog.setText("stop");
 		move.stopRobot();
 	}
 
 	public void turnLeft() {
-		textLog.setText("turn left");
+		// textLog.setText("turn left");
 		move.turnLeft();
 	}
 
@@ -89,7 +89,7 @@ public class Robot {
 	}
 
 	public void turnRight() {
-		textLog.setText("turn right");
+		// textLog.setText("turn right");
 		move.turnRight();
 	}
 	
@@ -102,12 +102,12 @@ public class Robot {
 	}
 
 	public void lowerBar() {
-		textLog.setText("lower");
+		// textLog.setText("lower");
 		move.lowerBar();
 	}
 
 	public void riseBar() {
-		textLog.setText("rise");
+		// textLog.setText("rise");
 		move.riseBar();
 	}
 
@@ -115,7 +115,7 @@ public class Robot {
 	 * low fix position for bar
 	 */
 	public void lowPositionBar() {
-		//textLog.setText("low Position");
+		// textLog.setText("low Position");
 		move.lowPositionBar();
 	}
 
@@ -123,7 +123,7 @@ public class Robot {
 	 * high fix position for bar
 	 */
 	public void upPositionBar() {
-		textLog.setText("up Position");
+		// textLog.setText("up Position");
 		move.upPositionBar();
 	}
 
@@ -131,7 +131,7 @@ public class Robot {
 	 * all LEDs on
 	 */
 	public void LedOn() {
-		textLog.setText("all LED on");
+		// textLog.setText("all LED on");
 		move.LedOn();
 	}
 
@@ -139,7 +139,7 @@ public class Robot {
 	 * all LEDs off
 	 */
 	public void LedOff() {
-		textLog.setText("all LED off");
+		// 	textLog.setText("all LED off");
 		move.LedOff();
 	}
 
@@ -156,7 +156,7 @@ public class Robot {
 	 * @param distance_cm
 	 */
 	public void driveSquare(double distance_cm) {
-		textLog.setText("drive Square");
+		// textLog.setText("drive Square");
 		for (int i = 0; i < 4; i++) {
 			move.robotDrive(distance_cm, true);
 			move.robotTurn(90);
@@ -167,14 +167,15 @@ public class Robot {
 	 * calibrate the distance for obstacle avoidance
 	 */
 	public void calibrateSensor() {
-		textLog.setText("calibration done: " + Double.toString(obst.setStopDistance()) + "cm");		
+		obst.setStopDistance();
+		// textLog.setText("calibration done: " + Double.toString(obst.setStopDistance()) + "cm");		
 	}
 
 	/**
 	 * print out the actual odometry position to the textView
 	 */
 	public void printOdometryData() {
-		textLog.setText(odometry.getPosition().toString());
+		// textLog.setText(odometry.getPosition().toString());
 	}
 	
 	/**
@@ -199,10 +200,12 @@ public class Robot {
 		 */
 		
 		move.turnTowardsPosition(goal);
-		
+
 		while(true) {
 			Position robotPos = odometry.getPosition();
 			double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
+			if(!withAvoidance)
+				distance = distance - 10;
 			if (move.robotDrive(distance, withAvoidance)) {
 				//during driving robot drive against an obstacle, drive around and then drive again to position
 				move.avoidanceAlgorithm(goal);
@@ -215,9 +218,10 @@ public class Robot {
 				return;
 			}
 		}
+		
 	}
 	
-	public void collectRedBall(boolean withExplore) {
+	public void collectBall(boolean withExplore) {
 		if (withExplore) {
 			explore();
 		}
@@ -231,31 +235,33 @@ public class Robot {
 		
 		lowPositionBar();
 		
+		navigateToPosition(new Position(150,150,0), false, false);
+		
 		navigateToPosition(new Position(0,0,0), true, false);
 		
 	}
 	
 	public void explore() {
 		List<Position> positions = new ArrayList<Position>();
-		Position p0 = new Position( 0, 0,  0);
 		Position p1 = new Position( 1, 1, 45);
 		Position p2 = new Position(-1, 1,180);
 		Position p3 = new Position(-1,-1,-90);
 		Position p4 = new Position( 1,-1,  0);
-		positions.add(p0);
+		Position p5 = new Position( 0, 0,  0);
 		positions.add(p1);
 		positions.add(p2);
 		positions.add(p3);
 		positions.add(p4);
+		positions.add(p5);
 		
 		for (Position p : positions) {
-			navigateToPosition(p, true, false);
 			for (int i=0; i < 4 && !blobDetection.existslowestPoint(); i++) {
 				move.robotTurn(90);
 			}
 			if (blobDetection.existslowestPoint()) {
 				return;
 			}
+			navigateToPosition(p, true, false);
 		}
 	}
 	
