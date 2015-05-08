@@ -1,6 +1,5 @@
 package com.example.robotwasd;
 
-import android.widget.TextView;
 import jp.ksksue.driver.serial.FTDriver;
 
 /**
@@ -10,30 +9,24 @@ import jp.ksksue.driver.serial.FTDriver;
  */
 public class Communication {
 	private FTDriver driver;
-	private TextView textLog;
 	private static final int BAUDRATE = 9600;
 	
-	public Communication(FTDriver driver, TextView textLog){
+	public Communication(FTDriver driver){
 		this.driver = driver;
-		this.textLog = textLog;
 	}
 	
 	public boolean connect() {
 		if (driver.begin(BAUDRATE)){
-			// textLog.setText("connected");
 			return true;
 		}
         else{
-        	// textLog.setText("could not connect");
         	return false;
         }
 	}
 	
-	public void disconnect() {
+	public boolean disconnect() {
 	       driver.end();
-	       if (!driver.isConnected()) {
-	    	   // textLog.setText("disconnected");
-	       }
+	       return !driver.isConnected();
 	}
 	
 	public void reconnect() {
@@ -55,7 +48,6 @@ public class Communication {
 			return true;
 		}
 		else {
-			// textLog.setText("not connected");
 			return false;
 		}
 	}
@@ -79,9 +71,6 @@ public class Communication {
 				i++;
 			}
 		}
-		else {
-			// textLog.setText("not connected");
-		}
 		return s;
 	}
 	
@@ -100,9 +89,6 @@ public class Communication {
 			} catch (InterruptedException e) {
 				// ignore
 			}
-		}
-		else {
-			// textLog.setText("not connected");
 		}
 		return readRobot();
 	}

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.ksksue.driver.serial.FTDriver;
-import android.widget.TextView;
-
-import com.example.OpenCV.ColorBlobDetection;
 
 /**
  * Class to controll the functions of the robot
@@ -15,68 +12,65 @@ import com.example.OpenCV.ColorBlobDetection;
  * 
  */
 public class Robot {
-	public TextView textLog;
 	private Communication com;
 	private Movement move;
 	private Odometry odometry;
 	private ObstacleAvoidance obst;
 	private FTDriver driver;
-	private ColorBlobDetection blobDetection;
 	private Homography homography;
 
-	public Robot(FTDriver driver, TextView textLog, ColorBlobDetection blobDetection) {
-		this.textLog = textLog;
+	public Robot(FTDriver driver) {
 		this.driver = driver;
-		this.blobDetection = blobDetection;
 	}
 
 	/**
 	 * create all helper classes
+	 * @return true if connecting to robot was successfully
 	 */
-	public void initialize() {
-		com = new Communication(driver, textLog);
+	public boolean initialize() {
+		com = new Communication(driver);
 		odometry = new Odometry();
 		obst = new ObstacleAvoidance(this, odometry);
-		move = new Movement(com, odometry, obst, textLog);
-		homography = new Homography(blobDetection);
-		connect();
+		move = new Movement(com, odometry, obst);
+		homography = new Homography();
+		return connect();
 	}
 
 	/**
 	 * create the usb connection to the robot
+	 * @return true if robot is connected otherwise false
 	 */
-	public void connect() { 
-		 com.connect();
+	public boolean connect() { 
+		 return com.connect();
 	}
 	
 	/**
 	 * disconnect from robot
+	 * @return true if disconnection was succesfully
 	 */
-	public void disconnect() { 
-		 if (com.isConnected()) { 
+	public boolean disconnect() { 
+		boolean ret = false; 
+		if (com.isConnected()) { 
 			 //stop robot
 			 move.stopRobot();
-			 com.disconnect(); 
+			 ret = com.disconnect(); 
 		} 
+		return ret;
 	}
 
 	public void moveForward() {
-		// textLog.setText("forward");
 		move.moveForward();
 	}
 
 	public void moveBackward() {
-		// textLog.setText("backward");
 		move.moveBackward();
 	}
 
 	public void stopRobot() {
-		// textLog.setText("stop");
 		move.stopRobot();
 	}
 
 	public void turnLeft() {
-		// textLog.setText("turn left");
 		move.turnLeft();
 	}
 
@@ -89,7 +83,6 @@ public class Robot {
 	}
 
 	public void turnRight() {
-		// textLog.setText("turn right");
 		move.turnRight();
 	}
 	
@@ -102,12 +95,10 @@ public class Robot {
 	}
 
 	public void lowerBar() {
-		// textLog.setText("lower");
 		move.lowerBar();
 	}
 
 	public void riseBar() {
-		// textLog.setText("rise");
 		move.riseBar();
 	}
 
@@ -115,7 +106,6 @@ public class Robot {
 	 * low fix position for bar
 	 */
 	public void lowPositionBar() {
-		// textLog.setText("low Position");
 		move.lowPositionBar();
 	}
 
@@ -123,7 +113,6 @@ public class Robot {
 	 * high fix position for bar
 	 */
 	public void upPositionBar() {
-		// textLog.setText("up Position");
 		move.upPositionBar();
 	}
 
@@ -131,7 +120,6 @@ public class Robot {
 	 * all LEDs on
 	 */
 	public void LedOn() {
-		// textLog.setText("all LED on");
 		move.LedOn();
 	}
 
@@ -139,7 +127,6 @@ public class Robot {
 	 * all LEDs off
 	 */
 	public void LedOff() {
-		// 	textLog.setText("all LED off");
 		move.LedOff();
 	}
 
@@ -156,7 +143,6 @@ public class Robot {
 	 * @param distance_cm
 	 */
 	public void driveSquare(double distance_cm) {
-		// textLog.setText("drive Square");
 		for (int i = 0; i < 4; i++) {
 			move.robotDrive(distance_cm, true);
 			move.robotTurn(90);
@@ -165,17 +151,10 @@ public class Robot {
 
 	/**
 	 * calibrate the distance for obstacle avoidance
+	 * @return measured stop distance
 	 */
-	public void calibrateSensor() {
-		obst.setStopDistance();
-		// textLog.setText("calibration done: " + Double.toString(obst.setStopDistance()) + "cm");		
-	}
-
-	/**
-	 * print out the actual odometry position to the textView
-	 */
-	public void printOdometryData() {
-		// textLog.setText(odometry.getPosition().toString());
+	public double calibrateSensor() {
+		return obst.setStopDistance();	
 	}
 	
 	/**
@@ -183,7 +162,14 @@ public class Robot {
 	 */
 	public void initOdometryPosition(){
 		odometry.setPosition(0, 0, 0);
-		printOdometryData();
+	}
+	
+	/**
+	 * get odometry position
+	 * @return actual odometry position from the robot
+	 */
+	public Position getOdometryPosition(){
+		return odometry.getPosition();
 	}
 	
 	/**
@@ -255,10 +241,10 @@ public class Robot {
 		positions.add(p5);
 		
 		for (Position p : positions) {
-			for (int i=0; i < 4 && !blobDetection.existslowestPoint(); i++) {
+			for (int i=0; i < 4 && !ValueHolder.existslowestPoint(); i++) {
 				move.robotTurn(90);
 			}
-			if (blobDetection.existslowestPoint()) {
+			if (ValueHolder.existslowestPoint()) {
 				return;
 			}
 			navigateToPosition(p, true, false);

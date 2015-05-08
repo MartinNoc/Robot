@@ -1,11 +1,14 @@
-package com.example.OpenCV;
+package com.example.robotwasd;
 
 import java.util.Iterator;
 import java.util.List;
 
+import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -16,17 +19,23 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
+import android.view.WindowManager;
 
 /**
  * coordinate the camera and color-blob detection
  * @author Witsch Daniel
  *
  */
-public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener2 {
+public class ColorBlobDetection extends ActionBarActivity implements OnTouchListener, CvCameraViewListener2 {
     private static final String  TAG              = "OCVSample::Activity";
 
     private boolean              mIsColorSelected = false;
@@ -39,15 +48,61 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
     
-    public	Mat					 rawPicture;
-    public  Point				 lowestBlobPoint;
-
     public CameraBridgeViewBase mOpenCvCameraView;
     
-    public ColorBlobDetection(View view){
-        mOpenCvCameraView = (CameraBridgeViewBase) view;
+	/**
+	 * load the OpenCV camera
+	 */
+	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+		@Override
+		public void onManagerConnected(int status) {
+			switch (status) {
+			case LoaderCallbackInterface.SUCCESS: {
+				mOpenCvCameraView.enableView();
+				mOpenCvCameraView
+						.setOnTouchListener(ColorBlobDetection.this);
+			}
+				break;
+			default: {
+				super.onManagerConnected(status);
+			}
+				break;
+			}
+		}
+	};
+    
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		super.onCreate(savedInstanceState);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setContentView(R.layout.color_blob_detection_surface_view);
+
+		// initialize the ColorBlobDetection and Camera
+		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
-    }
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this,
+				mLoaderCallback);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
+	}
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
@@ -120,9 +175,7 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
     	System.out.println("Robot: new frame");
         mRgba = inputFrame.rgba();
-        rawPicture = inputFrame.rgba();
-        //Mat rotMat = Imgproc.getRotationMatrix2D(new Point(mRgba.cols()/2,mRgba.rows()/2), -90.0, 1);      
-        //Imgproc.warpAffine(mRgba, mRgba, rotMat, mRgba.size());
+        ValueHolder.setRawPicture(inputFrame.rgba());
        
         if (mIsColorSelected) {
             mDetector.process(mRgba);
@@ -141,16 +194,15 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 		            		lowest = p;
 		            }
             	}
-	           	//System.out.println("ROBOT: " + lowest.y);
 	           	
-	           	lowestBlobPoint = lowest;
+	           	ValueHolder.setLowestBlobPoint(lowest);
             }
             else {
-            	lowestBlobPoint.x = -1;
-            	lowestBlobPoint.y = -1;
+            	ValueHolder.getLowestBlobPoint().x = -1;
+            	ValueHolder.getLowestBlobPoint().y = -1;
             }
             
-            Core.circle(mRgba, lowestBlobPoint, 20, new Scalar(200.0), -1);
+            Core.circle(mRgba, ValueHolder.getLowestBlobPoint(), 20, new Scalar(200.0), -1);
             Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
@@ -171,8 +223,35 @@ public class ColorBlobDetection implements OnTouchListener, CvCameraViewListener
 
         return new Scalar(pointMatRgba.get(0, 0));
     }
-    
-    public boolean existslowestPoint() {
-    	return !(lowestBlobPoint.x == -1 && lowestBlobPoint.y == -1);
-    }
+        
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		// getMenuInflater().inflate(R.menu.main, menu);
+		menu.add("Buttons");
+		menu.add("Collect");
+		menu.add("Homography");
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		CharSequence itemSelected = item.getTitle();
+		switch (itemSelected.toString()) {
+		case "Buttons":
+			finish();
+			break;
+		case "Collect":
+			RobotThread thread = new RobotThread(ValueHolder.getRobot());
+			thread.start();
+			break;
+		case "Homography":
+			ValueHolder.getRobot().calibrateHomography();
+			break;
+		}
+		return false;
+	}
 }

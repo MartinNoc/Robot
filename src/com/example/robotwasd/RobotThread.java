@@ -11,8 +11,6 @@ public class RobotThread extends Thread {
 	}
 
 	public void run() {
-		System.out.println("Robot:start");
 		robot.collectBall(true);
-		System.out.println("Robot:stop");
 	}
 }

@@ -11,21 +11,17 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import com.example.OpenCV.ColorBlobDetection;
-
 public class Homography {
 
-	private ColorBlobDetection blobDetection;
 	private Mat homographyMatrix;
 
-	public Homography(ColorBlobDetection blobDetection) {
-		this.blobDetection = blobDetection;
+	public Homography() {
 	}
 
 	public Mat calibrateHomography() {
-		homographyMatrix = getHomographyMatrix(blobDetection.rawPicture);
+		homographyMatrix = getHomographyMatrix(ValueHolder.getRawPicture());
 		while (homographyMatrix.empty()) {
-			homographyMatrix = getHomographyMatrix(blobDetection.rawPicture);
+			homographyMatrix = getHomographyMatrix(ValueHolder.getRawPicture());
 		}
 		return homographyMatrix;
 	}
@@ -73,7 +69,7 @@ public class Homography {
 
 		Mat src = new Mat(1, 1, CvType.CV_32FC2);
 		Mat dest = new Mat(1, 1, CvType.CV_32FC2);
-		src.put(0, 0, new double[] { blobDetection.lowestBlobPoint.x, blobDetection.lowestBlobPoint.y }); // ps is a point in image coordinates
+		src.put(0, 0, new double[] { ValueHolder.getLowestBlobPoint().x, ValueHolder.getLowestBlobPoint().y }); // ps is a point in image coordinates
 		Core.perspectiveTransform(src, dest, homographyMatrix); // homography is your homography matrix
 		Point dest_point = new Point(dest.get(0, 0)[0], dest.get(0, 0)[1]);
 		

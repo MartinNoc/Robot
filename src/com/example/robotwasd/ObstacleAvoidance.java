@@ -81,7 +81,6 @@ public class ObstacleAvoidance {
 				// calculate driven distance and correct odometry
 				double driveDistance = driveTimeSec * coefficient_length_time;
 				odometry.adjustOdometry(driveDistance, 0);
-				// robot.textLog.setText(odometry.getPosition().toString());
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {

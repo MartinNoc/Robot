@@ -1,6 +1,5 @@
 package com.example.robotwasd;
 
-import android.widget.TextView;
 
 /**
  * Wrapper Class for all movements of the robot
@@ -19,13 +18,11 @@ public class Movement {
 	private Communication com;
 	private Odometry odometry;
 	private ObstacleAvoidance obst;
-	private TextView textLog;
 
-	public Movement(Communication com, Odometry odometry, ObstacleAvoidance obst, TextView textLog) {
+	public Movement(Communication com, Odometry odometry, ObstacleAvoidance obst) {
 		this.com = com;
 		this.odometry = odometry;
 		this.obst = obst;
-		this.textLog = textLog;
 	}
 
 	/**
@@ -155,7 +152,6 @@ public class Movement {
 				// correct odometry values if robot doesn't hit an obstacle
 				if (!robotHit) {
 					odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
-					// textLog.setText(odometry.getPosition().toString());
 				}
 			}
 			else {
@@ -183,7 +179,6 @@ public class Movement {
 				robotTurn_helper(Byte.MAX_VALUE);
 		}
 		robotTurn_helper(remain);
-		// textLog.setText(odometry.getPosition().toString());
 		
 	}
 
