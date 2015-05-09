@@ -8,9 +8,9 @@ package com.example.robotwasd;
  * 
  */
 public class Movement {
-	private final double COEFFICIENT_LENGTH = 1.352;		// constant to correct length of driving
+	private final double COEFFICIENT_LENGTH = 1.355;		// constant to correct length of driving
 	private final double COEFFICIENT_LENGTH_TIME = 0.073; 	// seconds per cm
-	private final double COEFFICIENT_DEGREE = 1.12;		// constant to correct rotation
+	private final double COEFFICIENT_DEGREE = 1.14;		// constant to correct rotation
 	private final double COEFFICIENT_DEGREE_TIME = 0.016111;// seconds per degree
 	
 	static boolean turnLeft = true;
@@ -93,99 +93,107 @@ public class Movement {
 		robotSetLeds((byte) 0, (byte) 0);
 	}
 
-	/** helper functions */
-	/********************************************/
+
 
 	/**
 	 * Setting blue and red LED
-	 * 
-	 * @param red
-	 * @param blue
 	 */
 	public void robotSetLeds(byte red, byte blue) {
 		com.readWriteRobot(new byte[] { 'u', red, blue, '\r', '\n' });
 	}
 
 	/**
-	 * Driving straight forward/backward Computes correctedDistance and splits
-	 * driving into parts in order to avoid overflows
+	 * Driving straight forward/backward. Computes correctedDistance and splits
+	 * driving into parts in order to avoid overflows.
 	 * 
-	 * @param distance_cm
-	 * @return when true then robot hit against an obstacle
+	 * No Obstacle Avoidance.
 	 */
-	public boolean robotDrive(double distance_cm, boolean withAvoidance) {
+	public void robotDrive(double distance_cm) {
 		double correctedDistance = distance_cm * COEFFICIENT_LENGTH;
-		int numberRepetitions = (int) (correctedDistance / Byte.MAX_VALUE);
+		int numberRepetitions = (int) (Math.abs(correctedDistance) / Byte.MAX_VALUE);
 		double remain = correctedDistance % Byte.MAX_VALUE;
-		boolean robotHit = false;
+		
+		for (int i = 0; i < numberRepetitions; i++) {
+			double distance_robot = Math.signum(correctedDistance) * Byte.MAX_VALUE;
+			com.readWriteRobot(new byte[] { 'k', (byte) Math.round(distance_robot), '\r', '\n' });
+			
+			waitForRobotDrive(Byte.MAX_VALUE / COEFFICIENT_LENGTH);
+			
+		}
+		com.readWriteRobot(new byte[] { 'k', (byte) Math.round(remain), '\r', '\n' });
+		waitForRobotDrive(remain / COEFFICIENT_LENGTH);
+		
+		odometry.adjustOdometry(distance_cm, 0);
+	}
+	
+	/**
+	 * Driving straight forward/backward. With Obstacle Avoidance
+	 * 
+	 * @return true if robot hits an obstacle
+	 */
+	public boolean robotDriveOA(double distance_cm) {		
+		double correctedDistance = distance_cm * COEFFICIENT_LENGTH;
+		int numberRepetitions = (int) (Math.abs(correctedDistance) / Byte.MAX_VALUE);
+		double remain = correctedDistance % Byte.MAX_VALUE;
 
-		for (int i = 0; i < Math.abs(numberRepetitions); i++) {
-			if (correctedDistance < 0)
-				robotHit = robotDrive_helper(-Byte.MAX_VALUE, withAvoidance);
-			else
-				robotHit = robotDrive_helper(Byte.MAX_VALUE, withAvoidance);
-			if(robotHit)	//when robot drives against an obstacle
+		for (int i = 0; i < numberRepetitions; i++) {
+			double distance_robot = Math.signum(correctedDistance) * Byte.MAX_VALUE;
+			if (robotDriveOA_helper(distance_robot)) {
 				return true;
+			}
 		}
 		//when robot doesn't drive against an obstacle
-		return robotDrive_helper(remain, withAvoidance);
-		
+		return robotDriveOA_helper(remain);
 	}
 
 	/**
-	 * Helper for driving straight forward/backward
+	 * Helper for robotDriveOA method.
 	 * 
-	 * @param distance_cm
-	 *            Real distance robot will drive
+	 * @param distance_cm Real distance robot will drive
 	 */
-	private boolean robotDrive_helper(double distance_cm, boolean withAvoidance) {
+	private boolean robotDriveOA_helper(double distance_cm) {
 		double waitingTime;
 		boolean robotHit = false;
+		
 		if (!obst.checkObstacleAhead()) {
 			waitingTime = calculateWaitTimeLength(distance_cm / COEFFICIENT_LENGTH);
 			com.readWriteRobot(new byte[] { 'k', (byte) Math.round(distance_cm), '\r', '\n' });
 			// round in order to get a minimal error by casting to byte
 			// only effective when passing remain
-			
-			if (withAvoidance) {
-				robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis());
-				// correct odometry values if robot doesn't hit an obstacle
-				if (!robotHit) {
-					odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
-				}
-			}
-			else {
-				try {
-					Thread.sleep((long)waitingTime);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		
+			robotHit = obst.avoidObstacles(waitingTime, System.currentTimeMillis());
+			// correct odometry values if robot doesn't hit an obstacle
+			if (!robotHit) {
 				odometry.adjustOdometry(distance_cm / COEFFICIENT_LENGTH, 0);
 			}
+		
 			return robotHit;
 		}
-		else
+		else {
 			return true;
-	}
-
-	public void robotTurn(double degree) {
-		double correctedDegree = degree * COEFFICIENT_DEGREE;
-		int numberRepetitions = (int) (correctedDegree / Byte.MAX_VALUE);
-		double remain = correctedDegree % Byte.MAX_VALUE;
-		for (int i = 0; i < Math.abs(numberRepetitions); i++) {	//abs for minus degrees
-			if(correctedDegree < 0)	//when degree is negative
-				robotTurn_helper(-Byte.MAX_VALUE);
-			else
-				robotTurn_helper(Byte.MAX_VALUE);
 		}
-		robotTurn_helper(remain);
-		
 	}
 
 	/**
 	 * Turning the robot on the spot, counter-clockwise (left)
-	 * 
 	 * @param degree
+	 */
+	public void robotTurn(double degree) {
+		double correctedDegree = degree * COEFFICIENT_DEGREE;
+		int numberRepetitions = (int) (Math.abs(correctedDegree) / Byte.MAX_VALUE);
+		double remain = correctedDegree % Byte.MAX_VALUE;
+		
+		for (int i = 0; i < numberRepetitions; i++) {
+			double degree_robot = Math.signum(correctedDegree) * Byte.MAX_VALUE;
+			robotTurn_helper(degree_robot);
+		}
+		robotTurn_helper(remain);
+		
+		odometry.adjustOdometry(0, degree);
+	}
+
+	/**
+	 * Helper for robotTurn method.
 	 */
 	private void robotTurn_helper(double degree) {
 		com.readWriteRobot(new byte[] { 'l', (byte) Math.round(degree), '\r', '\n' }
@@ -194,14 +202,10 @@ public class Movement {
 		);
 
 		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
-		odometry.adjustOdometry(0, degree / COEFFICIENT_DEGREE);
 	}
 
 	/**
 	 * Driving by velocity
-	 * 
-	 * @param left
-	 * @param right
 	 */
 	public void robotSetVelocity(byte left, byte right) {
 		com.readWriteRobot(new byte[] { 'i', left, right, '\r', '\n' });
@@ -209,25 +213,30 @@ public class Movement {
 
 	/**
 	 * Using the bar
-	 * 
-	 * @param value
 	 */
 	public void robotSetBar(byte value) {
 		com.readWriteRobot(new byte[] { 'o', value, '\r', '\n' });
 	}
 
 	/**
-	 * calculates the time till the movement is over [ms]
+	 * Calculates the time till the movement is over [ms]
 	 * 
-	 * @param distance_cm
-	 *            distance to drive
+	 * @param distance_cm distance to drive
 	 */
 	private double calculateWaitTimeLength(double distance_cm) {
 		return (Math.abs(distance_cm) * COEFFICIENT_LENGTH_TIME * 1.1 * 1000);
 	}
+	
+	private void waitForRobotDrive(double distance_cm) {
+		try {
+			Thread.sleep((long)(Math.abs(distance_cm) * COEFFICIENT_LENGTH_TIME * 1.1 * 1000));
+		} catch (InterruptedException e) {
+			// ignore
+		}
+	}
 
 	/**
-	 * calculates the time till the roation is over and sleeps until rotation is done.
+	 * Calculates the time till the roation is over and sleeps until rotation is done.
 	 * 
 	 * @param degree amount of degree to rotate
 	 */
@@ -242,7 +251,7 @@ public class Movement {
 	}
 
 	/**
-	 * moves the robot back to origin position. x = y = theta = 0.
+	 * Moves the robot back to origin position. x = y = theta = 0.
 	 */
 	@Deprecated 
 	public void driveToOrigin() {
@@ -256,7 +265,7 @@ public class Movement {
 		 * negative so the robot moves backwards
 		 */
 		setRobotOrientation(270);
-		robotDrive(p.y, true);
+		robotDriveOA(p.y);
 
 		// now the robot is in y-position zero at some x-position facing
 		// straight down (theta = 3/2*PI)
@@ -266,7 +275,7 @@ public class Movement {
 		 * case analysis due to same reasons as mentioned above
 		 */
 		setRobotOrientation(180);
-		robotDrive(p.x, true);
+		robotDriveOA(p.x);
 
 		// now the robot is in (x/y) position (0/0) at angle theta = PI
 
@@ -276,9 +285,7 @@ public class Movement {
 	/**
 	 * Turns robot to a specific angle alpha
 	 * 
-	 * @param alpha
-	 *            Desired orientation-angle the robot will be turned to: [0,360)
-	 *            [degree]
+	 * @param alpha Desired orientation-angle the robot will be turned to: [0,360) [degree]
 	 */
 	public void setRobotOrientation(double alpha) {
 		// convert angle alpha to number within interval [0,360)
@@ -306,7 +313,7 @@ public class Movement {
 			else 
 				robotTurn(-90);
 		}
-		robotDrive(90, true);
+		robotDriveOA(90);
 		turnTowardsPosition(goal);
 		
 		if (obst.checkObstacleAhead())
@@ -316,16 +323,12 @@ public class Movement {
 	}
 	
 	/**
-	 * rotates the robot towards the goal position
+	 * Rotates the robot towards the goal position
 	 * @param goal remote point the robot is going to face
 	 */
 	public void turnTowardsPosition(Position goal) {
 		Position robotPos = odometry.getPosition();
 		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x) * 180 / Math.PI;
 		setRobotOrientation(angle);
-	}
-	
-	public void driveWithoutObstacles() {
-		
 	}
 }

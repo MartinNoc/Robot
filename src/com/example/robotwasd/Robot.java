@@ -25,7 +25,7 @@ public class Robot {
 
 	/**
 	 * create all helper classes
-	 * @return true if connecting to robot was successfully
+	 * @return true if connecting to robot was successful
 	 */
 	public boolean initialize() {
 		com = new Communication(driver);
@@ -74,10 +74,6 @@ public class Robot {
 		move.turnLeft();
 	}
 
-	/**
-	 * turning with obstacle avoidance
-	 * @param degree
-	 */
 	public void turnLeft(double degree) {
 		move.turnLeft(degree);
 	}
@@ -86,10 +82,6 @@ public class Robot {
 		move.turnRight();
 	}
 	
-	/**
-	 * turning with obstacle avoidance
-	 * @param degree
-	 */
 	public void turnRight(double degree) {
 		move.turnRight(degree);
 	}
@@ -140,11 +132,11 @@ public class Robot {
 
 	/**
 	 * drive a square
-	 * @param distance_cm
+	 * @param distance_cm side length of square.
 	 */
 	public void driveSquare(double distance_cm) {
 		for (int i = 0; i < 4; i++) {
-			move.robotDrive(distance_cm, true);
+			move.robotDriveOA(distance_cm);
 			move.robotTurn(90);
 		}
 	}
@@ -176,7 +168,7 @@ public class Robot {
 	 * robot drive to the goal position from his actual position
 	 * @param goal goal position
 	 */
-	public void navigateToPosition(Position goal, boolean withOrientation, boolean withAvoidance) {
+	public void navigateToPosition(Position goal) {
 		/**
 		 *  calc angle and distance towards goal considering the robot's current position
 		 *  
@@ -186,25 +178,45 @@ public class Robot {
 		 */
 		
 		move.turnTowardsPosition(goal);
-
-		while(true) {
+		
+		Position robotPos = odometry.getPosition();
+		double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
+		
+		move.robotDrive(distance);
+		
+		move.setRobotOrientation(goal.theta);
+	
+	}
+	
+	/**
+	 * robot drive to the goal position from his actual position with Obstacle Avoidance
+	 */
+	public void navigateToPositionOA(Position goal) {
+		move.turnTowardsPosition(goal);
+		
+		while (true) {
 			Position robotPos = odometry.getPosition();
 			double distance = Math.hypot(goal.x - robotPos.x, goal.y - robotPos.y);
-			if(!withAvoidance)
-				distance = distance - 10;
-			if (move.robotDrive(distance, withAvoidance)) {
-				//during driving robot drive against an obstacle, drive around and then drive again to position
+			
+			if (move.robotDriveOA(distance)) {
+				//during driving robot hit an obstacle, drive around and then head towards goal
 				move.avoidanceAlgorithm(goal);
 			}
 			else {
 				//driving worked perfect, no obstacles
-				if (withOrientation) {
-					move.setRobotOrientation(goal.theta);
-				}
+				move.setRobotOrientation(goal.theta);
 				return;
 			}
 		}
+	}
+	
+	public void navigateToEgocentricPosition(Position goal) {
+		double angle = Math.atan2(goal.y, goal.x) * 180 / Math.PI;
+		move.robotTurn(angle);
 		
+		double distance = Math.hypot(goal.x, goal.y);
+		
+		move.robotDrive(distance);
 	}
 	
 	public void collectBall(boolean withExplore) {
@@ -212,33 +224,56 @@ public class Robot {
 			explore();
 		}
 		
-		Position ballPosition = homography.collectBall();
+		if (!ValueHolder.existslowestPoint()) {
+			// ball still not found!
+			return;
+		}
 		
-		ballPosition.x += odometry.getPosition().x;
-		ballPosition.y += odometry.getPosition().y;
+		Position ballPosition = homography.calcPixelPosition();
 		
-		navigateToPosition(ballPosition, false, false);
+		navigateToEgocentricPosition(ballPosition);
 		
 		lowPositionBar();
 		
-		navigateToPosition(new Position(150,150,0), false, false);
+		//navigateToPosition(new Position(150,150,0));
 		
-		navigateToPosition(new Position(0,0,0), true, false);
+		//upPositionBar();
+		
+		navigateToPosition(new Position(0,0,0));
+		
+		upPositionBar();
 		
 	}
 	
+	/*  _____________________(150/150)
+	 * |          |          |
+	 * |  p3      |     p2   |
+	 * |          |          |
+	 * |          |          |
+	 * |--------p0,7---p1,6--|
+	 * |          |          |
+	 * |          |          |
+	 * |  p4      |     p5   |
+	 * |__________|__________|
+	 * (-150/-150)           (150/-150)
+	 * 
+	 */
 	public void explore() {
 		List<Position> positions = new ArrayList<Position>();
-		Position p1 = new Position( 1, 1, 45);
-		Position p2 = new Position(-1, 1,180);
-		Position p3 = new Position(-1,-1,-90);
-		Position p4 = new Position( 1,-1,  0);
-		Position p5 = new Position( 0, 0,  0);
+		Position p1 = new Position( 50,   0,  0);
+		Position p2 = new Position( 50, 50, 90);
+		Position p3 = new Position(-50, 50,180);
+		Position p4 = new Position(-50,-50,-90);
+		Position p5 = new Position( 50,-50,  0);
+		Position p6 = new Position( 50,   0, 90);
+		Position p7 = new Position(   0,   0,180);
 		positions.add(p1);
 		positions.add(p2);
 		positions.add(p3);
 		positions.add(p4);
 		positions.add(p5);
+		positions.add(p6);
+		positions.add(p7);
 		
 		for (Position p : positions) {
 			for (int i=0; i < 4 && !ValueHolder.existslowestPoint(); i++) {
@@ -247,10 +282,14 @@ public class Robot {
 			if (ValueHolder.existslowestPoint()) {
 				return;
 			}
-			navigateToPosition(p, true, false);
+			navigateToPosition(p);
 		}
 	}
 	
+	/**
+	 * Calibrates the homography matrix by analyzing the camera image.
+	 * Image should show the homography chess board.
+	 */
 	public void calibrateHomography() {
 		homography.calibrateHomography();
 	}

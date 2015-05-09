@@ -1,24 +1,19 @@
 package com.example.robotwasd;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Odometry class.
  * Keep track of the robot's position via maintaining Position instance
  * including x-coordinate, y-coordinate and orientation 'theta'
- * @author Nocker Martin
  */
 public class Odometry {
 
 	private Position p;
-	private List<Position> robotPosList;
 	
 	private final double ACCURACY_THREASHOLD = 1e-3;
 	
 	public Odometry() {
 		p = new Position();
-		robotPosList = new ArrayList<Position>();
 	}
 	
 	public Position getPosition(){
@@ -54,17 +49,5 @@ public class Odometry {
 		if (Math.abs(p.theta) < ACCURACY_THREASHOLD) p.theta = 0;
 		if (Math.abs(p.x) < ACCURACY_THREASHOLD) p.x = 0;
 		if (Math.abs(p.y) < ACCURACY_THREASHOLD) p.y = 0;
-	}
-	
-	
-	/**
-	 * Methods to save robot's position into the List of positions
-	 */
-	public void saveRobotPosition(double x, double y, double theta){
-		robotPosList.add(new Position(x,y,theta));
-	}
-	
-	public void saveRobotPosition(Position p){
-		robotPosList.add(p);
 	}
 }

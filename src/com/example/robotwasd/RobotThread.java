@@ -1,6 +1,10 @@
 package com.example.robotwasd;
 
-
+/**
+ * Thread class which performs actions in a separate thread.
+ * Thus the UI Thread is able to continue obtaining camera images.
+ *
+ */
 public class RobotThread extends Thread {
 
 	private Robot robot;
@@ -11,6 +15,7 @@ public class RobotThread extends Thread {
 	}
 
 	public void run() {
-		robot.collectBall(true);
+		boolean withExplore = true;
+		robot.collectBall(withExplore);
 	}
 }

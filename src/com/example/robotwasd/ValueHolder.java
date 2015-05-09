@@ -3,6 +3,10 @@ package com.example.robotwasd;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+/**
+ * Common Access Point for shared objects and values
+ *
+ */
 public class ValueHolder {
 	private static Robot robot;
     public	static Mat rawPicture;

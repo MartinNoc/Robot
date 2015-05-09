@@ -11,6 +11,12 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+/**
+ * Homography class: Mapping from image pixel coordinates to egocentric ground plane coordinates.
+ * Provides methods for initializing the homography matrix and calculating ground plane
+ * coordinates for given pixel coordinates.
+ *
+ */
 public class Homography {
 
 	private Mat homographyMatrix;
@@ -27,8 +33,8 @@ public class Homography {
 	}
 
 	private Mat getHomographyMatrix(Mat mRgba) {
-		final float Y_OFFS =  295.0f;
-		final float X_OFFS =  -20.0f;
+		final float Y_OFFS =  100.0f;
+		final float X_OFFS =  -30.0f;
 		
 		// number of inner corners in the used chessboard pattern
 		final Size mPatternSize = new Size(6, 9);
@@ -64,7 +70,7 @@ public class Homography {
 			return new Mat();
 	}
 
-	public Position collectBall() {
+	public Position calcPixelPosition() {
 		Position goal = new Position();
 
 		Mat src = new Mat(1, 1, CvType.CV_32FC2);

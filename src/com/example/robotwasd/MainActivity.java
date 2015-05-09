@@ -38,6 +38,10 @@ public class MainActivity extends ActionBarActivity {
 		editTextX = (EditText) findViewById(R.id.edit_inputX);
 		editTextY = (EditText) findViewById(R.id.edit_inputY);
 		editTextTheta = (EditText) findViewById(R.id.edit_inputTheta);
+		
+		editTextX.setText("40");
+		editTextY.setText("0");
+		editTextTheta.setText("0");
 
 		// load FTDriver
 		FTDriver driver = new FTDriver(
@@ -119,9 +123,12 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	public void odometryButton_onClick(View v) {
+		/*
 		textLog.setText("Odometry: (" + robot.getOdometryPosition().x + ", "
 				+ robot.getOdometryPosition().y + ", "
 				+ robot.getOdometryPosition().theta + ")");
+		 */
+		textLog.setText("Odometry: " + robot.getOdometryPosition().toString());
 	}
 
 	public void initOdometryButton_onClick(View v) {
@@ -129,15 +136,19 @@ public class MainActivity extends ActionBarActivity {
 		odometryButton_onClick(v);
 	}
 
+	// with Obstacle Avoidance ("OA")
 	public void navigationButton_onClick(View v) {
 		double x = Double.parseDouble(editTextX.getText().toString());
 		double y = Double.parseDouble(editTextY.getText().toString());
 		double theta = Double.parseDouble(editTextTheta.getText().toString());
 		Position p = new Position(x, y, theta);
-		robot.navigateToPosition(p, true, false);
+		robot.navigateToPosition(p);
+		/*
 		textLog.setText("Navigate To: (" + robot.getOdometryPosition().x + ", "
 				+ robot.getOdometryPosition().y + ", "
 				+ robot.getOdometryPosition().theta + ")");
+		*/
+		textLog.setText("Navigate To: " + robot.getOdometryPosition().toString());
 	}
 
 	@Override
@@ -156,9 +167,9 @@ public class MainActivity extends ActionBarActivity {
 		CharSequence itemSelected = item.getTitle();
 		switch (itemSelected.toString()) {
 		case "Camera":
-			Intent intent = new Intent();
-			intent.setClassName("com.example.robotwasd", "com.example.robotwasd.ColorBlobDetection");
-			startActivity(intent);
+			//Intent intent = new Intent();
+			//intent.setClassName("com.example.robotwasd", "com.example.robotwasd.ColorBlobDetection");
+			startActivity(new Intent(this,ColorBlobDetection.class));
 			break;
 		}
 		return false;
