@@ -260,13 +260,13 @@ public class Robot {
 	 */
 	public void explore() {
 		List<Position> positions = new ArrayList<Position>();
-		Position p1 = new Position( 50,   0,  0);
-		Position p2 = new Position( 50, 50, 90);
-		Position p3 = new Position(-50, 50,180);
-		Position p4 = new Position(-50,-50,-90);
-		Position p5 = new Position( 50,-50,  0);
-		Position p6 = new Position( 50,   0, 90);
-		Position p7 = new Position(   0,   0,180);
+		Position p1 = new Position( 90,  0,  0);
+		Position p2 = new Position( 90, 90, 90);
+		Position p3 = new Position(-90, 90,180);
+		Position p4 = new Position(-90,-90,-90);
+		Position p5 = new Position( 90,-90,  0);
+		Position p6 = new Position( 90,  0, 90);
+		Position p7 = new Position(  0,  0,180);
 		positions.add(p1);
 		positions.add(p2);
 		positions.add(p3);
