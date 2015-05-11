@@ -167,9 +167,10 @@ public class MainActivity extends ActionBarActivity {
 		CharSequence itemSelected = item.getTitle();
 		switch (itemSelected.toString()) {
 		case "Camera":
-			//Intent intent = new Intent();
-			//intent.setClassName("com.example.robotwasd", "com.example.robotwasd.ColorBlobDetection");
-			startActivity(new Intent(this,ColorBlobDetection.class));
+			Intent intent = new Intent();
+			intent.setClassName("com.example.robotwasd", "com.example.robotwasd.ColorBlobDetection");
+			//startActivity(new Intent(this,ColorBlobDetection.class));
+			startActivity(intent);
 			break;
 		}
 		return false;

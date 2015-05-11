@@ -221,7 +221,7 @@ public class Robot {
 	
 	public void collectBall(boolean withExplore) {
 		if (withExplore) {
-			explore();
+			//explore();
 		}
 		
 		if (!ValueHolder.existslowestPoint()) {
@@ -230,7 +230,13 @@ public class Robot {
 		}
 		
 		Position ballPosition = homography.calcPixelPosition();
+		System.out.println("ROBOT:" + ballPosition.toString());
 		
+		// adaption from camera-ball-position to robot-ball-position
+		ballPosition.y += 7.5;
+		ballPosition.x -= 25; 
+		
+		/*
 		navigateToEgocentricPosition(ballPosition);
 		
 		lowPositionBar();
@@ -242,7 +248,7 @@ public class Robot {
 		navigateToPosition(new Position(0,0,0));
 		
 		upPositionBar();
-		
+		*/
 	}
 	
 	/*  _____________________(150/150)

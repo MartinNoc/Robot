@@ -33,8 +33,8 @@ public class Homography {
 	}
 
 	private Mat getHomographyMatrix(Mat mRgba) {
-		final float Y_OFFS =  100.0f;
-		final float X_OFFS =  -30.0f;
+		final float Y_OFFS =  510.0f;
+		final float X_OFFS =  -48.0f;
 		
 		// number of inner corners in the used chessboard pattern
 		final Size mPatternSize = new Size(6, 9);
@@ -63,11 +63,13 @@ public class Homography {
 				mPatternSize, mCorners);
 
 		// Calculate homography:
-		if (mPatternWasFound)
+		if (mPatternWasFound) {
 			// Calib3d.drawChessboardCorners(mRgba, mPatternSize, mCorners, mPatternWasFound); //for visualization
 			return Calib3d.findHomography(mCorners, RealWorldC);
-		else
+		}
+		else {
 			return new Mat();
+		}
 	}
 
 	public Position calcPixelPosition() {

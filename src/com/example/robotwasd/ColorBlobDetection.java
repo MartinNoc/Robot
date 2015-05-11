@@ -2,6 +2,7 @@ package com.example.robotwasd;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -152,13 +153,14 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
             mBlobColorHsv.val[i] /= pointCount;
 
         mBlobColorRgba = converScalarHsv2Rgba(mBlobColorHsv);
+        
+        String rgb = "RGB " + String.format(Locale.US,"(%1$.2f,%2$.2f,%3$.2f)",
+        		mBlobColorRgba.val[0],mBlobColorRgba.val[1],mBlobColorRgba.val[2]);
+        
+        String hsv = "HSV " + String.format(Locale.US,"(%1$.2f,%2$.2f,%3$.2f)",
+        		mBlobColorHsv.val[0],mBlobColorHsv.val[1],mBlobColorHsv.val[2]);
 
-        Log.i(TAG, "Touched rgba color: (" + mBlobColorRgba.val[0] + ", " + mBlobColorRgba.val[1] +
-                ", " + mBlobColorRgba.val[2] + ", " + mBlobColorRgba.val[3] + ")");
-        /*
-        System.out.println(TAG + ": HSV: " + mBlobColorHsv.val[0] + ", " + mBlobColorHsv.val[1] +
-        		", " + mBlobColorHsv.val[2] + ", " + mBlobColorHsv.val[3]);
-		*/
+        System.out.println("Color: " + hsv + " / " + rgb);
         
         mDetector.setHsvColor(mBlobColorHsv);
 
@@ -208,9 +210,6 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
-
-            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-            mSpectrum.copyTo(spectrumLabel);
         }
 
         return mRgba;
