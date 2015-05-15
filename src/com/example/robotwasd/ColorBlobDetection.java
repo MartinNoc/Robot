@@ -48,6 +48,7 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
+    private BeaconDetection		 beaconDetection;
     
     public CameraBridgeViewBase mOpenCvCameraView;
     
@@ -82,6 +83,8 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 		// initialize the ColorBlobDetection and Camera
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        
+        beaconDetection = new BeaconDetection();
 	}
 
 	@Override
@@ -108,6 +111,7 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mDetector = new ColorBlobDetector();
+        ValueHolder.setBlobDetector(mDetector);
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
@@ -200,11 +204,14 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 	           	ValueHolder.setLowestBlobPoint(lowest);
             }
             else {
+            	ValueHolder.setLowestBlobPoint(-1, -1);
+            	/*
             	ValueHolder.getLowestBlobPoint().x = -1;
             	ValueHolder.getLowestBlobPoint().y = -1;
+            	*/
             }
             
-            Core.circle(mRgba, ValueHolder.getLowestBlobPoint(), 20, new Scalar(200.0), -1);
+            Core.circle(mRgba, ValueHolder.getLowestBlobPoint(), 15, new Scalar(200.0), -1);
             Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
@@ -230,6 +237,7 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 		menu.add("Buttons");
 		menu.add("Collect");
 		menu.add("Homography");
+		menu.add("BeaconDetection");
 		return true;
 	}
 
@@ -249,6 +257,9 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 			break;
 		case "Homography":
 			ValueHolder.getRobot().calibrateHomography();
+			break;
+		case "BeaconDetection":
+			beaconDetection.startBeaconDetection();
 			break;
 		}
 		return false;

@@ -72,17 +72,19 @@ public class Homography {
 		}
 	}
 
-	public Position calcPixelPosition() {
+	public Position calcPixelPosition(Point point) {
 		Position goal = new Position();
-
+		
 		Mat src = new Mat(1, 1, CvType.CV_32FC2);
 		Mat dest = new Mat(1, 1, CvType.CV_32FC2);
-		src.put(0, 0, new double[] { ValueHolder.getLowestBlobPoint().x, ValueHolder.getLowestBlobPoint().y }); // ps is a point in image coordinates
-		Core.perspectiveTransform(src, dest, homographyMatrix); // homography is your homography matrix
+		src.put(0, 0, new double[] { point.x, point.y }); // point is a point in image coordinates
+		Core.perspectiveTransform(src, dest, homographyMatrix);
 		Point dest_point = new Point(dest.get(0, 0)[0], dest.get(0, 0)[1]);
 		
+		// swapping of x and y, dividing by 10 and negate y value in order to
+		// transform from image coordinates to egocentric coordinates
 		goal.setPosition(dest_point.y/10, -dest_point.x/10, 0);
-		
+
 		return goal;
 	}
 }

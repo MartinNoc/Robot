@@ -33,6 +33,7 @@ public class Robot {
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
 		homography = new Homography();
+		ValueHolder.setHomography(homography);
 		return connect();
 	}
 
@@ -229,7 +230,7 @@ public class Robot {
 			return;
 		}
 		
-		Position ballPosition = homography.calcPixelPosition();
+		Position ballPosition = homography.calcPixelPosition(ValueHolder.getLowestBlobPoint());
 		System.out.println("ROBOT:" + ballPosition.toString());
 		
 		// adaption from camera-ball-position to robot-ball-position
