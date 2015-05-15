@@ -170,6 +170,8 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 
         touchedRegionRgba.release();
         touchedRegionHsv.release();
+        
+        ValueHolder.getRobot().addColorBallDetection(mBlobColorHsv);
 
         return false; // don't need subsequent touch events
     }
@@ -251,7 +253,7 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 			ValueHolder.getRobot().calibrateHomography();
 			break;
 		case "BeaconDetection":
-			ValueHolder.getRobot().startBeaconDetection();
+			ValueHolder.getRobot().startBeaconBallDetection();
 			break;
 		}
 		return false;

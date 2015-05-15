@@ -2,10 +2,12 @@ package com.example.robotwasd;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
 
 /**
  * Implements Beacon detection.
@@ -14,12 +16,16 @@ import org.opencv.core.MatOfPoint;
 public class BeaconBallDetection {
 
 	private Homography homography;
+	private Odometry odometry;
+	
+	private List<Scalar> ballColors = new LinkedList();
 	
 	private Collection<Beacon> detectedBeacons = new ArrayList<Beacon>();
 	private Collection<Position> detectedBalls = new ArrayList<Position>();
 
-	public BeaconBallDetection(Homography homography){
+	public BeaconBallDetection(Homography homography, Odometry odometry){
 		this.homography = homography;
+		this.odometry = odometry;
 	}
 	
 	/**
@@ -27,16 +33,18 @@ public class BeaconBallDetection {
 	 * All found beacons are stored in the beacon-collection.
 	 */
 	public void startBeaconBallDetection() {
+		double thresholdBall = 20;
 		detectedBeacons.clear();
 		detectedBalls.clear();
 		ColorBlobDetector blobDetector = new ColorBlobDetector();
 		Mat cameraImage = ValueHolder.getRawPicture();
-		List<Contour> contours = new ArrayList<Contour>();
+		List<Contour> contoursBeacons = new ArrayList<Contour>();
+		List<Contour> contoursBalls = new ArrayList<Contour>();
 		
 		// set Radius
 		blobDetector.setColorRadius(Color.getHsvRadius());
 		
-		// one iteration for every basic color (R, G, B, Y)
+		// one iteration for every basic color (R, G, B, Y) => beacons
 		for (Color color : Color.values()) {
 			// setHSV	
 			blobDetector.setHsvColor(Color.getHsvColor(color));
@@ -48,10 +56,10 @@ public class BeaconBallDetection {
 			List<MatOfPoint> imageContours = blobDetector.getContours();
 			
 			// process contours and save interesting pixel-positions
-			contours.addAll(Contour.processContours(imageContours, color));
+			contoursBeacons.addAll(Contour.processContours(imageContours, color));
 		}
 		
-		Contour[] contourArray = contours.toArray(new Contour[contours.size()]);
+		Contour[] contourArray = contoursBeacons.toArray(new Contour[contoursBeacons.size()]);
 		
 		System.out.println("Beacon: contourArray has size " + contourArray.length);
 		// check for beacon by comparing pixel-positions
@@ -79,10 +87,56 @@ public class BeaconBallDetection {
 					
 					System.out.println("Beacon found: " + beacon.toString());
 				}
-				
 			}
+		}	
+		
+		
+		//detect the contours for the balls
+		for (Scalar color : ballColors) {
+			// setHSV	
+			blobDetector.setHsvColor(color);
+			
+			// process
+			blobDetector.process(cameraImage);
+			
+			// getcontours
+			List<MatOfPoint> imageContours = blobDetector.getContours();
+			
+			// process contours and save interesting pixel-positions
+			contoursBalls.addAll(Contour.processContours(imageContours, color));
 		}
 		
+		for(Contour cont : contoursBalls){
+			for(Beacon bea : detectedBeacons){
+				if(Math.abs(bea.getImagePos().x - cont.getLowestPoint().x) <= thresholdBall){
+					//muss man noch machen
+				}
+			}
+		}
+	}
+	
+	/**
+	 * noch nicht implementiert
+	 */
+	public void adjustOdometryWithBeacons(){
+		//startBeaconBallDetection();
+		//weiteres
+		//odometry.adjustOdometry();
+	}
+	
+	/**
+	 * add a new Colour for the ball detection
+	 * @param color
+	 */
+	public void addBallColor(Scalar color){
+		ballColors.add(color.clone());
+	}
+	
+	/**
+	 * delete all Colors for ball detection
+	 */
+	public void deleteBallColors() {
+		ballColors.clear();
 	}
 	
 	/**

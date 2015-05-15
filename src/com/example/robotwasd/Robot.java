@@ -5,6 +5,8 @@ import java.util.List;
 
 import jp.ksksue.driver.serial.FTDriver;
 
+import org.opencv.core.Scalar;
+
 /**
  * Class to controll the functions of the robot
  * 
@@ -18,7 +20,7 @@ public class Robot {
 	private ObstacleAvoidance obst;
 	private FTDriver driver;
 	private Homography homography;
-	private BeaconBallDetection beaconDetection;
+	private BeaconBallDetection beaconBallDetection;
 
 	public Robot(FTDriver driver) {
 		this.driver = driver;
@@ -34,7 +36,7 @@ public class Robot {
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
 		homography = new Homography();
-		beaconDetection = new BeaconBallDetection(homography);
+		beaconBallDetection = new BeaconBallDetection(homography, odometry);
 		return connect();
 	}
 
@@ -309,7 +311,15 @@ public class Robot {
 	/**
 	 * starts to detect beacons in the actual image
 	 */
-	public void startBeaconDetection(){
-		beaconDetection.startBeaconBallDetection();
+	public void startBeaconBallDetection(){
+		beaconBallDetection.startBeaconBallDetection();
+	}
+	
+	/**
+	 * add a new Color for a ball
+	 * @param color
+	 */
+	public void addColorBallDetection(Scalar color){
+		beaconBallDetection.addBallColor(color);
 	}
 }
