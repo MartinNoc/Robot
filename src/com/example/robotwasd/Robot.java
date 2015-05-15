@@ -18,6 +18,7 @@ public class Robot {
 	private ObstacleAvoidance obst;
 	private FTDriver driver;
 	private Homography homography;
+	private BeaconBallDetection beaconDetection;
 
 	public Robot(FTDriver driver) {
 		this.driver = driver;
@@ -33,7 +34,7 @@ public class Robot {
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
 		homography = new Homography();
-		ValueHolder.setHomography(homography);
+		beaconDetection = new BeaconBallDetection(homography);
 		return connect();
 	}
 
@@ -211,6 +212,10 @@ public class Robot {
 		}
 	}
 	
+	/**
+	 * navigates to the egocentric goal position, image coordinates
+	 * @param goal image goal position
+	 */
 	public void navigateToEgocentricPosition(Position goal) {
 		double angle = Math.atan2(goal.y, goal.x) * 180 / Math.PI;
 		move.robotTurn(angle);
@@ -222,7 +227,7 @@ public class Robot {
 	
 	public void collectBall(boolean withExplore) {
 		if (withExplore) {
-			//explore();
+			explore();
 		}
 		
 		if (!ValueHolder.existslowestPoint()) {
@@ -237,7 +242,7 @@ public class Robot {
 		ballPosition.y += 7.5;
 		ballPosition.x -= 25; 
 		
-		/*
+		
 		navigateToEgocentricPosition(ballPosition);
 		
 		lowPositionBar();
@@ -249,7 +254,7 @@ public class Robot {
 		navigateToPosition(new Position(0,0,0));
 		
 		upPositionBar();
-		*/
+		
 	}
 	
 	/*  _____________________(150/150)
@@ -299,5 +304,12 @@ public class Robot {
 	 */
 	public void calibrateHomography() {
 		homography.calibrateHomography();
+	}
+	
+	/**
+	 * starts to detect beacons in the actual image
+	 */
+	public void startBeaconDetection(){
+		beaconDetection.startBeaconBallDetection();
 	}
 }

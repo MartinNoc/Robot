@@ -11,19 +11,25 @@ import org.opencv.core.MatOfPoint;
  * Implements Beacon detection.
  *
  */
-public class BeaconDetection {
+public class BeaconBallDetection {
 
+	private Homography homography;
+	
 	private Collection<Beacon> detectedBeacons = new ArrayList<Beacon>();
 	private Collection<Position> detectedBalls = new ArrayList<Position>();
 
+	public BeaconBallDetection(Homography homography){
+		this.homography = homography;
+	}
+	
 	/**
 	 * Takes the current image and analyzes it for beacons.
 	 * All found beacons are stored in the beacon-collection.
 	 */
-	public void startBeaconDetection() {
+	public void startBeaconBallDetection() {
 		detectedBeacons.clear();
 		detectedBalls.clear();
-		ColorBlobDetector blobDetector = ValueHolder.getBlobDetector();
+		ColorBlobDetector blobDetector = new ColorBlobDetector();
 		Mat cameraImage = ValueHolder.getRawPicture();
 		List<Contour> contours = new ArrayList<Contour>();
 		
@@ -60,13 +66,13 @@ public class BeaconDetection {
 						beacon.setTopColor(contourArray[i].getColor());
 						beacon.setBottomColor(contourArray[j].getColor());
 						/* needs homography */
-						//beacon.setImagePos(ValueHolder.getHomography().calcPixelPosition(contourArray[j].getLowestPoint()));
+						//beacon.setImagePos(homography.calcPixelPosition(contourArray[j].getLowestPoint()));
 					}
 					else {
 						beacon.setBottomColor(contourArray[i].getColor());
 						beacon.setTopColor(contourArray[j].getColor());
 						/* needs homography */
-						//beacon.setImagePos(ValueHolder.getHomography().calcPixelPosition(contourArray[i].getLowestPoint()));
+						//beacon.setImagePos(homography.calcPixelPosition(contourArray[i].getLowestPoint()));
 					}
 					beacon.setBeaconPos();
 					detectedBeacons.add(beacon);
