@@ -1,7 +1,5 @@
 package com.example.robotwasd;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -13,8 +11,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -186,38 +182,18 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
     	System.out.println("Robot: new frame");
         mRgba = inputFrame.rgba();
         ValueHolder.setRawPicture(inputFrame.rgba());
-       
-        if (mIsColorSelected) {
-            mDetector.process(mRgba);
-            List<MatOfPoint> contours = mDetector.getContours();
-            
-            
-            if(contours.size() > 0){
-            	Point lowest = new Point(0,0);
-            	
-            	for(MatOfPoint matofpoint : contours){
-		            List<Point> contList = matofpoint.toList();
-		            Iterator<Point> iter = contList.iterator();
-		            while(iter.hasNext()){
-		            	Point p = iter.next();
-		            	if(lowest.y < p.y)
-		            		lowest = p;
-		            }
-            	}
-	           	
-	           	ValueHolder.setLowestBlobPoint(lowest);
-            }
-            else {
-            	ValueHolder.setLowestBlobPoint(-1, -1);
-            }
-            
-            Core.circle(mRgba, ValueHolder.getLowestBlobPoint(), 15, new Scalar(200.0), -1);
-            Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
-
-            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
-            colorLabel.setTo(mBlobColorRgba);
+                   
+        for(Contour ball : ValueHolder.getDetectedBalls()){
+        	Core.circle(mRgba, ball.getLowestPoint(), 5, new Scalar(200.0), -1);
+        	Core.putText(mRgba, "ball", ball.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(200.0));
         }
+        
+        for(Contour beacon : ValueHolder.getDetectedBeacons()){
+        	Core.circle(mRgba, beacon.getLowestPoint(), 5, new Scalar(100.0), -1);
+        	Core.putText(mRgba, "beacon", beacon.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(100.0));
+        }
+        
+        //Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
         return mRgba;
     }
