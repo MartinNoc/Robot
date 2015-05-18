@@ -182,17 +182,18 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
     	System.out.println("Robot: new frame");
         mRgba = inputFrame.rgba();
         ValueHolder.setRawPicture(inputFrame.rgba());
-                   
-        for(Contour ball : ValueHolder.getDetectedBalls()){
-        	Core.circle(mRgba, ball.getLowestPoint(), 5, new Scalar(200.0), -1);
-        	Core.putText(mRgba, "ball", ball.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(200.0));
-        }
         
-        for(Contour beacon : ValueHolder.getDetectedBeacons()){
-        	Core.circle(mRgba, beacon.getLowestPoint(), 5, new Scalar(100.0), -1);
-        	Core.putText(mRgba, "beacon", beacon.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(100.0));
+        if(ValueHolder.getDetectedBalls() != null && ValueHolder.getDetectedBeacons() != null){
+            for(Contour ball : ValueHolder.getDetectedBalls()){
+            	Core.circle(mRgba, ball.getLowestPoint(), 5, new Scalar(200.0), -1);
+            	Core.putText(mRgba, "ball", ball.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(200.0));
+            }
+            
+            for(Contour beacon : ValueHolder.getDetectedBeacons()){
+            	Core.circle(mRgba, beacon.getLowestPoint(), 5, new Scalar(100.0), -1);
+            	Core.putText(mRgba, "beacon", beacon.getLowestPoint(), Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(100.0));
+            }
         }
-        
         //Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 
         return mRgba;
