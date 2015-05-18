@@ -36,7 +36,7 @@ public class Robot {
 		obst = new ObstacleAvoidance(this, odometry);
 		move = new Movement(com, odometry, obst);
 		homography = new Homography();
-		beaconBallDetection = new BeaconBallDetection(homography, odometry);
+		beaconBallDetection = new BeaconBallDetection(homography, odometry, this);
 		return connect();
 	}
 

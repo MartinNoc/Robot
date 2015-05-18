@@ -14,15 +14,14 @@ import org.opencv.core.Scalar;
 public enum Color {
 	Red, Blue, Green, Yellow;
 	
-	// initial : Scalar(10, 20, 20);
-	private static Scalar hsvRadius = new Scalar(20, 50, 50);
+	private static Scalar hsvRadius = new Scalar(20, 75, 75);
 	
 	public static Scalar getHsvColor(Color c) {
 		switch (c) {
-			case Red: return new Scalar(246,180, 178);
-			case Blue: return new Scalar(158,234, 200);
-			case Green: return new Scalar(120,214,105);
-			case Yellow: return new Scalar(39, 70, 207);
+			case Red: return new Scalar(12,190, 170);
+			case Blue: return new Scalar(147,220, 130);
+			case Green: return new Scalar(93,180,100);
+			case Yellow: return new Scalar(40, 210, 180);
 		}
 		return new Scalar(0,0,0);
 	}
