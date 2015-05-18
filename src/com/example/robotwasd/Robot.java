@@ -227,6 +227,10 @@ public class Robot {
 		move.robotDrive(distance);
 	}
 	
+	/**
+	 * collect all balls on the image, with or without exploring the workspace
+	 * @param withExplore
+	 */
 	public void collectBall(boolean withExplore) {
 		if (withExplore) {
 			explore();

@@ -203,6 +203,56 @@ public class Movement {
 
 		waitForRobotDegree(degree / COEFFICIENT_DEGREE);
 	}
+	
+	/**
+	 * Turns robot to a specific angle alpha
+	 * 
+	 * @param alpha Desired orientation-angle the robot will be turned to: [0,360) [degree]
+	 */
+	public void setRobotOrientation(double alpha) {
+		// convert angle alpha to number within interval [0,360)
+		alpha = alpha % 360;
+		if (alpha < 0) {
+			alpha = 360 + alpha;
+		}
+
+		double theta = odometry.getPosition().theta * 180 / Math.PI;
+
+		robotTurn(alpha - theta);
+	}
+	
+	/**
+	 * Called if robot faces an obstacle.
+	 * Tries to go round the obstacle until the way to the goal is free.
+	 * 
+	 * @param goal Position of the goal
+	 */
+	public void avoidanceAlgorithm(Position goal) {
+		// turn robot until it does not face an obstacle
+		while(obst.checkObstacleAhead()) {
+			if (turnLeft) 
+				robotTurn(90);
+			else 
+				robotTurn(-90);
+		}
+		robotDriveOA(90);
+		turnTowardsPosition(goal);
+		
+		if (obst.checkObstacleAhead())
+			avoidanceAlgorithm(goal);
+		else
+			turnLeft = !turnLeft;
+	}
+	
+	/**
+	 * Rotates the robot towards the goal position
+	 * @param goal remote point the robot is going to face
+	 */
+	public void turnTowardsPosition(Position goal) {
+		Position robotPos = odometry.getPosition();
+		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x) * 180 / Math.PI;
+		setRobotOrientation(angle);
+	}
 
 	/**
 	 * Driving by velocity
@@ -280,55 +330,5 @@ public class Movement {
 		// now the robot is in (x/y) position (0/0) at angle theta = PI
 
 		setRobotOrientation(0);
-	}
-	
-	/**
-	 * Turns robot to a specific angle alpha
-	 * 
-	 * @param alpha Desired orientation-angle the robot will be turned to: [0,360) [degree]
-	 */
-	public void setRobotOrientation(double alpha) {
-		// convert angle alpha to number within interval [0,360)
-		alpha = alpha % 360;
-		if (alpha < 0) {
-			alpha = 360 + alpha;
-		}
-
-		double theta = odometry.getPosition().theta * 180 / Math.PI;
-
-		robotTurn(alpha - theta);
-	}
-	
-	/**
-	 * Called if robot faces an obstacle.
-	 * Tries to go round the obstacle until the way to the goal is free.
-	 * 
-	 * @param goal Position of the goal
-	 */
-	public void avoidanceAlgorithm(Position goal) {
-		// turn robot until it does not face an obstacle
-		while(obst.checkObstacleAhead()) {
-			if (turnLeft) 
-				robotTurn(90);
-			else 
-				robotTurn(-90);
-		}
-		robotDriveOA(90);
-		turnTowardsPosition(goal);
-		
-		if (obst.checkObstacleAhead())
-			avoidanceAlgorithm(goal);
-		else
-			turnLeft = !turnLeft;
-	}
-	
-	/**
-	 * Rotates the robot towards the goal position
-	 * @param goal remote point the robot is going to face
-	 */
-	public void turnTowardsPosition(Position goal) {
-		Position robotPos = odometry.getPosition();
-		double angle = Math.atan2(goal.y - robotPos.y, goal.x - robotPos.x) * 180 / Math.PI;
-		setRobotOrientation(angle);
 	}
 }

@@ -11,6 +11,11 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+/**
+ * class to detect color blobs on a picture
+ * @author daniel
+ *
+ */
 public class ColorBlobDetector {
     // Lower and Upper bounds for range checking in HSV color space
     private Scalar mLowerBound = new Scalar(0);

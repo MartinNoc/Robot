@@ -32,7 +32,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
- * coordinate the camera and color-blob detection
+ * camera activity with touch function
  * @author Witsch Daniel
  *
  */
@@ -41,7 +41,6 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
-    private Mat					 setPicture;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
     private ColorBlobDetector    mDetector;
@@ -119,6 +118,10 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
         mRgba.release();
     }
 
+    /**
+     * callback function, is called when you touch on the camera picture
+     * then add the touched color to the ball detection colors
+     */
     public boolean onTouch(View v, MotionEvent event) {
         int cols = mRgba.cols();
         int rows = mRgba.rows();
@@ -176,6 +179,9 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
         return false; // don't need subsequent touch events
     }
 
+    /**
+     * callback function, is called when a new camera frame arrived
+     */
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
     	System.out.println("Robot: new frame");
         mRgba = inputFrame.rgba();
@@ -216,6 +222,11 @@ public class ColorBlobDetection extends ActionBarActivity implements OnTouchList
         return mRgba;
     }
 
+    /**
+     * convert a HSV color to a RGB color
+     * @param hsvColor
+     * @return RGB color
+     */
     private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
         Mat pointMatRgba = new Mat();
         Mat pointMatHsv = new Mat(1, 1, CvType.CV_8UC3, hsvColor);

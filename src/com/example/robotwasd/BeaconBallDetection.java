@@ -18,6 +18,9 @@ public class BeaconBallDetection {
 	private Homography homography;
 	private Odometry odometry;
 	
+	private static final double THRESHOLD_BALL = 20;
+	private static final double THRESHOLD_BEACON = 60;
+	
 	private List<Scalar> ballColors = new LinkedList();
 	
 	private Collection<Beacon> detectedBeacons = new ArrayList<Beacon>();
@@ -29,11 +32,11 @@ public class BeaconBallDetection {
 	}
 	
 	/**
-	 * Takes the current image and analyzes it for beacons.
+	 * Takes the current image and analyzes it for beacons and balls.
 	 * All found beacons are stored in the beacon-collection.
+	 * All found balls are stored in the balls-colleciotn.
 	 */
-	public void startBeaconBallDetection() {
-		double thresholdBall = 20;
+	public void startBeaconBallDetection() {	
 		detectedBeacons.clear();
 		detectedBalls.clear();
 		ColorBlobDetector blobDetector = new ColorBlobDetector();
@@ -108,7 +111,7 @@ public class BeaconBallDetection {
 		
 		for(Contour cont : contoursBalls){
 			for(Beacon bea : detectedBeacons){
-				if(Math.abs(bea.getImagePos().x - cont.getLowestPoint().x) <= thresholdBall){
+				if(Math.abs(bea.getImagePos().x - cont.getLowestPoint().x) <= THRESHOLD_BALL){
 					//muss man noch machen
 				}
 			}
@@ -135,7 +138,7 @@ public class BeaconBallDetection {
 	/**
 	 * delete all Colors for ball detection
 	 */
-	public void deleteBallColors() {
+	public void clearBallColors() {
 		ballColors.clear();
 	}
 	
@@ -147,28 +150,25 @@ public class BeaconBallDetection {
 	 * @return 0 if contours don't make up a beacon. If they make up a beacon
 	 * 1 if contourA is on top, 2 if contourB is on top.
 	 */
-	private int isBeacon(Contour contourA, Contour contourB) {
-		// pixels
-		final double Threshold = 60.0;
-		
+	private int isBeacon(Contour contourA, Contour contourB) {		
 		// contours must not have same colour
 		if (contourA.getColor() == contourB.getColor()) {
 			return 0;
 		}
 		
 		// checks if the contours are aligned vertically
-		if ( Math.abs(contourA.getMiddlePointX() - contourB.getMiddlePointX()) > Threshold) {
+		if ( Math.abs(contourA.getMiddlePointX() - contourB.getMiddlePointX()) > THRESHOLD_BEACON) {
 			double delta = Math.abs(contourA.getMiddlePointX() - contourB.getMiddlePointX());
 			System.out.println("Beacon: Failed - Middle Point " + delta);
 			return 0;
 		}
 		
 		// checks if one contour is stacked right above the other
-		if ( Math.abs(contourA.getLowestPoint().y - contourB.getTopmostPoint().y) <= Threshold) {
+		if ( Math.abs(contourA.getLowestPoint().y - contourB.getTopmostPoint().y) <= THRESHOLD_BEACON) {
 			// A on top of B
 			return 1;
 		}
-		if ( Math.abs(contourA.getTopmostPoint().y - contourB.getLowestPoint().y) <= Threshold ) {
+		if ( Math.abs(contourA.getTopmostPoint().y - contourB.getLowestPoint().y) <= THRESHOLD_BEACON) {
 			// B on top of A
 			return 2;
 		}

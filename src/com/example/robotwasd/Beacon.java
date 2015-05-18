@@ -1,5 +1,10 @@
 package com.example.robotwasd;
 
+/**
+ * represents one beacon
+ * @author daniel
+ *
+ */
 public class Beacon {
 	
 	private Color topColor;

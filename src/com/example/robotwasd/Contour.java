@@ -8,6 +8,11 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
+/**
+ * class for holding the information about a contour
+ * @author daniel
+ *
+ */
 public class Contour {
 	
 	private Color color;

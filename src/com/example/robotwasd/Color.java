@@ -27,6 +27,10 @@ public enum Color {
 		return new Scalar(0,0,0);
 	}
 	
+	/**
+	 * get the HSV value for the color
+	 * @return HSV value
+	 */
 	public static Scalar getHsvRadius() {
 		return hsvRadius;
 	}

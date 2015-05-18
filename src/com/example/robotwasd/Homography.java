@@ -32,6 +32,11 @@ public class Homography {
 		return homographyMatrix;
 	}
 
+	/**
+	 * calculates the homography matrix from a picture with a chessboard on it
+	 * @param mRgba
+	 * @return
+	 */
 	private Mat getHomographyMatrix(Mat mRgba) {
 		final float Y_OFFS =  510.0f;
 		final float X_OFFS =  -48.0f;
@@ -72,6 +77,11 @@ public class Homography {
 		}
 	}
 
+	/**
+	 * calculates the position of a pixel in a egocentric position of the robot
+	 * @param point pixel position on image
+	 * @return egocentric position
+	 */
 	public Position calcPixelPosition(Point point) {
 		Position goal = new Position();
 		
