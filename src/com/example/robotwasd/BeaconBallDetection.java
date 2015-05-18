@@ -25,6 +25,10 @@ public class BeaconBallDetection {
 	
 	private Collection<Beacon> detectedBeacons = new ArrayList<Beacon>();
 	private Collection<Position> detectedBalls = new ArrayList<Position>();
+	
+	//is needed for displaying the detected balls/beacons on the image
+	private List<Contour> detectedBeaconContours = new ArrayList<>();
+	private List<Contour> detectedBallContours = new ArrayList<>();
 
 	public BeaconBallDetection(Homography homography, Odometry odometry){
 		this.homography = homography;
@@ -39,6 +43,8 @@ public class BeaconBallDetection {
 	public void startBeaconBallDetection() {	
 		detectedBeacons.clear();
 		detectedBalls.clear();
+		detectedBeaconContours.clear();
+		detectedBallContours.clear();
 		ColorBlobDetector blobDetector = new ColorBlobDetector();
 		Mat cameraImage = ValueHolder.getRawPicture();
 		List<Contour> contoursBeacons = new ArrayList<Contour>();
@@ -87,6 +93,8 @@ public class BeaconBallDetection {
 					}
 					beacon.setBeaconPos();
 					detectedBeacons.add(beacon);
+					detectedBeaconContours.add(contourArray[i]);
+					detectedBeaconContours.add(contourArray[j]);
 					
 					System.out.println("Beacon found: " + beacon.toString());
 				}
@@ -110,12 +118,28 @@ public class BeaconBallDetection {
 		}
 		
 		for(Contour cont : contoursBalls){
-			for(Beacon bea : detectedBeacons){
-				if(Math.abs(bea.getImagePos().x - cont.getLowestPoint().x) <= THRESHOLD_BALL){
-					//muss man noch machen
+			boolean isBall = true;
+			for(Contour bea : detectedBeaconContours){
+				if(Math.abs(bea.getLowestPoint().x - cont.getLowestPoint().x) <= THRESHOLD_BALL){
+					isBall = false;
+				}
+				if(Math.abs(bea.getLowestPoint().y - cont.getLowestPoint().y) <= THRESHOLD_BALL){
+					isBall = false;
 				}
 			}
+			if(isBall){
+				Position ball = new Position();
+				ball.x = homography.calcPixelPosition(cont.getLowestPoint()).x;
+				ball.y = homography.calcPixelPosition(cont.getLowestPoint()).y;
+				ball.theta = 0;
+				detectedBalls.add(ball);
+				detectedBallContours.add(cont);
+				System.out.println("Ball found");
+			}
 		}
+		//for displaying the points on the image
+		ValueHolder.setDetectedBalls(detectedBallContours);
+		ValueHolder.setDetectedBeacons(detectedBeaconContours);
 	}
 	
 	/**
