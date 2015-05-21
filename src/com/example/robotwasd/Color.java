@@ -15,13 +15,33 @@ public enum Color {
 	Red, Blue, Green, Yellow;
 	
 	private static Scalar hsvRadius = new Scalar(20, 75, 75);
+	private static Scalar red = new Scalar(12, 190, 170);
+	private static Scalar blue = new Scalar(147,220, 130);
+	private static Scalar green = new Scalar(93,180,100);
+	private static Scalar yellow = new Scalar(40, 210, 180);
+	
+	public static void setRed(Scalar red) {
+		Color.red = red;
+	}
+
+	public static void setBlue(Scalar blue) {
+		Color.blue = blue;
+	}
+
+	public static void setGreen(Scalar green) {
+		Color.green = green;
+	}
+
+	public static void setYellow(Scalar yellow) {
+		Color.yellow = yellow;
+	}
 	
 	public static Scalar getHsvColor(Color c) {
 		switch (c) {
-			case Red: return new Scalar(12,190, 170);
-			case Blue: return new Scalar(147,220, 130);
-			case Green: return new Scalar(93,180,100);
-			case Yellow: return new Scalar(40, 210, 180);
+			case Red: return red;
+			case Blue: return blue;
+			case Green: return green;
+			case Yellow: return yellow;
 		}
 		return new Scalar(0,0,0);
 	}
@@ -32,6 +52,10 @@ public enum Color {
 	 */
 	public static Scalar getHsvRadius() {
 		return hsvRadius;
+	}
+	
+	public static void setHsvRadius(Scalar hsvRadius) {
+		Color.hsvRadius = hsvRadius;
 	}
 	
 	/**

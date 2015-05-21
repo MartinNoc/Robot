@@ -326,4 +326,12 @@ public class Robot {
 	public void addColorBallDetection(Scalar color){
 		beaconBallDetection.addBallColor(color);
 	}
+	
+	/**
+	 * delete all ball colors
+	 * @param color
+	 */
+	public void deleteAllColorBallDetection(){
+		beaconBallDetection.clearBallColors();
+	}
 }
