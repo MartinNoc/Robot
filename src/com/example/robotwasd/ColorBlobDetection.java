@@ -187,23 +187,23 @@ public class ColorBlobDetection extends ActionBarActivity implements
 
 		switch (touchFunction) {
 		case 0:
-			ValueHolder.getRobot().addColorBallDetection(mBlobColorHsv);
+			ValueHolder.getRobot().addColorBallDetection(mBlobColorHsv.clone());
 			touchFunction = -1;
 			break;
 		case 1:
-			Color.setRed(mBlobColorHsv);
+			Color.setRed(mBlobColorHsv.clone());
 			touchFunction++;
 			break;
 		case 2:
-			Color.setBlue(mBlobColorHsv);
+			Color.setBlue(mBlobColorHsv.clone());
 			touchFunction++;
 			break;
 		case 3:
-			Color.setGreen(mBlobColorHsv);
+			Color.setGreen(mBlobColorHsv.clone());
 			touchFunction++;
 			break;
 		case 4:
-			Color.setYellow(mBlobColorHsv);
+			Color.setYellow(mBlobColorHsv.clone());
 			touchFunction = -1;
 			break;
 		}

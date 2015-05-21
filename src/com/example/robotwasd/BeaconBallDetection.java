@@ -87,16 +87,12 @@ public class BeaconBallDetection {
 						beacon.setTopColor(contourArray[i].getColor());
 						beacon.setBottomColor(contourArray[j].getColor());
 						/* needs homography */
-						beacon.setImagePos(homography
-								.calcPixelPosition(contourArray[j]
-										.getLowestPoint()));
+						beacon.setImagePos(homography.calcPixelPosition(contourArray[j].getLowestPoint()));
 					} else {
 						beacon.setBottomColor(contourArray[i].getColor());
 						beacon.setTopColor(contourArray[j].getColor());
 						/* needs homography */
-						beacon.setImagePos(homography
-								.calcPixelPosition(contourArray[i]
-										.getLowestPoint()));
+						beacon.setImagePos(homography.calcPixelPosition(contourArray[i].getLowestPoint()));
 					}
 					beacon.setBeaconPos();
 					detectedBeacons.add(beacon);
