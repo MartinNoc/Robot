@@ -142,7 +142,14 @@ public class BeaconBallDetection {
 	}
 
 	/**
-	 * noch nicht implementiert
+	 * Self Localization.
+	 * 
+	 * Looks for two beacons to calculate robot's position.
+	 * 
+	 * X/Y calculation via 2 circle intersection:
+	 * http://de.wikipedia.org/wiki/Schnittpunkt#Schnittpunkte_zweier_Kreise
+	 * 
+	 * Orientation calculation via vector dot product (robot->beacon-vector and x-axis-vector)
 	 */
 	public void adjustOdometryWithBeacons() {
 		startBeaconBallDetection();
@@ -150,26 +157,96 @@ public class BeaconBallDetection {
 			robot.turnLeft(45);
 			startBeaconBallDetection();
 		}
-		Position beaconImage1 = detectedBeacons.get(0).getImagePos();
-		Position beaconImage2 = detectedBeacons.get(1).getImagePos();
-		double angle_beacon1 = Math.atan2(beaconImage1.y, beaconImage1.x) * 180 / Math.PI;
-		double distance_beacon1 = Math.hypot(beaconImage1.x, beaconImage1.y);
-		double angle_beacon2 = Math.atan2(beaconImage2.y, beaconImage2.x) * 180 / Math.PI;
-		double distance_beacon2 = Math.hypot(beaconImage2.x, beaconImage2.y);
+
+		// chose 2 beacons to calculate with
+		Beacon beacon0 = detectedBeacons.get(0);
+		Beacon beacon1 = detectedBeacons.get(1);
 		
-		Position beaconWorld1 = detectedBeacons.get(0).getBeaconPos();
-		Position beaconWorld2 = detectedBeacons.get(1).getBeaconPos();
+		// init beacon-position variables for short variable-names
+		double x0 = beacon0.getBeaconPos().x;
+		double y0 = beacon0.getBeaconPos().y;
 		
-		double distanceBetweenBeacons = Math.sqrt(Math.pow(beaconWorld1.x-beaconWorld2.x,2) + Math.pow(beaconWorld1.y-beaconWorld2.y,2));
-		double angle = 0;
-		if(angle_beacon1 > angle_beacon2){
-			angle = Math.acos((Math.pow(distance_beacon2,2) - Math.pow(distanceBetweenBeacons,2) - Math.pow(distance_beacon1, 2))/(-2*distanceBetweenBeacons*distance_beacon1));
-		}else
-		{
-			angle = Math.acos((Math.pow(distance_beacon1,2) - Math.pow(distanceBetweenBeacons,2) - Math.pow(distance_beacon2, 2))/(-2*distanceBetweenBeacons*distance_beacon2));
+		double x1 = beacon1.getBeaconPos().x;
+		double y1 = beacon1.getBeaconPos().y;
+		
+		// distances from robot to beacons
+		double d0 = Math.hypot(beacon0.getImagePos().x, beacon0.getImagePos().y);
+		double d1 = Math.hypot(beacon1.getImagePos().x, beacon1.getImagePos().y);
+		
+		/* X Y Calculation */
+		double a = 2 * (beacon1.getBeaconPos().x - beacon0.getBeaconPos().x);
+		double b = 2 * (beacon1.getBeaconPos().y - beacon0.getBeaconPos().y);
+		double c = d0*d0 - x0*x0 - y0*y0 - d1*d1 + x1*x1 + y1*y1;
+		double d = c - a*x0 - b*y0;
+		
+		double DET = Math.sqrt(d0*d0 * (a*a + b*b) - d*d);
+		
+		Position p0 = new Position();
+		Position p1 = new Position();
+		
+		// 2 possible positions (because there are 2 intersections of the circles)
+		p0.x = x0 + (a*d + b * DET)/(a*a + b*b);
+		p0.y = y0 + (b*d - a * DET)/(a*a + b*b);
+		
+		p1.x = x0 + (a*d - b * DET)/(a*a + b*b);
+		p1.y = y0 + (b*d + a * DET)/(a*a + b*b);
+		
+		
+		/* Check which intersection is within the workspace */
+		if (isPositionInWorkspace(125, p0)) {
+			p0.theta = calcOrientation(p0,beacon0);
+			odometry.setPosition(p0);
 		}
+		else {
+			p1.theta = calcOrientation(p1,beacon0);
+			odometry.setPosition(p1);
+		}
+		
+	}
+	
+	/**
+	 * Checks for a given position if it is within the workspace.
+	 * 
+	 * @param maxXY
+	 * @param p
+	 * @return
+	 */
+	private boolean isPositionInWorkspace(double maxXY, Position p) {
+		if (Math.abs(p.x) > maxXY || Math.abs(p.y) > maxXY) {
+			return false;
+		}
+		return true;
 	}
 
+	/**
+	 * calculates for given beacon and given robot position the orientation
+	 * of the robot.
+	 * 
+	 * Assumption: robot faces beacon straight forward
+	 * Vector: robot -> beacon
+	 * Vector: x-axis
+	 * dot-product = cosine of enclosed angle between the two vectors
+	 * 
+	 * add egocentric orientation alpha to the dot-product to get robot's real orientation
+	 * 
+	 * if robot is above the beacon, the real angle is 360° (2PI) minus dot-product.
+	 * 
+	 * @param p
+	 * @param b
+	 * @return
+	 */
+	private double calcOrientation(Position p, Beacon b) {
+		double alpha = Math.atan2(b.getImagePos().y, b.getImagePos().x);
+		double xVecBeaconRobot = b.getBeaconPos().x - p.x;
+		double yVecBeaconRobot = b.getBeaconPos().y - p.y;
+		
+		double angle = Math.acos(xVecBeaconRobot/(Math.sqrt(Math.pow(xVecBeaconRobot,2) + Math.pow(yVecBeaconRobot, 2))));
+		if(b.getBeaconPos().y < p.y)
+			angle = 2*Math.PI - angle;
+		double rightAngle = angle - alpha;
+		return rightAngle;
+	}
+	
 	/**
 	 * add a new Colour for the ball detection
 	 * 
@@ -211,15 +288,56 @@ public class BeaconBallDetection {
 		// checks if one contour is stacked right above the other
 		if (Math.abs(contourA.getLowestPoint().y - contourB.getTopmostPoint().y) <= THRESHOLD_BEACON) {
 			// A on top of B
-			return 1;
+			if (checkBeaconColorCombination(contourA.getColor(), contourB.getColor())) {
+				return 1;
+			}
 		}
 		if (Math.abs(contourA.getTopmostPoint().y - contourB.getLowestPoint().y) <= THRESHOLD_BEACON) {
 			// B on top of A
-			return 2;
+			if (checkBeaconColorCombination(contourB.getColor(), contourA.getColor())) {
+				return 2;
+			}
 		}
 
 		System.out.println("Beacon: Failed - Top/Bottom");
 		return 0;
+	}
+	
+	private boolean checkBeaconColorCombination(Color topColor, Color bottomColor) {
+		if (topColor == Color.Blue) {
+			if (bottomColor == Color.Red) {
+				return true;
+			}
+			else if (bottomColor == Color.Green) {
+				return true;
+			}
+			else if (bottomColor == Color.Yellow) {
+				return true;
+			}
+		}
+		else if (topColor == Color.Yellow) {
+			if (bottomColor == Color.Green) {
+				return true;
+			}
+			else if (bottomColor == Color.Red) {
+				return true;
+			}
+		}
+		else if (topColor == Color.Red) {
+			if (bottomColor == Color.Yellow) {
+				return true;
+			}
+			else if (bottomColor == Color.Green) {
+				return true;
+			}
+		}
+		else if (topColor == Color.Green) {
+			if (bottomColor == Color.Blue) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }
