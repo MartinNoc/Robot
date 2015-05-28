@@ -38,14 +38,14 @@ public class Homography {
 	 * @return
 	 */
 	private Mat getHomographyMatrix(Mat mRgba) {
-		final float Y_OFFS =  510.0f;
-		final float X_OFFS =  -48.0f;
+		final float Y_OFFS =  290.0f;
+		final float X_OFFS =  -150.0f;
 		
 		// number of inner corners in the used chessboard pattern
 		final Size mPatternSize = new Size(6, 9);
 		float x = X_OFFS; // coordinates of first detected inner corner on chessboard
 		float y = Y_OFFS;
-		float delta = 12.0f; // size of a single square edge in chessboard
+		float delta = 38.0f; // size of a single square edge in chessboard
 		LinkedList<Point> PointList = new LinkedList<Point>();
 
 		// Define real-world coordinates for given chessboard pattern:

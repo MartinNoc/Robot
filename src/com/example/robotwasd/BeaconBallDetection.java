@@ -30,7 +30,8 @@ public class BeaconBallDetection {
 	private List<Contour> detectedBeaconContours = new ArrayList<>();
 	private List<Contour> detectedBallContours = new ArrayList<>();
 
-	public BeaconBallDetection(Homography homography, Odometry odometry, Robot robot) {
+	public BeaconBallDetection(Homography homography, Odometry odometry,
+			Robot robot) {
 		this.homography = homography;
 		this.odometry = odometry;
 		this.robot = robot;
@@ -87,12 +88,16 @@ public class BeaconBallDetection {
 						beacon.setTopColor(contourArray[i].getColor());
 						beacon.setBottomColor(contourArray[j].getColor());
 						/* needs homography */
-						beacon.setImagePos(homography.calcPixelPosition(contourArray[j].getLowestPoint()));
+						beacon.setImagePos(homography
+								.calcPixelPosition(contourArray[j]
+										.getLowestPoint()));
 					} else {
 						beacon.setBottomColor(contourArray[i].getColor());
 						beacon.setTopColor(contourArray[j].getColor());
 						/* needs homography */
-						beacon.setImagePos(homography.calcPixelPosition(contourArray[i].getLowestPoint()));
+						beacon.setImagePos(homography
+								.calcPixelPosition(contourArray[i]
+										.getLowestPoint()));
 					}
 					beacon.setBeaconPos();
 					detectedBeacons.add(beacon);
@@ -122,7 +127,9 @@ public class BeaconBallDetection {
 		for (Contour cont : contoursBalls) {
 			boolean isBall = true;
 			for (Contour bea : detectedBeaconContours) {
-				if (Math.abs(bea.getLowestPoint().x - cont.getLowestPoint().x) <= THRESHOLD_BALL && Math.abs(bea.getLowestPoint().y - cont.getLowestPoint().y) <= THRESHOLD_BALL) {
+				if (Math.abs(bea.getLowestPoint().x - cont.getLowestPoint().x) <= THRESHOLD_BALL
+						&& Math.abs(bea.getLowestPoint().y
+								- cont.getLowestPoint().y) <= THRESHOLD_BALL) {
 					isBall = false;
 				}
 			}
@@ -133,7 +140,9 @@ public class BeaconBallDetection {
 				ball.theta = 0;
 				detectedBalls.add(ball);
 				detectedBallContours.add(cont);
-				System.out.println("Ball found");
+				System.out.println("Ball found with distance: "
+						+ Math.hypot(ball.x, ball.y) + " x: " + ball.x + " y: "
+						+ ball.y);
 			}
 		}
 		// for displaying the points on the image
@@ -149,11 +158,12 @@ public class BeaconBallDetection {
 	 * X/Y calculation via 2 circle intersection:
 	 * http://de.wikipedia.org/wiki/Schnittpunkt#Schnittpunkte_zweier_Kreise
 	 * 
-	 * Orientation calculation via vector dot product (robot->beacon-vector and x-axis-vector)
+	 * Orientation calculation via vector dot product (robot->beacon-vector and
+	 * x-axis-vector)
 	 */
 	public void adjustOdometryWithBeacons() {
 		startBeaconBallDetection();
-		while(detectedBeacons.size() < 2){
+		while (detectedBeacons.size() < 2) {
 			robot.turnLeft(45);
 			startBeaconBallDetection();
 		}
@@ -161,49 +171,50 @@ public class BeaconBallDetection {
 		// chose 2 beacons to calculate with
 		Beacon beacon0 = detectedBeacons.get(0);
 		Beacon beacon1 = detectedBeacons.get(1);
-		
+
 		// init beacon-position variables for short variable-names
 		double x0 = beacon0.getBeaconPos().x;
 		double y0 = beacon0.getBeaconPos().y;
-		
+
 		double x1 = beacon1.getBeaconPos().x;
 		double y1 = beacon1.getBeaconPos().y;
-		
+
 		// distances from robot to beacons
-		double d0 = Math.hypot(beacon0.getImagePos().x, beacon0.getImagePos().y);
-		double d1 = Math.hypot(beacon1.getImagePos().x, beacon1.getImagePos().y);
-		
+		double d0 = Math
+				.hypot(beacon0.getImagePos().x, beacon0.getImagePos().y);
+		double d1 = Math
+				.hypot(beacon1.getImagePos().x, beacon1.getImagePos().y);
+
 		/* X Y Calculation */
 		double a = 2 * (beacon1.getBeaconPos().x - beacon0.getBeaconPos().x);
 		double b = 2 * (beacon1.getBeaconPos().y - beacon0.getBeaconPos().y);
-		double c = d0*d0 - x0*x0 - y0*y0 - d1*d1 + x1*x1 + y1*y1;
-		double d = c - a*x0 - b*y0;
-		
-		double DET = Math.sqrt(d0*d0 * (a*a + b*b) - d*d);
-		
+		double c = d0 * d0 - x0 * x0 - y0 * y0 - d1 * d1 + x1 * x1 + y1 * y1;
+		double d = c - a * x0 - b * y0;
+
+		double DET = Math.sqrt(d0 * d0 * (a * a + b * b) - d * d);
+
 		Position p0 = new Position();
 		Position p1 = new Position();
-		
-		// 2 possible positions (because there are 2 intersections of the circles)
-		p0.x = x0 + (a*d + b * DET)/(a*a + b*b);
-		p0.y = y0 + (b*d - a * DET)/(a*a + b*b);
-		
-		p1.x = x0 + (a*d - b * DET)/(a*a + b*b);
-		p1.y = y0 + (b*d + a * DET)/(a*a + b*b);
-		
-		
+
+		// 2 possible positions (because there are 2 intersections of the
+		// circles)
+		p0.x = x0 + (a * d + b * DET) / (a * a + b * b);
+		p0.y = y0 + (b * d - a * DET) / (a * a + b * b);
+
+		p1.x = x0 + (a * d - b * DET) / (a * a + b * b);
+		p1.y = y0 + (b * d + a * DET) / (a * a + b * b);
+
 		/* Check which intersection is within the workspace */
 		if (isPositionInWorkspace(125, p0)) {
-			p0.theta = calcOrientation(p0,beacon0);
+			p0.theta = calcOrientation(p0, beacon0);
 			odometry.setPosition(p0);
-		}
-		else {
-			p1.theta = calcOrientation(p1,beacon0);
+		} else {
+			p1.theta = calcOrientation(p1, beacon0);
 			odometry.setPosition(p1);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Checks for a given position if it is within the workspace.
 	 * 
@@ -219,17 +230,18 @@ public class BeaconBallDetection {
 	}
 
 	/**
-	 * calculates for given beacon and given robot position the orientation
-	 * of the robot.
+	 * calculates for given beacon and given robot position the orientation of
+	 * the robot.
 	 * 
-	 * Assumption: robot faces beacon straight forward
-	 * Vector: robot -> beacon
-	 * Vector: x-axis
-	 * dot-product = cosine of enclosed angle between the two vectors
+	 * Assumption: robot faces beacon straight forward Vector: robot -> beacon
+	 * Vector: x-axis dot-product = cosine of enclosed angle between the two
+	 * vectors
 	 * 
-	 * add egocentric orientation alpha to the dot-product to get robot's real orientation
+	 * add egocentric orientation alpha to the dot-product to get robot's real
+	 * orientation
 	 * 
-	 * if robot is above the beacon, the real angle is 360° (2PI) minus dot-product.
+	 * if robot is above the beacon, the real angle is 360° (2PI) minus
+	 * dot-product.
 	 * 
 	 * @param p
 	 * @param b
@@ -239,14 +251,16 @@ public class BeaconBallDetection {
 		double alpha = Math.atan2(b.getImagePos().y, b.getImagePos().x);
 		double xVecBeaconRobot = b.getBeaconPos().x - p.x;
 		double yVecBeaconRobot = b.getBeaconPos().y - p.y;
-		
-		double angle = Math.acos(xVecBeaconRobot/(Math.sqrt(Math.pow(xVecBeaconRobot,2) + Math.pow(yVecBeaconRobot, 2))));
-		if(b.getBeaconPos().y < p.y)
-			angle = 2*Math.PI - angle;
+
+		double angle = Math.acos(xVecBeaconRobot
+				/ (Math.sqrt(Math.pow(xVecBeaconRobot, 2)
+						+ Math.pow(yVecBeaconRobot, 2))));
+		if (b.getBeaconPos().y < p.y)
+			angle = 2 * Math.PI - angle;
 		double rightAngle = angle - alpha;
 		return rightAngle;
 	}
-	
+
 	/**
 	 * add a new Colour for the ball detection
 	 * 
@@ -288,13 +302,15 @@ public class BeaconBallDetection {
 		// checks if one contour is stacked right above the other
 		if (Math.abs(contourA.getLowestPoint().y - contourB.getTopmostPoint().y) <= THRESHOLD_BEACON) {
 			// A on top of B
-			if (checkBeaconColorCombination(contourA.getColor(), contourB.getColor())) {
+			if (checkBeaconColorCombination(contourA.getColor(),
+					contourB.getColor())) {
 				return 1;
 			}
 		}
 		if (Math.abs(contourA.getTopmostPoint().y - contourB.getLowestPoint().y) <= THRESHOLD_BEACON) {
 			// B on top of A
-			if (checkBeaconColorCombination(contourB.getColor(), contourA.getColor())) {
+			if (checkBeaconColorCombination(contourB.getColor(),
+					contourA.getColor())) {
 				return 2;
 			}
 		}
@@ -302,41 +318,35 @@ public class BeaconBallDetection {
 		System.out.println("Beacon: Failed - Top/Bottom");
 		return 0;
 	}
-	
-	private boolean checkBeaconColorCombination(Color topColor, Color bottomColor) {
+
+	private boolean checkBeaconColorCombination(Color topColor,
+			Color bottomColor) {
 		if (topColor == Color.Blue) {
 			if (bottomColor == Color.Red) {
 				return true;
-			}
-			else if (bottomColor == Color.Green) {
+			} else if (bottomColor == Color.Green) {
+				return true;
+			} else if (bottomColor == Color.Yellow) {
 				return true;
 			}
-			else if (bottomColor == Color.Yellow) {
-				return true;
-			}
-		}
-		else if (topColor == Color.Yellow) {
+		} else if (topColor == Color.Yellow) {
 			if (bottomColor == Color.Green) {
 				return true;
-			}
-			else if (bottomColor == Color.Red) {
+			} else if (bottomColor == Color.Red) {
 				return true;
 			}
-		}
-		else if (topColor == Color.Red) {
+		} else if (topColor == Color.Red) {
 			if (bottomColor == Color.Yellow) {
 				return true;
-			}
-			else if (bottomColor == Color.Green) {
+			} else if (bottomColor == Color.Green) {
 				return true;
 			}
-		}
-		else if (topColor == Color.Green) {
+		} else if (topColor == Color.Green) {
 			if (bottomColor == Color.Blue) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
