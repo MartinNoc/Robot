@@ -99,4 +99,37 @@ public class Beacon {
 		return "[" + topColor.toString() + "/" + bottomColor.toString() + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Beacon other = (Beacon) obj;
+		if (beaconPos == null) {
+			if (other.beaconPos != null)
+				return false;
+		} else if (!beaconPos.equals(other.beaconPos))
+			return false;
+		if (bottomColor != other.bottomColor)
+			return false;
+		if (topColor != other.topColor)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((beaconPos == null) ? 0 : beaconPos.hashCode());
+		result = prime * result
+				+ ((bottomColor == null) ? 0 : bottomColor.hashCode());
+		result = prime * result
+				+ ((topColor == null) ? 0 : topColor.hashCode());
+		return result;
+	}
 }

@@ -18,7 +18,7 @@ public class BeaconBallDetection {
 	private Odometry odometry;
 	private Robot robot;
 
-	private static final double THRESHOLD_BALL = 40;
+	private static final double THRESHOLD_BALL = 20;
 	private static final double THRESHOLD_BEACON = 40;
 
 	private List<Scalar> ballColors = new LinkedList();
@@ -100,11 +100,13 @@ public class BeaconBallDetection {
 										.getLowestPoint()));
 					}
 					beacon.setBeaconPos();
-					detectedBeacons.add(beacon);
-					detectedBeaconContours.add(contourArray[i]);
-					detectedBeaconContours.add(contourArray[j]);
-
-					System.out.println("Beacon found: " + beacon.toString());
+					if(!detectedBeacons.contains(beacon))
+					{
+						detectedBeacons.add(beacon);
+						detectedBeaconContours.add(contourArray[i]);
+						detectedBeaconContours.add(contourArray[j]);
+						System.out.println("Beacon found: " + beacon.toString());
+					}
 				}
 			}
 		}
@@ -319,6 +321,12 @@ public class BeaconBallDetection {
 		return 0;
 	}
 
+	/**
+	 * checks if the combination of beacon color is correct and exists
+	 * @param topColor
+	 * @param bottomColor
+	 * @return true when beacon exists, otherwise false
+	 */
 	private boolean checkBeaconColorCombination(Color topColor,
 			Color bottomColor) {
 		if (topColor == Color.Blue) {
