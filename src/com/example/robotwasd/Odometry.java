@@ -21,13 +21,16 @@ public class Odometry {
 	}
 	
 	public void setPosition(double x, double y, double theta){
-		p.setPosition(x, y, theta);
+		this.p.x = p.x;
+		this.p.y = p.y;		
+		this.p.theta = p.theta;
+		
+		checkTheta();
+		checkAccuracy();
 	}
 	
 	public void setPosition(Position p) {
-		this.p.x = p.x;
-		this.p.y = p.y;
-		this.p.theta = p.theta;
+		setPosition(p.x, p.y, p.theta);
 	}
 	
 	/**
@@ -48,9 +51,17 @@ public class Odometry {
 		 *  if theta is negative, convert it to positive angle
 		 */
 		p.theta = (p.theta + alpha*Math.PI/180) % (2*Math.PI);
+		
+		checkTheta();
+		checkAccuracy();
+	}
+	
+	private void checkTheta() {
 		if (p.theta < 0)
 			p.theta = 2*Math.PI + p.theta;
-		
+	}
+	
+	private void checkAccuracy() {
 		/** Set odometry properties to 0 if values are under the threashold */
 		if (Math.abs(p.theta) < ACCURACY_THREASHOLD) p.theta = 0;
 		if (Math.abs(p.x) < ACCURACY_THREASHOLD) p.x = 0;

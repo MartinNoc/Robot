@@ -232,21 +232,29 @@ public class Robot {
 	 * @param withExplore
 	 */
 	public void collectBall(boolean withExplore) {
-		if (withExplore) {
+		/*if (withExplore) {
 			explore();
+		}*/
+		upPositionBar();
+		beaconBallDetection.startBeaconBallDetection();
+		while(ValueHolder.getDetectedBalls().size() == 0){
+			move.turnLeft(30);
+			beaconBallDetection.startBeaconBallDetection();
 		}
 		
-		if (!ValueHolder.existslowestPoint()) {
-			// ball still not found!
-			return;
+		int ballIndex = 0;
+		double lowestPoint = ValueHolder.getDetectedBalls().get(0).getLowestPoint().y;
+		for (int i = 1; i < ValueHolder.getDetectedBalls().size(); i++) {
+			if (ValueHolder.getDetectedBalls().get(i).getLowestPoint().y > lowestPoint) {
+				lowestPoint = ValueHolder.getDetectedBalls().get(i).getLowestPoint().y;
+				ballIndex = i;
+			}
 		}
-		
-		Position ballPosition = homography.calcPixelPosition(ValueHolder.getLowestBlobPoint());
-		System.out.println("ROBOT:" + ballPosition.toString());
+		Position ballPosition = homography.calcPixelPosition(ValueHolder.getDetectedBalls().get(ballIndex).getLowestPoint());
 		
 		// adaption from camera-ball-position to robot-ball-position
-		ballPosition.y += 7.5;
-		ballPosition.x -= 25; 
+		ballPosition.y += 4;
+		ballPosition.x -= 22; 
 		
 		
 		navigateToEgocentricPosition(ballPosition);
@@ -257,9 +265,9 @@ public class Robot {
 		
 		//upPositionBar();
 		
-		navigateToPosition(new Position(0,0,0));
+		//navigateToPosition(new Position(0,0,0));
 		
-		upPositionBar();
+		//upPositionBar();
 		
 	}
 	
@@ -294,10 +302,10 @@ public class Robot {
 		positions.add(p7);
 		
 		for (Position p : positions) {
-			for (int i=0; i < 4 && !ValueHolder.existslowestPoint(); i++) {
+			for (int i=0; i < 4 && ValueHolder.getDetectedBalls().size() > 0; i++) {
 				move.robotTurn(90);
 			}
-			if (ValueHolder.existslowestPoint()) {
+			if (ValueHolder.getDetectedBalls().size() > 0) {
 				return;
 			}
 			navigateToPosition(p);
@@ -315,7 +323,14 @@ public class Robot {
 	/**
 	 * starts to detect beacons in the actual image
 	 */
-	public void startBeaconBallDetection(){
+	public void startSelfLocalization(){
+		beaconBallDetection.adjustOdometryWithBeacons();
+	}
+	
+	/**
+	 * detects beacon and balls at the actual image
+	 */
+	public void detectBeaconBalls(){
 		beaconBallDetection.startBeaconBallDetection();
 	}
 	

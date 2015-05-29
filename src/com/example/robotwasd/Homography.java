@@ -38,8 +38,8 @@ public class Homography {
 	 * @return
 	 */
 	private Mat getHomographyMatrix(Mat mRgba) {
-		final float Y_OFFS =  290.0f;
-		final float X_OFFS =  -150.0f;
+		final float Y_OFFS =  395.0f;
+		final float X_OFFS =  -114.0f;
 		
 		// number of inner corners in the used chessboard pattern
 		final Size mPatternSize = new Size(6, 9);

@@ -15,7 +15,7 @@ public class RobotThread extends Thread {
 	}
 
 	public void run() {
-		boolean withExplore = true;
+		boolean withExplore = false;
 		robot.collectBall(withExplore);
 	}
 }

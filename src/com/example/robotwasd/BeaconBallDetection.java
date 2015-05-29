@@ -1,5 +1,6 @@
 package com.example.robotwasd;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class BeaconBallDetection {
 	private Robot robot;
 
 	private static final double THRESHOLD_BALL = 20;
-	private static final double THRESHOLD_BEACON = 40;
+	private static final double THRESHOLD_BEACON = 20;
 
 	private List<Scalar> ballColors = new LinkedList();
 
@@ -105,7 +106,10 @@ public class BeaconBallDetection {
 						detectedBeacons.add(beacon);
 						detectedBeaconContours.add(contourArray[i]);
 						detectedBeaconContours.add(contourArray[j]);
-						System.out.println("Beacon found: " + beacon.toString());
+						DecimalFormat df = new DecimalFormat("#.0");
+						System.out.println("Detect:Beacon found " + beacon.toString() + " with distance: "
+								+ df.format(Math.hypot(beacon.getImagePos().x, beacon.getImagePos().y)) + " x:" + df.format(beacon.getImagePos().x) + " y: "
+								+ df.format(beacon.getImagePos().y));
 					}
 				}
 			}
@@ -142,9 +146,11 @@ public class BeaconBallDetection {
 				ball.theta = 0;
 				detectedBalls.add(ball);
 				detectedBallContours.add(cont);
-				System.out.println("Ball found with distance: "
-						+ Math.hypot(ball.x, ball.y) + " x: " + ball.x + " y: "
-						+ ball.y);
+				
+				DecimalFormat df = new DecimalFormat("#.0"); 
+				System.out.println("Detect:Ball found with distance: "
+						+ df.format(Math.hypot(ball.x, ball.y)) + " x:" + df.format(ball.x) + " y: "
+						+ df.format(ball.y));
 			}
 		}
 		// for displaying the points on the image
@@ -166,7 +172,7 @@ public class BeaconBallDetection {
 	public void adjustOdometryWithBeacons() {
 		startBeaconBallDetection();
 		while (detectedBeacons.size() < 2) {
-			robot.turnLeft(45);
+			//robot.turnLeft(45);
 			startBeaconBallDetection();
 		}
 

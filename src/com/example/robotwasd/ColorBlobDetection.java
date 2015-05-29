@@ -217,8 +217,9 @@ public class ColorBlobDetection extends ActionBarActivity implements
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		System.out.println("Robot: new frame");
 		mRgba = inputFrame.rgba();
-		ValueHolder.setRawPicture(inputFrame.rgba());
+		ValueHolder.setRawPicture(mRgba);
 
+		/*
 		if (ValueHolder.getDetectedBalls() != null
 				&& ValueHolder.getDetectedBeacons() != null) {
 			for (Contour ball : ValueHolder.getDetectedBalls()) {
@@ -235,8 +236,9 @@ public class ColorBlobDetection extends ActionBarActivity implements
 						Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(100.0));
 			}
 		}
+		*/
 		// Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
-
+		 
 		return mRgba;
 	}
 
@@ -261,11 +263,12 @@ public class ColorBlobDetection extends ActionBarActivity implements
 		// getMenuInflater().inflate(R.menu.main, menu);
 		menu.add("Buttons");
 		menu.add("Collect");
+		menu.add("SelfLocalization");
+		menu.add("Detect Beacon and Balls");
 		menu.add("Homography");
 		menu.add("Calibrate Beacon Color (Red, Blue, Green, Yellow)");
 		menu.add("Add ball color");
 		menu.add("Delete all ball colors");
-		menu.add("BeaconDetection");
 		return true;
 	}
 
@@ -294,8 +297,11 @@ public class ColorBlobDetection extends ActionBarActivity implements
 			break;
 		case "Delete all ball colors":
 			ValueHolder.getRobot().deleteAllColorBallDetection();
-		case "BeaconDetection":
-			ValueHolder.getRobot().startBeaconBallDetection();
+		case "SelfLocalization":
+			ValueHolder.getRobot().startSelfLocalization();
+			break;
+		case "Detect Beacon and Balls":
+			ValueHolder.getRobot().detectBeaconBalls();
 			break;
 		}
 		return false;
