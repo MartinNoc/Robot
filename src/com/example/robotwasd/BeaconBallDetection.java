@@ -75,8 +75,6 @@ public class BeaconBallDetection {
 		Contour[] contourArray = contoursBeacons
 				.toArray(new Contour[contoursBeacons.size()]);
 
-		System.out.println("Beacon: contourArray has size "
-				+ contourArray.length);
 		// check for beacon by comparing pixel-positions
 		for (int i = 0; i < contourArray.length; i++) {
 			for (int j = i + 1; j < contourArray.length; j++) {
@@ -107,7 +105,7 @@ public class BeaconBallDetection {
 						detectedBeaconContours.add(contourArray[i]);
 						detectedBeaconContours.add(contourArray[j]);
 						DecimalFormat df = new DecimalFormat("#.0");
-						System.out.println("Detect:Beacon found " + beacon.toString() + " with distance: "
+						System.out.println("Robot: Beacon found " + beacon.toString() + " with distance: "
 								+ df.format(Math.hypot(beacon.getImagePos().x, beacon.getImagePos().y)) + " x:" + df.format(beacon.getImagePos().x) + " y: "
 								+ df.format(beacon.getImagePos().y));
 					}
@@ -148,7 +146,7 @@ public class BeaconBallDetection {
 				detectedBallContours.add(cont);
 				
 				DecimalFormat df = new DecimalFormat("#.0"); 
-				System.out.println("Detect:Ball found with distance: "
+				System.out.println("Robot: Ball found with distance: "
 						+ df.format(Math.hypot(ball.x, ball.y)) + " x:" + df.format(ball.x) + " y: "
 						+ df.format(ball.y));
 			}
@@ -172,7 +170,13 @@ public class BeaconBallDetection {
 	public void adjustOdometryWithBeacons() {
 		startBeaconBallDetection();
 		while (detectedBeacons.size() < 2) {
-			//robot.turnLeft(45);
+			robot.turnLeft(30);
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			startBeaconBallDetection();
 		}
 

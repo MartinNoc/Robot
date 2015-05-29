@@ -205,6 +205,7 @@ public class ColorBlobDetection extends ActionBarActivity implements
 		case 4:
 			Color.setYellow(mBlobColorHsv.clone());
 			touchFunction = -1;
+			System.out.println("Robot: calibration beacon colors done");
 			break;
 		}
 
@@ -215,12 +216,11 @@ public class ColorBlobDetection extends ActionBarActivity implements
 	 * callback function, is called when a new camera frame arrived
 	 */
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-		System.out.println("Robot: new frame");
 		mRgba = inputFrame.rgba();
 		ValueHolder.setRawPicture(mRgba);
 
-		/*
-		if (ValueHolder.getDetectedBalls() != null
+		
+		/*if (ValueHolder.getDetectedBalls() != null
 				&& ValueHolder.getDetectedBeacons() != null) {
 			for (Contour ball : ValueHolder.getDetectedBalls()) {
 				Core.circle(mRgba, ball.getLowestPoint(), 5, new Scalar(200.0),
@@ -235,8 +235,8 @@ public class ColorBlobDetection extends ActionBarActivity implements
 				Core.putText(mRgba, "beacon", beacon.getLowestPoint(),
 						Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(100.0));
 			}
-		}
-		*/
+		}*/
+		
 		// Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
 		 
 		return mRgba;
@@ -298,7 +298,8 @@ public class ColorBlobDetection extends ActionBarActivity implements
 		case "Delete all ball colors":
 			ValueHolder.getRobot().deleteAllColorBallDetection();
 		case "SelfLocalization":
-			ValueHolder.getRobot().startSelfLocalization();
+			SelfLocalizeThread threadLocalize = new SelfLocalizeThread(ValueHolder.getRobot());
+			threadLocalize.start();
 			break;
 		case "Detect Beacon and Balls":
 			ValueHolder.getRobot().detectBeaconBalls();

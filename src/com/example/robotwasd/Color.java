@@ -14,7 +14,7 @@ import org.opencv.core.Scalar;
 public enum Color {
 	Red, Blue, Green, Yellow;
 	
-	private static Scalar hsvRadius = new Scalar(20, 75, 75);
+	private static Scalar hsvRadius = new Scalar(8,50,50);//(20, 75, 75);
 	private static Scalar red = new Scalar(12, 190, 170);
 	private static Scalar blue = new Scalar(147,220, 130);
 	private static Scalar green = new Scalar(93,180,100);

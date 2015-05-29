@@ -21,9 +21,9 @@ public class Odometry {
 	}
 	
 	public void setPosition(double x, double y, double theta){
-		this.p.x = p.x;
-		this.p.y = p.y;		
-		this.p.theta = p.theta;
+		this.p.x = x;
+		this.p.y = y;		
+		this.p.theta = theta;
 		
 		checkTheta();
 		checkAccuracy();

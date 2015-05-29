@@ -232,14 +232,12 @@ public class Robot {
 	 * @param withExplore
 	 */
 	public void collectBall(boolean withExplore) {
-		/*if (withExplore) {
-			explore();
-		}*/
+		startSelfLocalization();
 		upPositionBar();
-		beaconBallDetection.startBeaconBallDetection();
-		while(ValueHolder.getDetectedBalls().size() == 0){
-			move.turnLeft(30);
-			beaconBallDetection.startBeaconBallDetection();
+		navigateToPosition(new Position(0,0,0));
+		
+		if (withExplore) {
+			explore();
 		}
 		
 		int ballIndex = 0;
@@ -261,17 +259,19 @@ public class Robot {
 		
 		lowPositionBar();
 		
+		startSelfLocalization();
+		
 		//navigateToPosition(new Position(150,150,0));
 		
 		//upPositionBar();
 		
-		//navigateToPosition(new Position(0,0,0));
+		navigateToPosition(new Position(0,0,0));
 		
-		//upPositionBar();
+		upPositionBar();
 		
 	}
 	
-	/*  _____________________(150/150)
+	/*  _____________________(125/125)
 	 * |          |          |
 	 * |  p3      |     p2   |
 	 * |          |          |
@@ -281,17 +281,17 @@ public class Robot {
 	 * |          |          |
 	 * |  p4      |     p5   |
 	 * |__________|__________|
-	 * (-150/-150)           (150/-150)
+	 * (-125/-125)           (125/-125)
 	 * 
 	 */
 	public void explore() {
 		List<Position> positions = new ArrayList<Position>();
-		Position p1 = new Position( 90,  0,  0);
-		Position p2 = new Position( 90, 90, 90);
-		Position p3 = new Position(-90, 90,180);
-		Position p4 = new Position(-90,-90,-90);
-		Position p5 = new Position( 90,-90,  0);
-		Position p6 = new Position( 90,  0, 90);
+		Position p1 = new Position( 60,  0,  0);
+		Position p2 = new Position( 60, 60, 90);
+		Position p3 = new Position(-60, 60,180);
+		Position p4 = new Position(-60,-60,-90);
+		Position p5 = new Position( 60,-60,  0);
+		Position p6 = new Position( 60,  0, 90);
 		Position p7 = new Position(  0,  0,180);
 		positions.add(p1);
 		positions.add(p2);
@@ -302,8 +302,10 @@ public class Robot {
 		positions.add(p7);
 		
 		for (Position p : positions) {
-			for (int i=0; i < 4 && ValueHolder.getDetectedBalls().size() > 0; i++) {
-				move.robotTurn(90);
+			beaconBallDetection.startBeaconBallDetection();
+			for (int i=0; i < 8 && ValueHolder.getDetectedBalls().size() == 0; i++) {
+				move.robotTurn(45);
+				beaconBallDetection.startBeaconBallDetection();
 			}
 			if (ValueHolder.getDetectedBalls().size() > 0) {
 				return;
@@ -318,13 +320,16 @@ public class Robot {
 	 */
 	public void calibrateHomography() {
 		homography.calibrateHomography();
+		System.out.println("Robot: calibration of homography matrix done");
 	}
 	
 	/**
 	 * starts to detect beacons in the actual image
 	 */
 	public void startSelfLocalization(){
+		lowPositionBar();
 		beaconBallDetection.adjustOdometryWithBeacons();
+		System.out.println("Robot: Localization with beacons done");
 	}
 	
 	/**
@@ -340,6 +345,7 @@ public class Robot {
 	 */
 	public void addColorBallDetection(Scalar color){
 		beaconBallDetection.addBallColor(color);
+		System.out.println("Robot: ball color added");
 	}
 	
 	/**
@@ -348,5 +354,6 @@ public class Robot {
 	 */
 	public void deleteAllColorBallDetection(){
 		beaconBallDetection.clearBallColors();
+		System.out.println("Robot: ball colors are deleted");
 	}
 }
