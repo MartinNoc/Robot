@@ -26,6 +26,9 @@ public class Position {
 		this.theta = theta;
 	}
 	
+	public double calcHypotenuse() {
+		return Math.hypot(this.x, this.y);
+	}
 
 	public String toString(){
 		return String.format(Locale.US,"(x,y,theta) = (%1$.2f,%2$.2f,%3$.2f)",x,y,180*theta/Math.PI);

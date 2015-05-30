@@ -297,6 +297,7 @@ public class ColorBlobDetection extends ActionBarActivity implements
 			break;
 		case "Delete all ball colors":
 			ValueHolder.getRobot().deleteAllColorBallDetection();
+			break;
 		case "SelfLocalization":
 			SelfLocalizeThread threadLocalize = new SelfLocalizeThread(ValueHolder.getRobot());
 			threadLocalize.start();

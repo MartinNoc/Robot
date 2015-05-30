@@ -222,7 +222,7 @@ public class Robot {
 		double angle = Math.atan2(goal.y, goal.x) * 180 / Math.PI;
 		move.robotTurn(angle);
 		
-		double distance = Math.hypot(goal.x, goal.y);
+		double distance = goal.calcHypotenuse();
 		
 		move.robotDrive(distance);
 	}
@@ -240,6 +240,7 @@ public class Robot {
 			explore();
 		}
 		
+		// choose the ball which is nearest to the robot (highest Y-pixel value = lowest on image)
 		int ballIndex = 0;
 		double lowestPoint = ValueHolder.getDetectedBalls().get(0).getLowestPoint().y;
 		for (int i = 1; i < ValueHolder.getDetectedBalls().size(); i++) {
@@ -254,16 +255,11 @@ public class Robot {
 		ballPosition.y += 4;
 		ballPosition.x -= 22; 
 		
-		
 		navigateToEgocentricPosition(ballPosition);
 		
 		lowPositionBar();
 		
 		startSelfLocalization();
-		
-		//navigateToPosition(new Position(150,150,0));
-		
-		//upPositionBar();
 		
 		navigateToPosition(new Position(0,0,0));
 		

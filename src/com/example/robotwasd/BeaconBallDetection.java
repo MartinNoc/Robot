@@ -90,7 +90,8 @@ public class BeaconBallDetection {
 						beacon.setImagePos(homography
 								.calcPixelPosition(contourArray[j]
 										.getLowestPoint()));
-					} else {
+					}
+					else {
 						beacon.setBottomColor(contourArray[i].getColor());
 						beacon.setTopColor(contourArray[j].getColor());
 						/* needs homography */
@@ -99,14 +100,13 @@ public class BeaconBallDetection {
 										.getLowestPoint()));
 					}
 					beacon.setBeaconPos();
-					if(!detectedBeacons.contains(beacon))
-					{
+					if (!detectedBeacons.contains(beacon)) {
 						detectedBeacons.add(beacon);
 						detectedBeaconContours.add(contourArray[i]);
 						detectedBeaconContours.add(contourArray[j]);
 						DecimalFormat df = new DecimalFormat("#.0");
 						System.out.println("Robot: Beacon found " + beacon.toString() + " with distance: "
-								+ df.format(Math.hypot(beacon.getImagePos().x, beacon.getImagePos().y)) + " x:" + df.format(beacon.getImagePos().x) + " y: "
+								+ df.format(beacon.getImagePos().calcHypotenuse()) + " x:" + df.format(beacon.getImagePos().x) + " y: "
 								+ df.format(beacon.getImagePos().y));
 					}
 				}
@@ -147,7 +147,7 @@ public class BeaconBallDetection {
 				
 				DecimalFormat df = new DecimalFormat("#.0"); 
 				System.out.println("Robot: Ball found with distance: "
-						+ df.format(Math.hypot(ball.x, ball.y)) + " x:" + df.format(ball.x) + " y: "
+						+ df.format(ball.calcHypotenuse()) + " x:" + df.format(ball.x) + " y: "
 						+ df.format(ball.y));
 			}
 		}
@@ -174,15 +174,16 @@ public class BeaconBallDetection {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			startBeaconBallDetection();
 		}
 
-		// chose 2 beacons to calculate with
-		Beacon beacon0 = detectedBeacons.get(0);
-		Beacon beacon1 = detectedBeacons.get(1);
+		// choose 2 beacons which are closest to the robot's x-axis (low Y-robot-coordinate value)
+		// (not far to the left or right, due to problematic perspecitve projection)
+		int[] beaconIndices = bestBeaconIndices();
+		Beacon beacon0 = detectedBeacons.get(beaconIndices[0]);
+		Beacon beacon1 = detectedBeacons.get(beaconIndices[1]);
 
 		// init beacon-position variables for short variable-names
 		double x0 = beacon0.getBeaconPos().x;
@@ -225,6 +226,29 @@ public class BeaconBallDetection {
 			odometry.setPosition(p1);
 		}
 
+	}
+	
+	private int[] bestBeaconIndices() {
+		// indices of best beacons. 0:best beacon, 1:2nd best beacon
+		int[] indices = new int[]{0,0};
+		
+		if (Math.abs(detectedBeacons.get(1).getImagePos().y) < Math.abs(detectedBeacons.get(0).getImagePos().y)) {
+			indices[0] = 1; 
+		}
+		else {
+			indices[1] = 1;
+		}
+		
+		for (int i = 2; i < detectedBeacons.size(); i++) {
+			if (Math.abs(detectedBeacons.get(i).getImagePos().y) < Math.abs(detectedBeacons.get(indices[0]).getImagePos().y)) {
+				indices[1] = indices[0];
+				indices[0] = i;
+			}
+			else if (Math.abs(detectedBeacons.get(i).getImagePos().y) < Math.abs(detectedBeacons.get(indices[1]).getImagePos().y)) {
+				indices[1] = i;
+			}
+		}
+		return indices;
 	}
 
 	/**
@@ -314,6 +338,13 @@ public class BeaconBallDetection {
 		// checks if one contour is stacked right above the other
 		if (Math.abs(contourA.getLowestPoint().y - contourB.getTopmostPoint().y) <= THRESHOLD_BEACON) {
 			// A on top of B
+			
+			// check if beacon is too far away - maybe beacause of recognition of wrong contours
+			// in the background
+			if (homography.calcPixelPosition(contourB.getLowestPoint()).calcHypotenuse() > 4.0) {
+				return 0;
+			}
+			// check if color combination exists as a beacon
 			if (checkBeaconColorCombination(contourA.getColor(),
 					contourB.getColor())) {
 				return 1;
@@ -321,6 +352,13 @@ public class BeaconBallDetection {
 		}
 		if (Math.abs(contourA.getTopmostPoint().y - contourB.getLowestPoint().y) <= THRESHOLD_BEACON) {
 			// B on top of A
+			
+			// check if beacon is too far away - maybe beacause of recognition of wrong contours
+			// in the background
+			if (homography.calcPixelPosition(contourA.getLowestPoint()).calcHypotenuse() > 4.0) {
+				return 0;
+			}
+			// check if color combination exists as a beacon
 			if (checkBeaconColorCombination(contourB.getColor(),
 					contourA.getColor())) {
 				return 2;
