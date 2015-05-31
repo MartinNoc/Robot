@@ -231,39 +231,76 @@ public class Robot {
 	 * collect all balls on the image, with or without exploring the workspace
 	 * @param withExplore
 	 */
-	public void collectBall(boolean withExplore) {
-		startSelfLocalization();
-		upPositionBar();
-		navigateToPosition(new Position(0,0,0));
+	public void collectBalls(boolean withExplore) {		
+		State state = State.LOCALIZATION_START;
 		
-		if (withExplore) {
-			explore();
-		}
-		
-		// choose the ball which is nearest to the robot (highest Y-pixel value = lowest on image)
-		int ballIndex = 0;
-		double lowestPoint = ValueHolder.getDetectedBalls().get(0).getLowestPoint().y;
-		for (int i = 1; i < ValueHolder.getDetectedBalls().size(); i++) {
-			if (ValueHolder.getDetectedBalls().get(i).getLowestPoint().y > lowestPoint) {
-				lowestPoint = ValueHolder.getDetectedBalls().get(i).getLowestPoint().y;
-				ballIndex = i;
+		while(state != State.FINISHED){
+			System.out.println("Robot: state " + state);
+			switch(state) {
+				case LOCALIZATION_START:
+					lowPositionBar();
+					startSelfLocalization();
+					state = State.DRIVING_HOME;
+					break;
+					
+				case LOCALIZATION_CATCHED:
+					startSelfLocalization();
+					state = State.DRIVING_TARGET;
+					break;
+					
+				case DRIVING_HOME:
+					upPositionBar();
+					navigateToPosition(new Position(0,0,0));
+					state = State.EXPLORING;
+					break;
+					
+				case DRIVING_TARGET:
+					navigateToPosition(new Position(0,0,0));
+					state = State.DRIVING_HOME;
+					break;
+					
+				case EXPLORING:
+					if (withExplore) {
+						if(explore()){
+							state = State.FINISHED;
+						} else {
+							state = State.BALL_CATCHING;
+						}
+					} else {
+						beaconBallDetection.startBeaconBallDetection();
+						if(beaconBallDetection.detectedBalls.size() > 0){
+							state = State.BALL_CATCHING;
+						} else {
+							state = State.FINISHED;
+						}
+					}
+					break;
+					
+				case BALL_CATCHING:
+					// choose the ball which is nearest to the robot (highest Y-pixel value = lowest on image)
+					int ballIndex = 0;
+					double lowestDistance = Math.hypot(beaconBallDetection.detectedBalls.get(0).x, beaconBallDetection.detectedBalls.get(0).y);
+					for (int i = 1; i < beaconBallDetection.detectedBalls.size(); i++) {
+						if (Math.hypot(beaconBallDetection.detectedBalls.get(i).x, beaconBallDetection.detectedBalls.get(i).y) < lowestDistance) {
+							lowestDistance = Math.hypot(beaconBallDetection.detectedBalls.get(0).x, beaconBallDetection.detectedBalls.get(0).y);
+							ballIndex = i;
+						}
+					}
+					Position ballPosition = beaconBallDetection.detectedBalls.get(ballIndex);
+					
+					// adaption from camera-ball-position to robot-ball-position
+					ballPosition.y += 4;
+					ballPosition.x -= 22; 
+					
+					navigateToEgocentricPosition(ballPosition);
+					
+					lowPositionBar();
+					
+					state = State.LOCALIZATION_CATCHED;
+					break;
 			}
 		}
-		Position ballPosition = homography.calcPixelPosition(ValueHolder.getDetectedBalls().get(ballIndex).getLowestPoint());
 		
-		// adaption from camera-ball-position to robot-ball-position
-		ballPosition.y += 4;
-		ballPosition.x -= 22; 
-		
-		navigateToEgocentricPosition(ballPosition);
-		
-		lowPositionBar();
-		
-		startSelfLocalization();
-		
-		navigateToPosition(new Position(0,0,0));
-		
-		upPositionBar();
 		
 	}
 	
@@ -280,7 +317,7 @@ public class Robot {
 	 * (-125/-125)           (125/-125)
 	 * 
 	 */
-	public void explore() {
+	public boolean explore() {
 		List<Position> positions = new ArrayList<Position>();
 		Position p1 = new Position( 60,  0,  0);
 		Position p2 = new Position( 60, 60, 90);
@@ -299,15 +336,17 @@ public class Robot {
 		
 		for (Position p : positions) {
 			beaconBallDetection.startBeaconBallDetection();
-			for (int i=0; i < 8 && ValueHolder.getDetectedBalls().size() == 0; i++) {
+			for (int i=0; i < 8 && beaconBallDetection.detectedBalls.size() == 0; i++) {
 				move.robotTurn(45);
 				beaconBallDetection.startBeaconBallDetection();
 			}
-			if (ValueHolder.getDetectedBalls().size() > 0) {
-				return;
+			if (beaconBallDetection.detectedBalls.size() > 0) {
+				return false;
 			}
 			navigateToPosition(p);
 		}
+		
+		return true;
 	}
 	
 	/**
@@ -323,7 +362,6 @@ public class Robot {
 	 * starts to detect beacons in the actual image
 	 */
 	public void startSelfLocalization(){
-		lowPositionBar();
 		beaconBallDetection.adjustOdometryWithBeacons();
 		System.out.println("Robot: Localization with beacons done");
 	}

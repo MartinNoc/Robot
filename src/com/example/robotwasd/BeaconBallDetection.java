@@ -24,12 +24,12 @@ public class BeaconBallDetection {
 
 	private List<Scalar> ballColors = new LinkedList();
 
-	private List<Beacon> detectedBeacons = new ArrayList<Beacon>();
-	private List<Position> detectedBalls = new ArrayList<Position>();
+	public List<Beacon> detectedBeacons = new ArrayList<Beacon>();
+	public List<Position> detectedBalls = new ArrayList<Position>();
 
 	// is needed for displaying the detected balls/beacons on the image
-	private List<Contour> detectedBeaconContours = new ArrayList<>();
-	private List<Contour> detectedBallContours = new ArrayList<>();
+	public List<Contour> detectedBeaconContours = new ArrayList<>();
+	public List<Contour> detectedBallContours = new ArrayList<>();
 
 	public BeaconBallDetection(Homography homography, Odometry odometry,
 			Robot robot) {
@@ -142,8 +142,11 @@ public class BeaconBallDetection {
 				ball.x = homography.calcPixelPosition(cont.getLowestPoint()).x;
 				ball.y = homography.calcPixelPosition(cont.getLowestPoint()).y;
 				ball.theta = 0;
-				detectedBalls.add(ball);
-				detectedBallContours.add(cont);
+				//add only balls which are inside the workspace to the list
+				if(Math.hypot(ball.x, ball.y) < 360){
+					detectedBalls.add(ball);
+					detectedBallContours.add(cont);
+				}
 				
 				DecimalFormat df = new DecimalFormat("#.0"); 
 				System.out.println("Robot: Ball found with distance: "
@@ -172,7 +175,7 @@ public class BeaconBallDetection {
 		while (detectedBeacons.size() < 2) {
 			robot.turnLeft(30);
 			try {
-				Thread.sleep(200);
+				Thread.sleep(300);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -180,10 +183,12 @@ public class BeaconBallDetection {
 		}
 
 		// choose 2 beacons which are closest to the robot's x-axis (low Y-robot-coordinate value)
-		// (not far to the left or right, due to problematic perspecitve projection)
+		// (not far to the left or right, due to problematic perspective projection)
 		int[] beaconIndices = bestBeaconIndices();
-		Beacon beacon0 = detectedBeacons.get(beaconIndices[0]);
-		Beacon beacon1 = detectedBeacons.get(beaconIndices[1]);
+		//Beacon beacon0 = detectedBeacons.get(beaconIndices[0]);
+		//Beacon beacon1 = detectedBeacons.get(beaconIndices[1]);
+		Beacon beacon0 = detectedBeacons.get(0);
+		Beacon beacon1 = detectedBeacons.get(1);
 
 		// init beacon-position variables for short variable-names
 		double x0 = beacon0.getBeaconPos().x;
@@ -341,7 +346,7 @@ public class BeaconBallDetection {
 			
 			// check if beacon is too far away - maybe beacause of recognition of wrong contours
 			// in the background
-			if (homography.calcPixelPosition(contourB.getLowestPoint()).calcHypotenuse() > 4.0) {
+			if (homography.calcPixelPosition(contourB.getLowestPoint()).calcHypotenuse() > 400.0) {
 				return 0;
 			}
 			// check if color combination exists as a beacon
@@ -355,7 +360,7 @@ public class BeaconBallDetection {
 			
 			// check if beacon is too far away - maybe beacause of recognition of wrong contours
 			// in the background
-			if (homography.calcPixelPosition(contourA.getLowestPoint()).calcHypotenuse() > 4.0) {
+			if (homography.calcPixelPosition(contourA.getLowestPoint()).calcHypotenuse() > 400.0) {
 				return 0;
 			}
 			// check if color combination exists as a beacon
