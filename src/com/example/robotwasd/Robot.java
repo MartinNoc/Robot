@@ -255,7 +255,7 @@ public class Robot {
 					break;
 					
 				case DRIVING_TARGET:
-					navigateToPosition(new Position(0,0,0));
+					navigateToPosition(new Position(100,100,0));
 					state = State.DRIVING_HOME;
 					break;
 					
@@ -326,15 +326,15 @@ public class Robot {
 		Position p5 = new Position( 60,-60,  0);
 		Position p6 = new Position( 60,  0, 90);
 		Position p7 = new Position(  0,  0,180);
-		positions.add(p1);
+		/*positions.add(p1);
 		positions.add(p2);
 		positions.add(p3);
 		positions.add(p4);
 		positions.add(p5);
 		positions.add(p6);
-		positions.add(p7);
+		positions.add(p7);*/
 		
-		for (Position p : positions) {
+		//for (Position p : positions) {
 			beaconBallDetection.startBeaconBallDetection();
 			for (int i=0; i < 8 && beaconBallDetection.detectedBalls.size() == 0; i++) {
 				move.robotTurn(45);
@@ -343,8 +343,8 @@ public class Robot {
 			if (beaconBallDetection.detectedBalls.size() > 0) {
 				return false;
 			}
-			navigateToPosition(p);
-		}
+			//navigateToPosition(p);
+		//}
 		
 		return true;
 	}

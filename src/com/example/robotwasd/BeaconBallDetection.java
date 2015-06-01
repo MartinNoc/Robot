@@ -54,7 +54,7 @@ public class BeaconBallDetection {
 		List<Contour> contoursBalls = new ArrayList<Contour>();
 
 		// set Radius
-		blobDetector.setColorRadius(Color.getHsvRadius());
+		blobDetector.setColorRadius(Color.getHsvRadiusBeacon());
 
 		// one iteration for every basic color (R, G, B, Y) => beacons
 		for (Color color : Color.values()) {
@@ -113,6 +113,9 @@ public class BeaconBallDetection {
 			}
 		}
 
+		// set Radius
+		blobDetector.setColorRadius(Color.getHsvRadiusBall());
+		
 		// detect the contours for the balls
 		for (Scalar color : ballColors) {
 			// setHSV
@@ -185,8 +188,10 @@ public class BeaconBallDetection {
 		// choose 2 beacons which are closest to the robot's x-axis (low Y-robot-coordinate value)
 		// (not far to the left or right, due to problematic perspective projection)
 		int[] beaconIndices = bestBeaconIndices();
-		//Beacon beacon0 = detectedBeacons.get(beaconIndices[0]);
-		//Beacon beacon1 = detectedBeacons.get(beaconIndices[1]);
+		/*
+		Beacon beacon0 = detectedBeacons.get(beaconIndices[0]);
+		Beacon beacon1 = detectedBeacons.get(beaconIndices[1]);
+		*/
 		Beacon beacon0 = detectedBeacons.get(0);
 		Beacon beacon1 = detectedBeacons.get(1);
 

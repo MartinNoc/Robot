@@ -14,11 +14,12 @@ import org.opencv.core.Scalar;
 public enum Color {
 	Red, Blue, Green, Yellow;
 	
-	private static Scalar hsvRadius = new Scalar(8,50,50);//(20, 75, 75);
-	private static Scalar red = new Scalar(12, 190, 170);
-	private static Scalar blue = new Scalar(147,220, 130);
-	private static Scalar green = new Scalar(93,180,100);
-	private static Scalar yellow = new Scalar(40, 210, 180);
+	private static Scalar hsvRadiusBeacon = new Scalar(20,75,100);//(20, 75, 75);
+	private static Scalar hsvRadiusBall = new Scalar(15,50,75);
+	private static Scalar red = new Scalar(8, 227, 90);
+	private static Scalar blue = new Scalar(137,200, 40);
+	private static Scalar green = new Scalar(89,210,60);
+	private static Scalar yellow = new Scalar(34, 223, 100);
 	
 	public static void setRed(Scalar red) {
 		Color.red = red;
@@ -50,12 +51,20 @@ public enum Color {
 	 * get the HSV value for the color
 	 * @return HSV value
 	 */
-	public static Scalar getHsvRadius() {
-		return hsvRadius;
+	public static Scalar getHsvRadiusBeacon() {
+		return hsvRadiusBeacon;
 	}
 	
-	public static void setHsvRadius(Scalar hsvRadius) {
-		Color.hsvRadius = hsvRadius;
+	public static void setHsvRadiusBeacon(Scalar hsvRadius) {
+		Color.hsvRadiusBeacon = hsvRadius;
+	}
+	
+	public static Scalar getHsvRadiusBall() {
+		return hsvRadiusBall;
+	}
+	
+	public static void setHsvRadiusBall(Scalar hsvRadius) {
+		Color.hsvRadiusBall = hsvRadius;
 	}
 	
 	/**
@@ -69,7 +78,7 @@ public enum Color {
 	 */
 	@Deprecated
 	public static Color detectColor(Scalar hsvValue){
-		final double hsvThreashold = calcEuclidianDistance(hsvRadius, new Scalar(0,0,0));
+		final double hsvThreashold = calcEuclidianDistance(hsvRadiusBeacon, new Scalar(0,0,0));
 		
 		if (calcEuclidianDistance(hsvValue, getHsvColor(Red)) < hsvThreashold) {
 			return Color.Red;
