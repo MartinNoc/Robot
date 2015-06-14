@@ -396,7 +396,8 @@ public class BeaconBallDetection {
 				return true;
 			}
 		} else if (topColor == Color.Yellow) {
-			if (bottomColor == Color.Green) {
+			//if (bottomColor == Color.Green) {
+			if (bottomColor == Color.Blue) {
 				return true;
 			} else if (bottomColor == Color.Red) {
 				return true;
@@ -404,7 +405,8 @@ public class BeaconBallDetection {
 		} else if (topColor == Color.Red) {
 			if (bottomColor == Color.Yellow) {
 				return true;
-			} else if (bottomColor == Color.Green) {
+			//} else if (bottomColor == Color.Green) {
+			} else if (bottomColor == Color.Blue) {
 				return true;
 			}
 		} else if (topColor == Color.Green) {

@@ -263,6 +263,7 @@ public class ColorBlobDetection extends ActionBarActivity implements
 		// getMenuInflater().inflate(R.menu.main, menu);
 		menu.add("Buttons");
 		menu.add("Collect");
+		menu.add("Collect with Obstacle Avoidance");
 		menu.add("SelfLocalization");
 		menu.add("Detect Beacon and Balls");
 		menu.add("Homography");
@@ -285,6 +286,10 @@ public class ColorBlobDetection extends ActionBarActivity implements
 		case "Collect":
 			RobotThread thread = new RobotThread(ValueHolder.getRobot());
 			thread.start();
+			break;
+		case "Collect with Obstacle Avoidance":
+			RobotThreadOA threadOA = new RobotThreadOA(ValueHolder.getRobot());
+			threadOA.start();
 			break;
 		case "Homography":
 			ValueHolder.getRobot().calibrateHomography();

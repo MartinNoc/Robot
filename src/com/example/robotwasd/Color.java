@@ -14,12 +14,12 @@ import org.opencv.core.Scalar;
 public enum Color {
 	Red, Blue, Green, Yellow;
 	
-	private static Scalar hsvRadiusBeacon = new Scalar(20,75,100);//(20, 75, 75);
-	private static Scalar hsvRadiusBall = new Scalar(15,50,75);
-	private static Scalar red = new Scalar(8, 227, 90);
-	private static Scalar blue = new Scalar(137,200, 40);
-	private static Scalar green = new Scalar(89,210,60);
-	private static Scalar yellow = new Scalar(34, 223, 100);
+	private static Scalar hsvRadiusBeacon = new Scalar(10,70,90);//(25,50,50);
+	private static Scalar hsvRadiusBall = new Scalar(20,50,50);
+	private static Scalar red = new Scalar(0,190,190);//(8, 200, 170);
+	private static Scalar blue = new Scalar(146,225,120);//(142,234, 96);
+	private static Scalar green = new Scalar(95,145,110);//(90,185,69);
+	private static Scalar yellow = new Scalar(37,160,180);//(39, 170, 198);
 	
 	public static void setRed(Scalar red) {
 		Color.red = red;

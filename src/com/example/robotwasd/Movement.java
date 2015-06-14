@@ -10,7 +10,7 @@ package com.example.robotwasd;
 public class Movement {
 	private final double COEFFICIENT_LENGTH = 1.355;		// constant to correct length of driving
 	private final double COEFFICIENT_LENGTH_TIME = 0.073; 	// seconds per cm
-	private final double COEFFICIENT_DEGREE = 1.14;		// constant to correct rotation
+	private final double COEFFICIENT_DEGREE = 1.15;		// constant to correct rotation
 	private final double COEFFICIENT_DEGREE_TIME = 0.016111;// seconds per degree
 	
 	static boolean turnLeft = true;
@@ -222,12 +222,21 @@ public class Movement {
 	}
 	
 	/**
-	 * Called if robot faces an obstacle.
+	 * Called if robot faces an obstacle. (world coordinates)
 	 * Tries to go round the obstacle until the way to the goal is free.
 	 * 
 	 * @param goal Position of the goal
 	 */
 	public void avoidanceAlgorithm(Position goal) {
+		//wait and look again for obstacle
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!obst.checkObstacleAhead())
+			return;
 		// turn robot until it does not face an obstacle
 		while(obst.checkObstacleAhead()) {
 			if (turnLeft) 
@@ -235,8 +244,45 @@ public class Movement {
 			else 
 				robotTurn(-90);
 		}
-		robotDriveOA(90);
+		robotDriveOA(30);
 		turnTowardsPosition(goal);
+		
+		if (obst.checkObstacleAhead())
+			avoidanceAlgorithm(goal);
+		else
+			turnLeft = !turnLeft;
+	}
+	
+	/**
+	 * Called if robot faces an obstacle. (Same functionaltity as avoidanceAlgorithm but with egocentric coordinates)
+	 * Tries to go round the obstacle until the way to the goal is free.
+	 * 
+	 * @param goal Position of the goal, egocentric
+	 */
+	public void avoidanceAlgorithmEgocentric(Position goal) {
+		//wait and look again for obstacle
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!obst.checkObstacleAhead())
+			return;
+		// turn robot until it does not face an obstacle
+		int turns = 0;
+		while(obst.checkObstacleAhead()) {
+			if (turnLeft) 
+				robotTurn(90);
+			else 
+				robotTurn(-90);
+			turns++;
+		}
+		robotDriveOA(30);
+		if (turnLeft) 
+			robotTurn(-90*turns);
+		else 
+			robotTurn(90*turns);
 		
 		if (obst.checkObstacleAhead())
 			avoidanceAlgorithm(goal);

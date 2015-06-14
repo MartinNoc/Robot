@@ -228,6 +228,25 @@ public class Robot {
 	}
 	
 	/**
+	 * navigates to the egocentric goal position, image coordinates with obstacle avoidance
+	 * @param goal image goal position
+	 * @return true when robot hit obstacle, false when ball is catched
+	 */
+	public boolean navigateToEgocentricPositionOA(Position goal) {
+		double angle = Math.atan2(goal.y, goal.x) * 180 / Math.PI;
+		move.robotTurn(angle);
+		
+		double distance = goal.calcHypotenuse();
+		
+		if (move.robotDriveOA(distance)) {
+			//during driving robot hit an obstacle, drive around and then head towards goal
+			move.avoidanceAlgorithmEgocentric(goal);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * collect all balls on the image, with or without exploring the workspace
 	 * @param withExplore
 	 */
@@ -290,13 +309,90 @@ public class Robot {
 					
 					// adaption from camera-ball-position to robot-ball-position
 					ballPosition.y += 4;
-					ballPosition.x -= 22; 
+					ballPosition.x -= 18; 
 					
 					navigateToEgocentricPosition(ballPosition);
 					
 					lowPositionBar();
 					
 					state = State.LOCALIZATION_CATCHED;
+					break;
+			}
+		}
+	}
+	
+	/**
+	 * collect all balls on the image, with or without exploring the workspace and with obstacle avoidance
+	 * @param withExplore
+	 */
+	public void collectBallsOA(boolean withExplore) {		
+		State state = State.LOCALIZATION_START;
+		
+		while(state != State.FINISHED){
+			System.out.println("Robot: state " + state);
+			switch(state) {
+				case LOCALIZATION_START:
+					lowPositionBar();
+					startSelfLocalization();
+					state = State.DRIVING_HOME;
+					break;
+					
+				case LOCALIZATION_CATCHED:
+					startSelfLocalization();
+					state = State.DRIVING_TARGET;
+					break;
+					
+				case DRIVING_HOME:
+					upPositionBar();
+					navigateToPositionOA(new Position(0,0,0));
+					state = State.EXPLORING;
+					break;
+					
+				case DRIVING_TARGET:
+					navigateToPositionOA(new Position(100,100,0));
+					state = State.DRIVING_HOME;
+					break;
+					
+				case EXPLORING:
+					if (withExplore) {
+						if(explore()){
+							state = State.FINISHED;
+						} else {
+							state = State.BALL_CATCHING;
+						}
+					} else {
+						beaconBallDetection.startBeaconBallDetection();
+						if(beaconBallDetection.detectedBalls.size() > 0){
+							state = State.BALL_CATCHING;
+						} else {
+							state = State.FINISHED;
+						}
+					}
+					break;
+					
+				case BALL_CATCHING:
+					// choose the ball which is nearest to the robot (highest Y-pixel value = lowest on image)
+					int ballIndex = 0;
+					double lowestDistance = Math.hypot(beaconBallDetection.detectedBalls.get(0).x, beaconBallDetection.detectedBalls.get(0).y);
+					for (int i = 1; i < beaconBallDetection.detectedBalls.size(); i++) {
+						if (Math.hypot(beaconBallDetection.detectedBalls.get(i).x, beaconBallDetection.detectedBalls.get(i).y) < lowestDistance) {
+							lowestDistance = Math.hypot(beaconBallDetection.detectedBalls.get(0).x, beaconBallDetection.detectedBalls.get(0).y);
+							ballIndex = i;
+						}
+					}
+					Position ballPosition = beaconBallDetection.detectedBalls.get(ballIndex);
+					
+					// adaption from camera-ball-position to robot-ball-position
+					ballPosition.y += 4;
+					ballPosition.x -= 22;
+					
+					boolean hit = navigateToEgocentricPositionOA(ballPosition);
+					if(hit){
+						state = State.EXPLORING;
+					}else{
+						lowPositionBar();
+						state = State.LOCALIZATION_CATCHED;
+					}
 					break;
 			}
 		}
