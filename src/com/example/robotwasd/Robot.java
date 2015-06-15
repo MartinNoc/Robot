@@ -334,7 +334,8 @@ public class Robot {
 				case LOCALIZATION_START:
 					lowPositionBar();
 					startSelfLocalization();
-					state = State.DRIVING_HOME;
+					upPositionBar();
+					state = State.EXPLORING;
 					break;
 					
 				case LOCALIZATION_CATCHED:
@@ -350,7 +351,8 @@ public class Robot {
 					
 				case DRIVING_TARGET:
 					navigateToPositionOA(new Position(100,100,0));
-					state = State.DRIVING_HOME;
+					upPositionBar();
+					state = State.EXPLORING;
 					break;
 					
 				case EXPLORING:
@@ -384,7 +386,7 @@ public class Robot {
 					
 					// adaption from camera-ball-position to robot-ball-position
 					ballPosition.y += 4;
-					ballPosition.x -= 22;
+					ballPosition.x -= 18;
 					
 					boolean hit = navigateToEgocentricPositionOA(ballPosition);
 					if(hit){
